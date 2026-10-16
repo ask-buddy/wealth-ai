@@ -106,13 +106,13 @@ export default function Home() {
   if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#fbf9f7]">
-        <div className="w-8 h-8 border-3 border-[#fe5e37] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-[#80283e] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#fbf9f7] text-[#191919] flex flex-col font-sans selection:bg-orange-100 selection:text-orange-950">
+    <div className="min-h-screen bg-[#fbf9f7] text-[#191919] flex flex-col font-sans selection:bg-[#f5dfe6] selection:text-[#5e1929]">
       {/* Printable Report Component for PDF export */}
       <div className="print-only">
         {portfolio && <PrintableReport ref={printRef} portfolio={portfolio} />}
@@ -124,7 +124,7 @@ export default function Home() {
         <header className="sticky top-0 z-40 w-full border-b border-stone-200 bg-white/95 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-sm bg-[#fe5e37] flex items-center justify-center text-white font-bold text-lg">
+              <div className="w-9 h-9 rounded-sm bg-[#80283e] flex items-center justify-center text-white font-bold text-lg">
                 A
               </div>
               <div>
@@ -176,7 +176,7 @@ export default function Home() {
                   <span
                     className={
                       currencyMode === "IDR"
-                        ? "font-bold text-[#fe5e37]"
+                        ? "font-bold text-[#80283e]"
                         : "text-stone-400"
                     }
                   >
@@ -186,7 +186,7 @@ export default function Home() {
                   <span
                     className={
                       currencyMode === "USD"
-                        ? "font-bold text-[#fe5e37]"
+                        ? "font-bold text-[#80283e]"
                         : "text-stone-400"
                     }
                   >
@@ -206,7 +206,7 @@ export default function Home() {
               <div className="text-center max-w-3xl mx-auto space-y-4 pt-4">
                 <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-stone-900 leading-tight">
                   Hitung Total Kekayaan Bersih Anda Secara{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fe5e37] via-[#f97316] to-[#eab308]">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#80283e] via-[#a34159] to-[#c57288]">
                     Instan & 100% Privat
                   </span>
                 </h1>
@@ -215,7 +215,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setIsAddingMore(false)}
-                    className="inline-flex items-center gap-1.5 text-xs text-[#fe5e37] hover:underline font-bold cursor-pointer pt-2"
+                    className="inline-flex items-center gap-1.5 text-xs text-[#80283e] hover:underline font-bold cursor-pointer pt-2"
                   >
                     <span>← Kembali ke Tampilan Dashboard Portofolio</span>
                   </button>
@@ -240,7 +240,7 @@ export default function Home() {
 
                 <div className="p-4 rounded-sm border border-stone-200 bg-white space-y-1.5 luxury-card">
                   <div className="flex items-center gap-2 font-bold text-sm text-stone-900">
-                    <Zap className="w-4 h-4 text-[#fe5e37]" />
+                    <Zap className="w-4 h-4 text-[#80283e]" />
                     <span>Multimodal One-Shot</span>
                   </div>
                   <p className="text-xs text-stone-500 leading-relaxed font-medium">
@@ -315,9 +315,7 @@ export default function Home() {
         {/* Footer */}
         <footer className="border-t border-stone-200/80 py-6 text-center text-xs text-stone-500 bg-white mt-12">
           <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span>
-              © 2026 AngelWealth. Private Wealth & Asset Aggregator AI.
-            </span>
+            <span>© 2026 AngelWealth. Private Wealth & Asset.</span>
             <span className="font-mono text-[11px] text-stone-400">
               Zero-Database Local Privacy
             </span>

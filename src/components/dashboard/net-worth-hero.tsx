@@ -72,7 +72,7 @@ export function NetWorthHero({
             onClick={onAddMore}
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-sm border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-all cursor-pointer"
           >
-            <PlusCircle className="w-3.5 h-3.5 text-[#fe5e37]" />
+            <PlusCircle className="w-3.5 h-3.5 text-[#80283e]" />
             <span>Tambah Dokumen</span>
           </button>
 
@@ -80,7 +80,7 @@ export function NetWorthHero({
           <button
             type="button"
             onClick={onExportPdf}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold rounded-sm bg-[#fe5e37] hover:bg-[#ea4e28] text-white transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold rounded-sm bg-[#80283e] hover:bg-[#6c1e32] text-white transition-all cursor-pointer"
           >
             <FileDown className="w-3.5 h-3.5" />
             <span>Ekspor PDF</span>

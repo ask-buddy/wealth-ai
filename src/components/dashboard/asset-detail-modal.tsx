@@ -260,7 +260,7 @@ export function AssetDetailModal({
 
                     {item.institution && (
                       <p className="text-xs text-stone-500 flex items-center gap-1.5 font-medium">
-                        <Tag className="w-3 h-3 text-[#fe5e37]" />
+                        <Tag className="w-3 h-3 text-[#80283e]" />
                         <span>Institusi: {item.institution}</span>
                       </p>
                     )}
@@ -303,7 +303,7 @@ export function AssetDetailModal({
                   <div className="flex items-center gap-1.5">
                     {getFileIcon(item.sourceFile)}
                     <span className="text-stone-400">Berkas Sumber:</span>
-                    <span className="font-mono font-semibold text-stone-800 px-2 py-0.5 rounded-sm bg-orange-50/80 border border-orange-200/60 text-[10px]">
+                    <span className="font-mono font-semibold text-stone-800 px-2 py-0.5 rounded-sm bg-[#faf0f3] border border-[#ecd0d8] text-[10px]">
                       {item.sourceFile}
                     </span>
                   </div>

@@ -21,73 +21,73 @@ export const CATEGORY_CONFIG: Record<
   PROPERTI: {
     label: "Properti & Tanah",
     icon: "",
-    color: "#FF5E48", // Vibrant Salmon/Coral
-    badgeBg: "#FFF1F0",
-    badgeText: "#E02E1B",
+    color: "#A56372", // Soft Dusty Rose-Burgundy
+    badgeBg: "#F7EDF0",
+    badgeText: "#7A2D3E",
     description: "Tanah, rumah hunian, ruko komersial, dan apartemen",
   },
   SAHAM: {
     label: "Saham (IHSG & US)",
     icon: "",
-    color: "#FF8A3D", // Warm Orange
-    badgeBg: "#FFF4ED",
-    badgeText: "#EA580C",
+    color: "#5C7993", // Soft Slate Steel Blue
+    badgeBg: "#EDF3F7",
+    badgeText: "#2F4D66",
     description: "Portofolio saham bursa dan indeks ekuitas",
   },
   KAS_DEPOSITO: {
     label: "Kas & Deposito",
     icon: "",
-    color: "#FFD13B", // Warm Golden Yellow
-    badgeBg: "#FEFCE8",
-    badgeText: "#CA8A04",
+    color: "#B3976B", // Soft Warm Champagne Sand
+    badgeBg: "#F7F4EE",
+    badgeText: "#6F562E",
     description: "Tabungan bank, deposito berjangka, dan kas likuid",
   },
   OBLIGASI_SBN: {
     label: "Obligasi & SBN",
     icon: "",
-    color: "#D2EE38", // Lime / Chartreuse
-    badgeBg: "#F7FEE7",
-    badgeText: "#65A30D",
+    color: "#768E77", // Soft Muted Sage
+    badgeBg: "#EFF4F0",
+    badgeText: "#3D543E",
     description: "Surat Berharga Negara, Sukuk, dan Obligasi korporasi",
   },
   EMAS_LOGAM_MULIA: {
     label: "Emas & Logam Mulia",
     icon: "",
-    color: "#86EFAC", // Soft Mint Green
-    badgeBg: "#F0FDF4",
-    badgeText: "#16A34A",
+    color: "#BA9C5E", // Soft Antique Gold
+    badgeBg: "#F9F6EE",
+    badgeText: "#735A22",
     description: "Emas batangan Antam, perak, dan logam mulia fisik",
   },
   KENDARAAN: {
     label: "Kendaraan",
     icon: "",
-    color: "#5EEAD4", // Sky Teal / Turquoise
-    badgeBg: "#F0FDFA",
-    badgeText: "#0D9488",
+    color: "#5F8F94", // Soft Ocean Pine / Muted Teal
+    badgeBg: "#EFF5F6",
+    badgeText: "#2E5B60",
     description: "Mobil mewah, motor koleksi, dan kendaraan pribadi",
   },
   CRYPTO: {
     label: "Kripto (BTC & ETH)",
     icon: "",
-    color: "#C084FC", // Lilac / Purple
-    badgeBg: "#FAF5FF",
-    badgeText: "#9333EA",
+    color: "#8F799E", // Soft Dusty Plum / Mauve
+    badgeBg: "#F4EFF6",
+    badgeText: "#5A426B",
     description: "Bitcoin, Ethereum, stablecoin, dan web3 assets",
   },
   PERUSAHAAN_SENDIRI: {
     label: "Perusahaan & Bisnis",
     icon: "",
-    color: "#A78BFA", // Lavender Indigo
-    badgeBg: "#EEF2FF",
-    badgeText: "#4F46E5",
+    color: "#6D7C9E", // Soft Slate Dusk
+    badgeBg: "#EFF2F7",
+    badgeText: "#3A4A6E",
     description: "Kepemilikan saham perseroan tertutup, CV, dan ekuitas bisnis",
   },
   LAINNYA: {
     label: "Aset Lainnya",
     icon: "",
-    color: "#F472B6", // Pink
-    badgeBg: "#FDF2F8",
-    badgeText: "#DB2777",
+    color: "#9E8075", // Soft Warm Rosewood
+    badgeBg: "#F6F1F0",
+    badgeText: "#63483E",
     description: "Barang seni, jam tangan mewah, dan koleksi berharga",
   },
 };

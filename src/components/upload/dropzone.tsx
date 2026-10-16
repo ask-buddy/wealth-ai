@@ -95,7 +95,7 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
       setAnalysisStep("Mempersiapkan dokumen in-memory...");
       await new Promise((r) => setTimeout(r, 400));
 
-      setAnalysisStep("Gemini 3.8 Flash mengekstrak aset & auditabilitas...");
+      setAnalysisStep("Mengekstrak aset & auditabilitas...");
 
       const payload = {
         files: files.map((f) => ({
@@ -157,8 +157,8 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
         onClick={() => fileInputRef.current?.click()}
         className={`relative border-2 border-dashed rounded-sm p-8 sm:p-12 text-center transition-all cursor-pointer luxury-card overflow-hidden ${
           isDragging
-            ? "border-[#fe5e37] bg-orange-50/70"
-            : "border-stone-300 hover:border-[#fe5e37]/70 hover:bg-stone-50/60 bg-white"
+            ? "border-[#80283e] bg-[#faf0f3]/70"
+            : "border-stone-300 hover:border-[#80283e]/70 hover:bg-stone-50/60 bg-white"
         }`}
       >
         <input
@@ -171,7 +171,7 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
         />
 
         <div className="relative flex flex-col items-center justify-center space-y-4">
-          <div className="w-16 h-16 rounded-sm bg-orange-50 border border-orange-200/60 flex items-center justify-center text-[#fe5e37]">
+          <div className="w-16 h-16 rounded-sm bg-[#faf0f3] border border-[#ecd0d8] flex items-center justify-center text-[#80283e]">
             <Upload className="w-7 h-7" />
           </div>
 
@@ -221,7 +221,7 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
               <span className="font-bold text-sm text-stone-900">
                 Dokumen Siap Diekstrak
               </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-sm bg-orange-100 text-[#fe5e37] font-mono font-bold">
+              <span className="text-xs px-2.5 py-0.5 rounded-sm bg-[#f5dfe6] text-[#80283e] font-mono font-bold">
                 {files.length} berkas
               </span>
             </div>
@@ -250,7 +250,7 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
                       {isPdf ? (
                         <FileText className="w-4 h-4 text-rose-500" />
                       ) : (
-                        <ImageIcon className="w-4 h-4 text-[#fe5e37]" />
+                        <ImageIcon className="w-4 h-4 text-[#80283e]" />
                       )}
                     </div>
                     <div className="min-w-0">
@@ -282,7 +282,7 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
               type="button"
               disabled={isAnalyzing}
               onClick={handleStartAnalysis}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-sm bg-[#fe5e37] hover:bg-[#ea4e28] text-white font-bold text-sm sm:text-base transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-sm bg-[#80283e] hover:bg-[#6c1e32] text-white font-bold text-sm sm:text-base transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {isAnalyzing ? (
                 <>
