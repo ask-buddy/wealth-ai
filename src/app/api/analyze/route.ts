@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { genAI, GEMINI_MODEL } from "@/lib/gemini";
+import { genAI, GEMINI_MODEL, GEMINI_BASE_URL, GEMINI_API_KEY } from "@/lib/gemini";
 import { assetExtractionSchema } from "@/lib/schema";
 import {
   ExtractedAssetItem,
   ExtractedLiabilityItem,
-  AssetCategory,
 } from "@/types/wealth";
-import { normalizeCategory } from "@/lib/math";
+import { normalizeCategory, parseFlexibleNumber } from "@/lib/math";
 
 interface IncomingFile {
   fileName: string;
@@ -17,70 +16,62 @@ interface IncomingFile {
 export const maxDuration = 180; // Extended execution timeout for multimodal document audit (up to 3 minutes)
 
 const SYSTEM_INSTRUCTION = `
-Anda adalah mesin AI Auditor Kekayaan & Ekstraksi Aset Keuangan tingkat institusional dengan tingkat presisi tinggi. Tugas tunggal Anda adalah membaca dokumen visual (screenshot aplikasi finansial, dokumen legal, laporan investasi, dan bukti kepemilikan aset dalam Bahasa Indonesia maupun Bahasa Inggris) lalu mengekstrak daftar aset secara faktual ke dalam skema JSON yang telah ditentukan.
+Anda adalah Auditor Finansial AI institusional dengan akurasi 100%. Tugas utama Anda adalah mengekstrak data aset keuangan faktual dari setiap dokumen visual atau PDF yang dilampirkan ke dalam format JSON yang valid.
 
-PATUHI ATURAN MUTLAK BERIKUT TANPA PENGECUALIAN:
+HANYA kembalikan satu objek JSON valid dengan struktur skema berikut:
+{
+  "assets": [
+    {
+      "asset_name": "string (nama institusi/produk/emiten/pemegang saham)",
+      "category": "SAHAM | PERUSAHAAN_SENDIRI | CRYPTO | PROPERTI | KAS_DEPOSITO | EMAS_LOGAM_MULIA | OBLIGASI_SBN | KENDARAAN | LAINNYA",
+      "estimated_value_idr": number (nilai moneter dalam rupiah, integer murni tanpa titik/koma/desimal),
+      "quantity_or_ownership_detail": "string (contoh: '0.011 gram', 'Saldo Aktif', '60% saham', '100 Lot', dsb)",
+      "source_file": "string (nama file dokumen asal item ini)"
+    }
+  ],
+  "liabilities": [],
+  "unreadable_or_skipped_files": [],
+  "executive_summary": "string (ringkasan 2-3 kalimat mengenai hasil audit dan total aset)"
+}
 
-1. STRICT GROUNDING & IDENTIFIKASI DOKUMEN:
-   - Screenshot aplikasi finansial/investasi/fintech (seperti Treasury, Pegadaian, Pluang, Bibit, Stockbit, Ajaib, e-wallet, Bank Digital, dsb) WALAUPUN memuat foto avatar pengguna, banner onboarding, atau checklist pendaftaran di bagian atas, ADALAH DOKUMEN ASET FINANSIAL YANG VALID DAN WAJIB DIEKSTRAK!
-   - Periksa seluruh area layar: cari kartu saldo, "Total Aset", "Tabungan Emas", "Saldo IDR", "Portofolio", saldo kas/rekening.
-   - HANYA masukkan nama file ke dalam \`unreadable_or_skipped_files\` jika dokumen tersebut benar-benar murni 100% foto selfie pribadi, foto pemandangan, meme, dokumen teks kosong, atau tangkapan layar chat WhatsApp tanpa nilai aset finansial.
+PATUHI ATURAN AUDIT BERIKUT TANPA PENGECUALIAN:
 
-2. ATURAN SCREENSHOT APLIKASI EMAS DIGITAL & FINTECH (TREASURY, SHARIACOIN, PEGADAIAN, PLUANG, LAKUEMAS):
-   - Pada aplikasi seperti **Treasury**: Layar beranda biasanya menampilkan kartu "Tabungan Emas" (dengan nominal Rupiah dan gramasi) serta kartu "Saldo IDR / Dompet / Saldo Tunai".
-   - Ekstrak SETIAP kartu aset tersebut sebagai item terpisah:
-     * "Tabungan Emas" -> Masukkan ke kategori \`LAINNYA\`, nama: "Tabungan Emas Treasury" (atau sesuai aplikasi), nilai: nominal Rupiah yang tertera, detail: gramasi (contoh: "0.011 gram").
-     * "Saldo IDR" -> Masukkan ke kategori \`KAS_DEPOSITO\`, nama: "Saldo IDR Treasury", nilai: nominal Rupiah saldo kas yang tertera.
-   - HINDARI DOUBLE-COUNTING: Jika Anda mengekstrak kartu rincian "Tabungan Emas" dan "Saldo IDR", JANGAN mengekstrak kartu "Total Aset" di atasnya agar tidak terhitung dua kali.
-   - Jika hanya ada satu angka Total Aset tanpa rincian kartu di bawahnya, barulah ekstrak kartu Total Aset tersebut.
+1. ATURAN SCREENSHOT BANKING (myBCA / BCA Mobile / Mandiri / BRI / BNI / Bank Lainnya):
+   - Masukkan ke kategori KAS_DEPOSITO.
+   - Ekstrak "Active Balance" / "Saldo Efektif" / "Available Balance" / "Saldo Tabungan".
+   - PERHATIAN FORMAT: Format myBCA (English UI) mencantumkan nilai seperti "IDR 56,498.48". Hilangkan sen desimal di belakang titik, bulatkan ke rupiah terdekat: 56498.
 
-3. ATURAN KHUSUS SCREENSHOT PORTOFOLIO SAHAM & REKSADANA (STOCKBIT, AJAIB, IPOT, BIBIT, BIONS, DLL.):
-   - HINDARI DOUBLE-COUNTING: Di bagian atas layar biasanya tertera "Total Portofolio / Total Equity / Nilai Investasi", dan di bawahnya terdapat daftar emiten (misal: BBCA, BMRI, TLKM, BBRI) atau produk Reksadana.
-   - JIKA daftar saham individual terlihat: Ekstrak SETIAP saham sebagai item terpisah di kategori \`SAHAM\`. JANGAN mengekstrak angka "Total Portofolio" di bagian atas.
-   - Gunakan angka **"Market Value" / "Nilai Pasar Saat Ini" / "Current Value"**, BUKAN "Modal / Invested / Avg Buy" dan BUKAN angka "Unrealized Gain/Loss (Return +/-)".
-   - Jika terdapat baris **"RDN / Cash / Saldo RDN / Buying Power / Trading Balance"** yang berdiri sendiri di dalam screenshot sekuritas, ekstrak saldo RDN tersebut sebagai item terpisah dengan kategori \`KAS_DEPOSITO\` (Contoh: "Saldo RDN Stockbit").
-   - Untuk detail kuantitas (\`quantity_or_ownership_detail\`), catat jumlah Lot (1 Lot = 100 lembar) dan harga rata-rata/pasar jika terlihat (Contoh: "120 Lot (Avg Rp 9.800)").
+2. ATURAN FINTECH EMAS & INVESTASI (TREASURY, PEGADAIAN, PLUANG):
+   - Pada screenshot yang menampilkan kartu rincian:
+     * "Tabungan Emas" (dengan nominal dan gramasi) -> Masukkan ke kategori EMAS_LOGAM_MULIA. Contoh: nominal IDR 25.297, gramasi "0.011 gram" -> estimated_value_idr: 25297.
+     * "Saldo IDR" / Dompet Tunai -> Masukkan ke kategori KAS_DEPOSITO. Contoh: nominal IDR 110.951 -> estimated_value_idr: 110951.
+   - HINDARI DOUBLE-COUNTING: JANGAN ekstrak kartu "Total Aset" di atasnya (misal Rp 136.248) jika kartu rincian Tabungan Emas dan Saldo IDR sudah diekstrak.
 
-4. ATURAN KHUSUS SCREENSHOT SALDO M-BANKING (BCA MOBILE, MYBCA, LIVIN MANDIRI, BRIMO, BNI, JENIUS, JAGO, BLU, SEA BANK):
-   - Masukkan ke dalam kategori \`KAS_DEPOSITO\`.
-   - Jika berupa screenshot halaman Info Saldo: Ekstrak **"Saldo Efektif" / "Available Balance" / "Total Saldo"**.
-   - Jika terdapat pemisahan "Tabungan Utama" dan "Deposito / Kantong (Pockets) / Tahapan Berjangka", ekstrak masing-masing jika rinciannya terlihat, atau ambil Total Keseluruhan (pilih salah satu agar tidak terhitung ganda).
-   - Jika berupa screenshot Mutasi Rekening / Rekening Koran: ABAIKAN seluruh baris transaksi debit/kredit/transfer. Hanya ambil **"Saldo Akhir" (Ending Balance)** pada tanggal terbaru.
-   - Sensor nomor rekening: Ambil hanya 4 digit terakhir (Contoh: "Tabungan Livin Mandiri ****8821").
+3. ATURAN SEKURITAS & INVESTASI (AJAIB, STOCKBIT, IPOT, BIBIT, PLUANG):
+   - Ekstrak setiap instrumen yang dimiliki:
+     * Posisi Saham (misal: ENVY - Envy Technologies Indonesia Tbk.) -> Kategori SAHAM, nilai sesuai nominal nilai pasar saat ini (misal Rp 10.000 -> 10000).
+     * Posisi Reksa Dana (misal: Eastspring Investments Cash Reserve) -> Kategori SAHAM, nilai sesuai Total Value (misal Rp 11.782 -> 11782).
+   - HINDARI DOUBLE-COUNTING: JANGAN ekstrak kartu "Est. Total Aset" atau "Total Portofolio" jika instrumen saham dan reksa dana sudah diekstrak.
 
-5. ATURAN KHUSUS FOTO STNK / BPKB / PAJAK KENDARAAN BERMOTOR:
-   - Masukkan ke dalam kategori \`LAINNYA\` dengan awalan nama "Kendaraan:" (Contoh: "Kendaraan: Toyota Kijang Innova Zenix 2023" atau "Kendaraan: Honda PCX 160 2022").
-   - Ekstrak Merk, Tipe/Model, dan Tahun Pembuatan dari STNK/BPKB untuk dimasukkan ke \`asset_name\` dan \`quantity_or_ownership_detail\`. Sensor Nomor Polisi (Plat Nomor) dan Nomor Rangka/Mesin demi privasi.
-   - CARA MENGHITUNG NILAI KENDARAAN (\`estimated_value_idr\`) DARI STNK:
-     * KASUS A (Lembar Ketetapan Pajak / TBPKP Terlihat): JANGAN gunakan angka "Total Pajak" sebagai nilai aset! Gunakan angka **"NJKB" (Nilai Jual Kendaraan Bermotor)** jika tertulis. Jika hanya tertulis nilai **PKB Pokok**, estimasikan nilai pasar kendaraan dengan rumus: \`PKB Pokok x 50\` (karena PKB rata-rata adalah ~2% dari NJKB).
-     * KASUS B (Hanya Lembar STNK Identitas Kendaraan): Berikan estimasi harga pasar wajar kendaraan bekas berdasarkan Merk, Tipe, CC, dan Tahun Pembuatan yang tertulis jelas di STNK, dan cantumkan keterangan "(Estimasi Pasar dari STNK)" pada \`quantity_or_ownership_detail\`.
+4. ATURAN DOKUMEN LEGAL (AKTA PENDIRIAN PERSEROAN / NOTARIS / KEMENKUMHAM):
+   - Kategori: PERUSAHAAN_SENDIRI.
+   - Ekstrak modal yang ditempatkan dan disetor penuh.
+   - Jika terdapat daftar pemegang saham pendiri, ekstrak kepemilikan saham dari masing-masing pemegang saham pendiri:
+     * Nama: "PT [Nama PT] - Saham [Nama Pendiri]"
+     * Nilai: nominal modal disetor pemegang saham tersebut dalam Rupiah penuh
+     * Detail: persentase dan jumlah lembar saham (contoh: "60% saham (2.400 Lembar)")
 
-6. ATURAN DOKUMEN BERBAHASA INGGRIS (INTERNATIONAL BROKERS, US STOCKS, CRYPTO, FOREIGN BANKING):
-   - Sistem wajib memahami terminologi keuangan Bahasa Inggris:
-     * "Net Liquidation Value" / "Total Equity" / "Market Value" / "Holdings" = Nilai aset saat ini.
-     * "Shares" / "Units" = Jumlah lembar/unit kepemilikan.
-     * "Cost Basis" / "Avg Price" / "Unrealized P&L" = Modal/Keuntungan (JANGAN gunakan ini sebagai nilai utama aset, gunakan Market Value).
-     * "Checking Account" / "Savings" / "Time Deposit" / "Cash Equivalents" = Kategori \`KAS_DEPOSITO\`.
-     * "Common Stock" / "Equities" / "Mutual Funds" / "ETF" / "Treasury Bonds" = Kategori \`SAHAM\`.
-     * "Real Estate" / "Deed of Sale" / "Property Valuation" = Kategori \`PROPERTI\`.
-     * "Articles of Incorporation" / "Shareholder Agreement" / "Private Equity" = Kategori \`PERUSAHAAN_SENDIRI\`.
-   - PERHATIAN FORMAT ANGKA INGGRIS VS INDONESIA:
-     * Dokumen Bahasa Inggris ($, USD, USDT, SGD, £, €): Koma (,) adalah pemisah ribuan, Titik (.) adalah desimal. Contoh: \`$12,500.50\` = 12500.50.
-     * Dokumen Bahasa Indonesia (Rp / IDR): Titik (.) adalah pemisah ribuan, Koma (,) adalah desimal. Contoh: \`Rp 12.500.000,00\` = 12500000.
-   - Singkatan: \`$15.5K\` = 15.500 USD; \`$1.2M\` = 1.200.000 USD; \`15,5 Jt\` = 15.500.000 IDR; \`1,2 M\` = 1.200.000.000 IDR.
-   - Kurs konversi ke Rupiah (\`estimated_value_idr\`):
-     * 1 USD / USDT / USDC = Rp 16.000
-     * 1 SGD = Rp 12.000
-     * 1 EUR = Rp 17.500
-     * 1 AUD = Rp 10.500
+5. ATURAN FORMAT ANGKA (STRICT INTEGER):
+   - estimated_value_idr HARUS berupa integer murni (Number) tanpa titik atau koma pemisah ribuan.
+   - Contoh konversi:
+     * "IDR 56,498.48" -> 56498
+     * "Rp 136.248" -> 136248
+     * "Rp 10.000" -> 10000
+     * "Rp 11.782" -> 11782
+     * "Rp 4.000.000.000" -> 4000000000
 
-7. ATURAN AKTA PERUSAHAAN & PROPERTI:
-   - Untuk Akta Notaris/SK Kemenkumham: Ekstrak nama PT, persentase saham, dan nominal modal disetor ke kategori \`PERUSAHAAN_SENDIRI\`.
-   - Untuk Sertifikat Tanah/Properti (SHM/SHGB/AJB/PBB): Ekstrak lokasi/nama properti dan luas ke kategori \`PROPERTI\`. Gunakan nilai NJOP total atau harga transaksi di AJB sebagai \`estimated_value_idr\`.
-
-8. ATURAN PELACAKAN SUMBER FILE (\`source_file\`):
-   - Setiap dokumen diawali dengan teks penanda \`--- DOKUMEN X | Nama File: "[nama_file_asli]" ---\`.
-   - Anda WAJIB mengisi field \`source_file\` pada setiap aset persis sama dengan \`Nama File\` dokumen asal aset tersebut.
+6. ATURAN SUMBER DOKUMEN (source_file):
+   - Isi field source_file pada setiap aset persis sama dengan nama file asal dokumen tempat aset tersebut ditemukan.
 `;
 
 function cleanAndExtractJson(raw: string): any {
@@ -115,6 +106,56 @@ function cleanAndExtractJson(raw: string): any {
   }
 }
 
+async function callChatCompletionsVision(
+  baseUrl: string,
+  apiKey: string,
+  model: string,
+  messages: any[],
+  temperature = 0.0,
+): Promise<string> {
+  const url = `${baseUrl.replace(/\/$/, "")}/chat/completions`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: model,
+      stream: false,
+      temperature,
+      messages: messages,
+    }),
+  });
+
+  const raw = await res.text();
+  if (!res.ok) {
+    throw new Error(`[API Error ${res.status}] ${raw.slice(0, 300)}`);
+  }
+
+  // Check if response is Server-Sent Events (SSE)
+  if (raw.startsWith("data:")) {
+    const lines = raw.split("\n");
+    let content = "";
+    for (const line of lines) {
+      if (line.startsWith("data: ") && !line.includes("[DONE]")) {
+        try {
+          const parsed = JSON.parse(line.substring(6));
+          const delta =
+            parsed.choices?.[0]?.delta?.content ||
+            parsed.choices?.[0]?.message?.content ||
+            "";
+          content += delta;
+        } catch {}
+      }
+    }
+    return content;
+  }
+
+  const json = JSON.parse(raw);
+  return json.choices?.[0]?.message?.content || "";
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -127,35 +168,41 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const contents: any[] = [];
+    // Build multimodal messages for OpenAI-compatible chat completions
+    const userContent: any[] = [
+      {
+        type: "text",
+        text: `Berikut adalah ${files.length} dokumen finansial dan bukti aset. Silakan lakukan audit menyeluruh dan ekstrak seluruh aset keuangan dari setiap dokumen secara lengkap, akurat, dan faktual sesuai instruksi sistem tanpa double counting.`,
+      },
+    ];
 
     files.forEach((file, index) => {
       const cleanBase64 = file.base64Data.includes("base64,")
         ? file.base64Data.split("base64,")[1]
         : file.base64Data;
 
-      contents.push({
+      userContent.push({
+        type: "text",
         text: `--- DOKUMEN ${index + 1} | Nama File: "${file.fileName}" ---`,
       });
 
-      contents.push({
-        inlineData: {
-          mimeType: file.mimeType,
-          data: cleanBase64,
+      userContent.push({
+        type: "image_url",
+        image_url: {
+          url: `data:${file.mimeType};base64,${cleanBase64}`,
         },
       });
     });
 
-    contents.push({
-      text: "Ekstrak seluruh data aset yang tampak pada dokumen di atas secara akurat sesuai instruksi sistem. Jika terdapat screenshot aplikasi investasi/keuangan (seperti Treasury, Bareksa, Pluang, Bibit, Stockbit, M-Banking), pastikan membaca dan mengekstrak kartu Tabungan Emas, Saldo IDR, dan saldo portofolio.",
-    });
+    const messages = [
+      { role: "system", content: SYSTEM_INSTRUCTION },
+      { role: "user", content: userContent },
+    ];
 
-    // Execute generation with retry & combo fallback
     let responseText = "";
     let lastError: any = null;
-    const maxRetries = 3;
+    const maxRetries = 2;
 
-    // Prioritize configured model, with fallback candidate (e.g., FireAce combo)
     const candidateModels = [GEMINI_MODEL];
     if (GEMINI_MODEL !== "FireAce") {
       candidateModels.push("FireAce");
@@ -168,35 +215,72 @@ export async function POST(req: NextRequest) {
           : candidateModels[0];
 
       try {
-        const response = await genAI.models.generateContent({
-          model: modelToUse,
-          contents: contents,
-          config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            responseMimeType: "application/json",
-            responseSchema: assetExtractionSchema,
-            temperature: 0.0, // WAJIB 0.0 untuk ekstraksi data finansial agar deterministik & tidak mengarang
-          },
-        });
+        responseText = await callChatCompletionsVision(
+          GEMINI_BASE_URL,
+          GEMINI_API_KEY,
+          modelToUse,
+          messages,
+          0.0,
+        );
 
-        if (response.text) {
-          responseText = response.text;
+        if (responseText) {
           break;
         }
       } catch (err: any) {
         lastError = err;
         console.warn(
-          `[Gemini API] Attempt ${attempt} (model: ${modelToUse}) failed: ${err.message}`,
+          `[ChatCompletions Vision] Attempt ${attempt} (model: ${modelToUse}) failed: ${err.message}`,
         );
+
+        // Fallback to GoogleGenAI SDK if ChatCompletions fails
+        try {
+          const contents: any[] = [];
+          files.forEach((file, index) => {
+            const cleanBase64 = file.base64Data.includes("base64,")
+              ? file.base64Data.split("base64,")[1]
+              : file.base64Data;
+
+            contents.push({
+              text: `--- DOKUMEN ${index + 1} | Nama File: "${file.fileName}" ---`,
+            });
+            contents.push({
+              inlineData: {
+                mimeType: file.mimeType,
+                data: cleanBase64,
+              },
+            });
+          });
+          contents.push({
+            text: "Ekstrak seluruh data aset yang tampak pada dokumen di atas secara akurat sesuai instruksi sistem.",
+          });
+
+          const geminiRes = await genAI.models.generateContent({
+            model: modelToUse,
+            contents: contents,
+            config: {
+              systemInstruction: SYSTEM_INSTRUCTION,
+              responseMimeType: "application/json",
+              responseSchema: assetExtractionSchema,
+              temperature: 0.0,
+            },
+          });
+
+          if (geminiRes.text) {
+            responseText = geminiRes.text;
+            break;
+          }
+        } catch (geminiErr: any) {
+          console.warn(`[Gemini SDK Fallback] failed: ${geminiErr.message}`);
+        }
+
         if (attempt < maxRetries) {
-          // Wait 2s before retry
           await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
         }
       }
     }
 
     if (!responseText) {
-      throw lastError || new Error("Gagal menerima respons dari model Gemini.");
+      throw lastError || new Error("Gagal menerima respons dari model AI.");
     }
 
     // Parse structured outputs response
@@ -228,12 +312,8 @@ export async function POST(req: NextRequest) {
           item.nominal ??
           0;
 
-        const numericVal =
-          typeof rawNum === "number"
-            ? rawNum
-            : parseFloat(String(rawNum).replace(/[^0-9.-]+/g, "")) || 0;
+        const numericVal = parseFlexibleNumber(rawNum);
 
-        // Auto detail notes from quantity and unit if separate
         let detailNote =
           item.quantity_or_ownership_detail ||
           item.keterangan ||
@@ -301,10 +381,7 @@ export async function POST(req: NextRequest) {
           item.amount ??
           0;
 
-        const numericAmt =
-          typeof rawAmt === "number"
-            ? rawAmt
-            : parseFloat(String(rawAmt).replace(/[^0-9.-]+/g, "")) || 0;
+        const numericAmt = parseFlexibleNumber(rawAmt);
 
         return {
           id: `lia-${idx + 1}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
@@ -328,7 +405,7 @@ export async function POST(req: NextRequest) {
         };
       });
 
-    // Clean up unreadable files list: If any asset was extracted from a file, it must NOT be marked as unreadable!
+    // Clean up unreadable files list
     const extractedFileNames = new Set(
       formattedAssets.map((a) => a.sourceFile.trim().toLowerCase()),
     );
@@ -372,7 +449,7 @@ export async function POST(req: NextRequest) {
       rawMsg.toLowerCase().includes("unavailable")
     ) {
       friendlyMessage =
-        "Server AI sedang mengalami lonjakan trafik (High Demand). 9router telah dikonfigurasi ke combo FireAce untuk fallback otomatis, silakan coba beberapa saat lagi.";
+        "Server AI sedang mengalami lonjakan trafik. Silakan coba beberapa saat lagi.";
     } else if (
       rawMsg.toLowerCase().includes("timeout") ||
       rawMsg.toLowerCase().includes("econnreset") ||
@@ -387,7 +464,7 @@ export async function POST(req: NextRequest) {
       rawMsg.includes("tidak valid sebagai format JSON")
     ) {
       friendlyMessage =
-        "Respon analisis dokumen terpotong akibat koneksi tidak stabil. Silakan klik tombol untuk memproses ulang dokumen.";
+        "Respon analisis dokumen terpotong akibat gangguan jaringan. Silakan klik tombol untuk memproses ulang dokumen.";
     } else if (rawMsg) {
       friendlyMessage = rawMsg.replace(/^[^{]*\{/, "{").slice(0, 150);
       if (friendlyMessage.startsWith("{")) {

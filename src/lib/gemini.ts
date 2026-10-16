@@ -18,5 +18,6 @@ export const genAI = new GoogleGenAI({
   },
 });
 
+export const GEMINI_API_KEY = rawApiKey;
 export const GEMINI_BASE_URL = rawBaseUrl;
 export const GEMINI_MODEL = process.env.GEMINI_MODEL || "FireAce";

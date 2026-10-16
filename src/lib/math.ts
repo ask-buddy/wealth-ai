@@ -96,8 +96,66 @@ export function parseFlexibleNumber(val: any): number {
   if (typeof val === "number") return isNaN(val) ? 0 : val;
   if (!val) return 0;
   if (typeof val === "string") {
-    // Strip everything except digits, minus, and dot
-    const cleanStr = val.replace(/[^0-9.-]+/g, "");
+    let s = val.trim();
+    // Strip currency symbols and whitespace
+    s = s.replace(/^(Rp\.?|IDR|\$|USD)\s*/i, "").trim();
+
+    // Check if format has both dots and commas (e.g. "56,498.48" or "1.234.567,89")
+    if (s.includes(",") && s.includes(".")) {
+      const lastComma = s.lastIndexOf(",");
+      const lastDot = s.lastIndexOf(".");
+      if (lastDot > lastComma) {
+        // Format: 56,498.48 (US/English style: comma thousands, dot decimal)
+        s = s.replace(/,/g, "");
+        const parsed = parseFloat(s);
+        return isNaN(parsed) ? 0 : Math.round(parsed);
+      } else {
+        // Format: 56.498,48 (ID/European style: dot thousands, comma decimal)
+        s = s.replace(/\./g, "").replace(",", ".");
+        const parsed = parseFloat(s);
+        return isNaN(parsed) ? 0 : Math.round(parsed);
+      }
+    }
+
+    // Only commas (e.g. "56,498" or "12,5")
+    if (s.includes(",") && !s.includes(".")) {
+      const parts = s.split(",");
+      if (parts.length > 1 && parts.every((p, i) => i === 0 || p.length === 3)) {
+        s = s.replace(/,/g, "");
+      } else {
+        s = s.replace(",", ".");
+      }
+      const parsed = parseFloat(s);
+      return isNaN(parsed) ? 0 : Math.round(parsed);
+    }
+
+    // Only dots (e.g. "136.248" or "10.000" or "4.000.000.000" or "0.011")
+    if (s.includes(".") && !s.includes(",")) {
+      const parts = s.split(".");
+      // Multiple dots (e.g. "4.000.000.000") -> definitely thousands separator
+      if (parts.length > 2) {
+        s = s.replace(/\./g, "");
+        const parsed = parseFloat(s);
+        return isNaN(parsed) ? 0 : parsed;
+      }
+      // Single dot: e.g. "136.248" or "10.000" vs "0.011"
+      if (parts.length === 2) {
+        const [intPart, fracPart] = parts;
+        // In Indonesian currency, if fracPart is 3 digits and intPart is not "0" (e.g. "136.248", "10.000", "21.782")
+        if (fracPart.length === 3 && intPart !== "0") {
+          s = s.replace(".", "");
+          const parsed = parseFloat(s);
+          return isNaN(parsed) ? 0 : parsed;
+        } else {
+          // Fractional decimal like 0.011
+          const parsed = parseFloat(s);
+          return isNaN(parsed) ? 0 : parsed;
+        }
+      }
+    }
+
+    // Plain digits or fallback
+    const cleanStr = s.replace(/[^0-9.-]+/g, "");
     const parsed = parseFloat(cleanStr);
     return isNaN(parsed) ? 0 : parsed;
   }
