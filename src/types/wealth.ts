@@ -64,6 +64,10 @@ export interface WealthPortfolio {
   liabilities: ExtractedLiabilityItem[];
   analyzedAt: string;
   sourceFiles: string[];
+  documentPreviews?: Record<
+    string,
+    { fileName: string; mimeType: string; dataUrl: string }
+  >;
 }
 
 export interface UploadedFileItem {

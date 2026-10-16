@@ -7,6 +7,7 @@ import { ExecutiveSummary } from "@/components/dashboard/executive-summary";
 import { PieBreakdownSection } from "@/components/dashboard/pie-breakdown-section";
 import { AssetDetailModal } from "@/components/dashboard/asset-detail-modal";
 import { ConfirmDeleteModal } from "@/components/dashboard/confirm-delete-modal";
+import { DocumentPreviewModal } from "@/components/dashboard/document-preview-modal";
 import { PrintableReport } from "@/components/export/printable-report";
 import {
   WealthPortfolio,
@@ -35,6 +36,7 @@ export default function Home() {
     useState<ExtractedLiabilityItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedPreviewFile, setSelectedPreviewFile] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [currencyMode, setCurrencyMode] = useState<"IDR" | "USD">("IDR");
@@ -296,10 +298,14 @@ export default function Home() {
                 currencyMode={currencyMode}
                 activeTab={dashboardTab}
                 onTabChange={setDashboardTab}
+                onPreviewFile={setSelectedPreviewFile}
               />
 
               {/* Executive Summary */}
-              <ExecutiveSummary portfolio={portfolio} />
+              <ExecutiveSummary
+                portfolio={portfolio}
+                onPreviewFile={setSelectedPreviewFile}
+              />
             </div>
           )}
         </main>
@@ -319,8 +325,21 @@ export default function Home() {
             isPrivate={isPrivate}
             selectedLiability={selectedLiability}
             currencyMode={currencyMode}
+            onPreviewFile={setSelectedPreviewFile}
           />
         )}
+
+        {/* Document Preview Modal */}
+        <DocumentPreviewModal
+          isOpen={!!selectedPreviewFile}
+          onClose={() => setSelectedPreviewFile(null)}
+          fileName={selectedPreviewFile}
+          preview={
+            selectedPreviewFile && portfolio?.documentPreviews
+              ? portfolio.documentPreviews[selectedPreviewFile]
+              : null
+          }
+        />
 
         {/* Custom Confirmation Modal for Deletion */}
         <ConfirmDeleteModal

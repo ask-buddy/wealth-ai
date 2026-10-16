@@ -7,7 +7,13 @@ export function savePortfolioToStorage(portfolio: WealthPortfolio): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(portfolio));
   } catch (e) {
-    console.error("Failed to save portfolio to localStorage:", e);
+    console.warn("localStorage quota exceeded, storing stripped portfolio:", e);
+    try {
+      const stripped = { ...portfolio, documentPreviews: undefined };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stripped));
+    } catch (inner) {
+      console.error("Failed to save portfolio to localStorage:", inner);
+    }
   }
 }
 

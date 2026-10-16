@@ -125,8 +125,9 @@ export function NetWorthHero({
           </div>
 
           {/* Text Terbilang di bawah Nilai Utama */}
-          <p className="text-xs sm:text-sm font-serif italic text-stone-600 tracking-wide pt-0.5">
-            &ldquo;{formatTerbilang(portfolio.totalNetWorthIdr, isPrivate)}&rdquo;
+          <p className="text-xs sm:text-sm italic text-stone-600 tracking-wide pt-0.5">
+            &ldquo;{formatTerbilang(portfolio.totalNetWorthIdr, isPrivate)}
+            &rdquo;
           </p>
         </div>
 
@@ -147,10 +148,16 @@ export function NetWorthHero({
               <span className="flex items-center gap-1.5">
                 <Layers
                   className={`w-3.5 h-3.5 ${
-                    activeTab === "assets" ? "text-[#80283e]" : "text-emerald-600"
+                    activeTab === "assets"
+                      ? "text-[#80283e]"
+                      : "text-emerald-600"
                   }`}
                 />
-                <span className={activeTab === "assets" ? "text-stone-900 font-bold" : ""}>
+                <span
+                  className={
+                    activeTab === "assets" ? "text-stone-900 font-bold" : ""
+                  }
+                >
                   Total Aset
                 </span>
               </span>
@@ -159,7 +166,11 @@ export function NetWorthHero({
               )}
             </div>
             <p className="text-sm sm:text-base font-bold font-mono text-stone-900 mt-1 truncate tabular-nums">
-              {formatCompactCurrencyValue(portfolio.totalAssetsIdr, currencyMode, isPrivate)}
+              {formatCompactCurrencyValue(
+                portfolio.totalAssetsIdr,
+                currencyMode,
+                isPrivate,
+              )}
             </p>
           </button>
 
@@ -178,10 +189,18 @@ export function NetWorthHero({
               <span className="flex items-center gap-1.5">
                 <ArrowDownRight
                   className={`w-3.5 h-3.5 ${
-                    activeTab === "liabilities" ? "text-[#80283e]" : "text-rose-500"
+                    activeTab === "liabilities"
+                      ? "text-[#80283e]"
+                      : "text-rose-500"
                   }`}
                 />
-                <span className={activeTab === "liabilities" ? "text-stone-900 font-bold" : ""}>
+                <span
+                  className={
+                    activeTab === "liabilities"
+                      ? "text-stone-900 font-bold"
+                      : ""
+                  }
+                >
                   Liabilitas
                 </span>
               </span>
@@ -191,8 +210,14 @@ export function NetWorthHero({
             </div>
             <p className="text-sm sm:text-base font-bold font-mono text-stone-900 mt-1 truncate tabular-nums">
               {portfolio.totalLiabilitiesIdr > 0
-                ? formatCompactCurrencyValue(portfolio.totalLiabilitiesIdr, currencyMode, isPrivate)
-                : currencyMode === "USD" ? "$0" : "Rp 0"}
+                ? formatCompactCurrencyValue(
+                    portfolio.totalLiabilitiesIdr,
+                    currencyMode,
+                    isPrivate,
+                  )
+                : currencyMode === "USD"
+                  ? "$0"
+                  : "Rp 0"}
             </p>
           </button>
         </div>
@@ -200,4 +225,3 @@ export function NetWorthHero({
     </div>
   );
 }
-

@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Playfair_Display, JetBrains_Mono } from "next/font/google";
+import {
+  Plus_Jakarta_Sans,
+  Playfair_Display,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -25,8 +29,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AngelWealth | Private Wealth & Asset Aggregator AI",
-  description: "Executive private wealth aggregator for High-Net-Worth Individuals. Instant, zero-database in-memory multi-document intelligence powered by Gemini 3.8 Flash.",
+  title: "AngelWealth | Private Wealth & Asset",
+  description:
+    "Executive private wealth aggregator for High-Net-Worth Individuals. Instant, zero-database in-memory multi-document intelligence powered by Gemini 3.8 Flash.",
 };
 
 export default function RootLayout({
@@ -45,4 +50,3 @@ export default function RootLayout({
     </html>
   );
 }
-

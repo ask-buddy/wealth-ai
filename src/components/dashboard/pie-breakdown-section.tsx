@@ -38,6 +38,7 @@ interface PieBreakdownSectionProps {
   currencyMode?: "IDR" | "USD";
   activeTab?: "assets" | "liabilities";
   onTabChange?: (tab: "assets" | "liabilities") => void;
+  onPreviewFile?: (fileName: string) => void;
 }
 
 type FilterGroup = "ALL" | "LIQUID" | "CAPITAL_MARKETS" | "REAL_ASSETS";
@@ -52,6 +53,7 @@ export function PieBreakdownSection({
   currencyMode = "IDR",
   activeTab: propActiveTab,
   onTabChange,
+  onPreviewFile,
 }: PieBreakdownSectionProps) {
   const [internalTab, setInternalTab] = useState<"assets" | "liabilities">(
     "assets",
@@ -563,10 +565,18 @@ export function PieBreakdownSection({
                                 isPrivate,
                               )}
                             </p>
-                            <span className="inline-flex items-center gap-1 text-[10px] text-stone-500 px-2 py-0.5 rounded-sm bg-stone-100 font-mono mt-1">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onPreviewFile?.(lia.sourceFile);
+                              }}
+                              className="inline-flex items-center gap-1 text-[10px] text-stone-600 hover:text-[#80283e] px-2 py-0.5 rounded-sm bg-stone-100 hover:bg-[#faf0f3] border border-stone-200 hover:border-[#ecd0d8] font-mono mt-1 cursor-pointer transition-all shadow-2xs"
+                              title="Klik untuk membuka pratinjau dokumen"
+                            >
                               <FileText className="w-3 h-3 text-stone-400" />
-                              {lia.sourceFile}
-                            </span>
+                              <span>{lia.sourceFile}</span>
+                            </button>
                           </div>
                         </div>
                       </div>

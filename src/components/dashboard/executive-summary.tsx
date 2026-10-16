@@ -1,14 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, CheckCircle2, FileText, Copy, Check, Quote } from "lucide-react";
+import { Sparkles, CheckCircle2, FileText, Copy, Check, Quote, Eye } from "lucide-react";
 import { WealthPortfolio } from "@/types/wealth";
 
 interface ExecutiveSummaryProps {
   portfolio: WealthPortfolio;
+  onPreviewFile?: (fileName: string) => void;
 }
 
-export function ExecutiveSummary({ portfolio }: ExecutiveSummaryProps) {
+export function ExecutiveSummary({
+  portfolio,
+  onPreviewFile,
+}: ExecutiveSummaryProps) {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = () => {
@@ -93,12 +97,16 @@ export function ExecutiveSummary({ portfolio }: ExecutiveSummaryProps) {
 
           <div className="flex items-center gap-1.5 flex-wrap">
             {portfolio.sourceFiles.map((file, idx) => (
-              <span
+              <button
                 key={idx}
-                className="px-2.5 py-1 rounded-sm bg-stone-100 border border-stone-200 text-[11px] font-mono text-stone-700"
+                type="button"
+                onClick={() => onPreviewFile?.(file)}
+                className="px-2.5 py-1 rounded-sm bg-stone-50 hover:bg-[#faf0f3] border border-stone-200 hover:border-[#ecd0d8] text-[11px] font-mono text-stone-700 hover:text-[#80283e] transition-all cursor-pointer inline-flex items-center gap-1.5 group shadow-2xs"
+                title="Klik untuk membuka pratinjau dokumen"
               >
-                {file}
-              </span>
+                <span>{file}</span>
+                <Eye className="w-3 h-3 text-stone-400 group-hover:text-[#80283e] transition-colors" />
+              </button>
             ))}
           </div>
         </div>

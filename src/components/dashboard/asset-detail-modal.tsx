@@ -32,6 +32,7 @@ interface AssetDetailModalProps {
   isPrivate?: boolean;
   selectedLiability?: ExtractedLiabilityItem | null;
   currencyMode?: "IDR" | "USD";
+  onPreviewFile?: (fileName: string) => void;
 }
 
 export function AssetDetailModal({
@@ -43,6 +44,7 @@ export function AssetDetailModal({
   isPrivate = false,
   selectedLiability,
   currencyMode = "IDR",
+  onPreviewFile,
 }: AssetDetailModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -212,9 +214,15 @@ export function AssetDetailModal({
                 <div className="flex items-center gap-2 text-xs text-stone-600 pt-2 border-t border-rose-100">
                   <FileText className="w-3.5 h-3.5 text-rose-500" />
                   <span>Berkas Audit:</span>
-                  <span className="px-2.5 py-1 rounded-sm bg-white border border-rose-200 font-mono text-[11px] text-stone-800">
-                    {selectedLiability.sourceFile}
-                  </span>
+                  <button
+                    type="button"
+                    onClick={() => onPreviewFile?.(selectedLiability.sourceFile)}
+                    className="px-2 py-0.5 rounded-sm bg-white hover:bg-rose-50 border border-rose-200 hover:border-rose-300 font-mono text-[11px] text-stone-800 hover:text-[#80283e] cursor-pointer inline-flex items-center gap-1.5 transition-all shadow-2xs"
+                    title="Klik untuk membuka pratinjau dokumen"
+                  >
+                    <span>{selectedLiability.sourceFile}</span>
+                    <ExternalLink className="w-3 h-3 text-stone-400" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -303,9 +311,15 @@ export function AssetDetailModal({
                   <div className="flex items-center gap-1.5">
                     {getFileIcon(item.sourceFile)}
                     <span className="text-stone-400">Berkas Sumber:</span>
-                    <span className="font-mono font-semibold text-stone-800 px-2 py-0.5 rounded-sm bg-[#faf0f3] border border-[#ecd0d8] text-[10px]">
-                      {item.sourceFile}
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onPreviewFile?.(item.sourceFile)}
+                      className="font-mono font-semibold text-stone-800 hover:text-[#80283e] px-2 py-0.5 rounded-sm bg-[#faf0f3] hover:bg-white border border-[#ecd0d8] hover:border-[#80283e]/50 text-[10px] cursor-pointer inline-flex items-center gap-1 transition-all shadow-2xs"
+                      title="Klik untuk membuka pratinjau dokumen"
+                    >
+                      <span>{item.sourceFile}</span>
+                      <ExternalLink className="w-2.5 h-2.5 text-stone-400" />
+                    </button>
                   </div>
 
                   <span className="text-[10px] text-emerald-700 font-medium inline-flex items-center gap-1">

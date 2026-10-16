@@ -12,21 +12,25 @@ interface PrintableReportProps {
 export const PrintableReport = forwardRef<HTMLDivElement, PrintableReportProps>(
   ({ portfolio }, ref) => {
     return (
-      <div ref={ref} className="p-8 sm:p-12 bg-white text-slate-900 print:p-0 space-y-8 font-sans">
+      <div
+        ref={ref}
+        className="p-8 sm:p-12 bg-white text-slate-900 print:p-0 space-y-8 font-sans"
+      >
         {/* Document Header */}
         <div className="flex items-start justify-between border-b-2 border-slate-900 pb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight uppercase text-slate-900">
+            <p className="text-md sm:text-md font-bold tracking-tight uppercase text-slate-900">
               ANGELWEALTH INTELLIGENCE
-            </h1>
+            </p>
             <p className="text-xs sm:text-sm font-semibold tracking-wider text-emerald-700 uppercase mt-1">
-              Laporan Konsolidasi Aset & Kekayaan Pribadi (HNWI)
+              Laporan Aset & Kekayaan Pribadi
             </p>
           </div>
           <div className="text-right text-xs text-slate-500 space-y-1">
-            <p className="font-semibold text-slate-800">STATUS: SANGAT RAHASIA</p>
-            <p>Tanggal Audit: {formatDateIndo(portfolio.analyzedAt)}</p>
-            <p>Model Verifikasi: Gemini 3.8 Flash Multimodal</p>
+            <p className="font-semibold text-slate-800">
+              STATUS: SANGAT RAHASIA
+            </p>
+            <p>{formatDateIndo(portfolio.analyzedAt)}</p>
           </div>
         </div>
 
@@ -61,10 +65,13 @@ export const PrintableReport = forwardRef<HTMLDivElement, PrintableReportProps>(
               Liabilitas & Rasio Likuiditas
             </span>
             <p className="text-xl sm:text-2xl font-bold text-rose-600 font-mono mt-1">
-              {portfolio.totalLiabilitiesIdr > 0 ? formatIdr(portfolio.totalLiabilitiesIdr) : "Rp 0"}
+              {portfolio.totalLiabilitiesIdr > 0
+                ? formatIdr(portfolio.totalLiabilitiesIdr)
+                : "Rp 0"}
             </p>
             <p className="text-xs text-slate-600 mt-1">
-              Rasio Likuiditas Kas: <strong>{portfolio.liquidRatioPercentage}%</strong>
+              Rasio Likuiditas Kas:{" "}
+              <strong>{portfolio.liquidRatioPercentage}%</strong>
             </p>
           </div>
         </div>
@@ -102,16 +109,26 @@ export const PrintableReport = forwardRef<HTMLDivElement, PrintableReportProps>(
             <thead>
               <tr className="bg-slate-100 text-slate-700">
                 <th className="p-2.5 border border-slate-200">Kategori Aset</th>
-                <th className="p-2.5 border border-slate-200 text-center">Jumlah Item</th>
-                <th className="p-2.5 border border-slate-200 text-right">Total Nilai (IDR)</th>
-                <th className="p-2.5 border border-slate-200 text-right">Porsi (%)</th>
+                <th className="p-2.5 border border-slate-200 text-center">
+                  Jumlah Item
+                </th>
+                <th className="p-2.5 border border-slate-200 text-right">
+                  Total Nilai (IDR)
+                </th>
+                <th className="p-2.5 border border-slate-200 text-right">
+                  Porsi (%)
+                </th>
               </tr>
             </thead>
             <tbody>
               {portfolio.categories.map((cat) => (
                 <tr key={cat.category} className="hover:bg-slate-50">
-                  <td className="p-2.5 border border-slate-200 font-medium">{cat.label}</td>
-                  <td className="p-2.5 border border-slate-200 text-center">{cat.itemCount}</td>
+                  <td className="p-2.5 border border-slate-200 font-medium">
+                    {cat.label}
+                  </td>
+                  <td className="p-2.5 border border-slate-200 text-center">
+                    {cat.itemCount}
+                  </td>
                   <td className="p-2.5 border border-slate-200 text-right font-mono">
                     {formatIdr(cat.totalIdr)}
                   </td>
@@ -134,16 +151,24 @@ export const PrintableReport = forwardRef<HTMLDivElement, PrintableReportProps>(
               <tr className="bg-slate-100 text-slate-700">
                 <th className="p-2 border border-slate-200">Nama Aset</th>
                 <th className="p-2 border border-slate-200">Kategori</th>
-                <th className="p-2 border border-slate-200">Institusi / Keterangan</th>
-                <th className="p-2 border border-slate-200 text-right">Nilai (IDR)</th>
+                <th className="p-2 border border-slate-200">
+                  Institusi / Keterangan
+                </th>
+                <th className="p-2 border border-slate-200 text-right">
+                  Nilai (IDR)
+                </th>
                 <th className="p-2 border border-slate-200">Sumber Dokumen</th>
               </tr>
             </thead>
             <tbody>
               {portfolio.assets.map((item) => (
                 <tr key={item.id} className="hover:bg-slate-50">
-                  <td className="p-2 border border-slate-200 font-semibold">{item.name}</td>
-                  <td className="p-2 border border-slate-200">{item.category}</td>
+                  <td className="p-2 border border-slate-200 font-semibold">
+                    {item.name}
+                  </td>
+                  <td className="p-2 border border-slate-200">
+                    {item.category}
+                  </td>
                   <td className="p-2 border border-slate-200 text-slate-600">
                     {item.institution || item.notes || "-"}
                   </td>
@@ -166,12 +191,14 @@ export const PrintableReport = forwardRef<HTMLDivElement, PrintableReportProps>(
             Jaminan Privasi & Ketiadaan Database:
           </p>
           <p>
-            Laporan ini diproduksi langsung di peramban (client-side) tanpa menyimpan data apa pun di basis data server. Dokumen sumber hanya numpang lewat di RAM untuk dianalisis oleh AI.
+            Laporan ini diproduksi langsung di peramban (client-side) tanpa
+            menyimpan data apa pun di basis data server. Dokumen sumber hanya
+            numpang lewat di RAM untuk dianalisis oleh AI.
           </p>
         </div>
       </div>
     );
-  }
+  },
 );
 
 PrintableReport.displayName = "PrintableReport";

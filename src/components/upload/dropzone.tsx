@@ -257,6 +257,26 @@ export function DocumentDropzone({
         finalPortfolio = calculatePortfolio(json.data, fileNames);
       }
 
+      // Attach document previews for interactive visual auditing modal
+      const newPreviews: Record<
+        string,
+        { fileName: string; mimeType: string; dataUrl: string }
+      > = {};
+      files.forEach((f) => {
+        newPreviews[f.fileName] = {
+          fileName: f.fileName,
+          mimeType: f.mimeType,
+          dataUrl: f.base64Data,
+        };
+      });
+
+      const combinedPreviews = {
+        ...(existingPortfolio?.documentPreviews || {}),
+        ...newPreviews,
+      };
+
+      finalPortfolio.documentPreviews = combinedPreviews;
+
       savePortfolioToStorage(finalPortfolio);
       onAnalysisSuccess(finalPortfolio);
     } catch (err: any) {
