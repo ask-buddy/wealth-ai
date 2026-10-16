@@ -1,10 +1,18 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Upload, FileText, Image as ImageIcon, Trash2, ShieldCheck, Sparkles, AlertCircle, Eye } from "lucide-react";
+import {
+  Upload,
+  FileText,
+  Image as ImageIcon,
+  Trash2,
+  ShieldCheck,
+  Sparkles,
+  AlertCircle,
+} from "lucide-react";
 import { UploadedFileItem, WealthPortfolio } from "@/types/wealth";
 import { calculatePortfolio } from "@/lib/math";
-import { savePortfolioToStorage, SAMPLE_PORTFOLIO } from "@/lib/storage";
+import { savePortfolioToStorage } from "@/lib/storage";
 
 interface DropzoneProps {
   onAnalysisSuccess: (portfolio: WealthPortfolio) => void;
@@ -25,7 +33,9 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
         resolve({
           id: `${file.name}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
           fileName: file.name,
-          mimeType: file.type || (file.name.endsWith(".pdf") ? "application/pdf" : "image/jpeg"),
+          mimeType:
+            file.type ||
+            (file.name.endsWith(".pdf") ? "application/pdf" : "image/jpeg"),
           size: file.size,
           base64Data: reader.result as string,
         });
@@ -45,18 +55,26 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
     for (let i = 0; i < fileList.length; i++) {
       const f = fileList[i];
       const ext = f.name.substring(f.name.lastIndexOf(".")).toLowerCase();
-      if (validExtensions.includes(ext) || f.type.startsWith("image/") || f.type === "application/pdf") {
+      if (
+        validExtensions.includes(ext) ||
+        f.type.startsWith("image/") ||
+        f.type === "application/pdf"
+      ) {
         incomingFiles.push(f);
       }
     }
 
     if (incomingFiles.length === 0) {
-      setErrorMessage("Format file tidak didukung. Mohon unggah berkas PDF, JPG, atau PNG.");
+      setErrorMessage(
+        "Format file tidak didukung. Mohon unggah berkas PDF, JPG, atau PNG.",
+      );
       return;
     }
 
     try {
-      const processed = await Promise.all(incomingFiles.map((file) => processFile(file)));
+      const processed = await Promise.all(
+        incomingFiles.map((file) => processFile(file)),
+      );
       setFiles((prev) => [...prev, ...processed]);
     } catch (err) {
       console.error(err);
@@ -107,16 +125,13 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
       onAnalysisSuccess(calculatedPortfolio);
     } catch (err: any) {
       console.error(err);
-      setErrorMessage(err.message || "Terjadi kendala saat analisis. Silakan coba kembali.");
+      setErrorMessage(
+        err.message || "Terjadi kendala saat analisis. Silakan coba kembali.",
+      );
     } finally {
       setIsAnalyzing(false);
       setAnalysisStep("");
     }
-  };
-
-  const loadDemoData = () => {
-    savePortfolioToStorage(SAMPLE_PORTFOLIO);
-    onAnalysisSuccess(SAMPLE_PORTFOLIO);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -127,7 +142,7 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
-      {/* Upload Drop Zone in Fluent HQ Light Aesthetic */}
+      {/* Upload Drop Zone in Crisp Flat Style */}
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -140,10 +155,10 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
           handleFiles(e.dataTransfer.files);
         }}
         onClick={() => fileInputRef.current?.click()}
-        className={`relative border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center transition-all cursor-pointer luxury-card overflow-hidden ${
+        className={`relative border-2 border-dashed rounded-sm p-8 sm:p-12 text-center transition-all cursor-pointer luxury-card overflow-hidden ${
           isDragging
-            ? "border-[#fe5e37] bg-orange-50/70 scale-[1.01] shadow-lg shadow-orange-100"
-            : "border-stone-300/90 hover:border-[#fe5e37]/70 hover:bg-stone-50/60 bg-white shadow-xs"
+            ? "border-[#fe5e37] bg-orange-50/70"
+            : "border-stone-300 hover:border-[#fe5e37]/70 hover:bg-stone-50/60 bg-white"
         }`}
       >
         <input
@@ -155,11 +170,8 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
           onChange={(e) => handleFiles(e.target.files)}
         />
 
-        {/* Ambient subtle warm gradient */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-orange-100/30 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-
         <div className="relative flex flex-col items-center justify-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-orange-50 border border-orange-200/60 flex items-center justify-center text-[#fe5e37] ring-8 ring-orange-50/40 shadow-xs">
+          <div className="w-16 h-16 rounded-sm bg-orange-50 border border-orange-200/60 flex items-center justify-center text-[#fe5e37]">
             <Upload className="w-7 h-7" />
           </div>
 
@@ -168,28 +180,31 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
               Tarik & Lepas Dokumen Portofolio Anda ke Sini
             </h3>
             <p className="text-xs sm:text-sm text-stone-500 font-medium leading-relaxed">
-              Screenshot portofolio saham, crypto, rekening koran PDF, sertifikat tanah, atau bilyet deposito.
+              Screenshot portofolio saham, crypto, rekening koran PDF,
+              sertifikat tanah, atau bilyet deposito.
             </p>
           </div>
 
           <div className="flex items-center gap-2 pt-2 flex-wrap justify-center">
-            <span className="px-3 py-1 text-[11px] font-bold rounded-lg bg-stone-100 border border-stone-200 text-stone-700 font-mono">
+            <span className="px-3 py-1 text-[11px] font-bold rounded-sm bg-stone-100 border border-stone-200 text-stone-700 font-mono">
               PDF
             </span>
-            <span className="px-3 py-1 text-[11px] font-bold rounded-lg bg-stone-100 border border-stone-200 text-stone-700 font-mono">
+            <span className="px-3 py-1 text-[11px] font-bold rounded-sm bg-stone-100 border border-stone-200 text-stone-700 font-mono">
               JPG / JPEG
             </span>
-            <span className="px-3 py-1 text-[11px] font-bold rounded-lg bg-stone-100 border border-stone-200 text-stone-700 font-mono">
+            <span className="px-3 py-1 text-[11px] font-bold rounded-sm bg-stone-100 border border-stone-200 text-stone-700 font-mono">
               PNG
             </span>
-            <span className="text-xs text-stone-400 font-medium">• Multi-berkas sekaligus</span>
+            <span className="text-xs text-stone-400 font-medium">
+              • Multi-berkas sekaligus
+            </span>
           </div>
         </div>
       </div>
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-start gap-3 shadow-2xs">
+        <div className="p-4 rounded-sm bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-start gap-3">
           <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-rose-600" />
           <div>
             <p className="font-bold">Perhatian</p>
@@ -200,11 +215,13 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
 
       {/* Uploaded Files Queue */}
       {files.length > 0 && (
-        <div className="p-6 rounded-3xl border border-stone-200/90 bg-white shadow-sm space-y-4 luxury-card">
+        <div className="p-6 rounded-sm border border-stone-200 bg-white space-y-4 luxury-card">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-stone-900">Dokumen Siap Diekstrak</span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-orange-100 text-[#fe5e37] font-mono font-bold">
+              <span className="font-bold text-sm text-stone-900">
+                Dokumen Siap Diekstrak
+              </span>
+              <span className="text-xs px-2.5 py-0.5 rounded-sm bg-orange-100 text-[#fe5e37] font-mono font-bold">
                 {files.length} berkas
               </span>
             </div>
@@ -226,10 +243,10 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
               return (
                 <div
                   key={file.id}
-                  className="flex items-center justify-between p-3 rounded-2xl border border-stone-200/80 bg-stone-50/50 text-sm gap-2"
+                  className="flex items-center justify-between p-3 rounded-sm border border-stone-200 bg-stone-50/50 text-sm gap-2"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="p-2 rounded-xl bg-white border border-stone-200 text-stone-500 shrink-0 shadow-2xs">
+                    <div className="p-2 rounded-sm bg-white border border-stone-200 text-stone-500 shrink-0">
                       {isPdf ? (
                         <FileText className="w-4 h-4 text-rose-500" />
                       ) : (
@@ -249,7 +266,7 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
                   <button
                     type="button"
                     onClick={() => removeFile(file.id)}
-                    className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                    className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-sm transition-colors cursor-pointer"
                     title="Hapus file"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -265,12 +282,14 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
               type="button"
               disabled={isAnalyzing}
               onClick={handleStartAnalysis}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-[#fe5e37] hover:bg-[#ea4e28] text-white font-bold text-sm sm:text-base transition-all shadow-md shadow-[#fe5e37]/25 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer active:scale-[0.99]"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-sm bg-[#fe5e37] hover:bg-[#ea4e28] text-white font-bold text-sm sm:text-base transition-all disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {isAnalyzing ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                  <span>{analysisStep || "Sedang Menganalisis Dokumen..."}</span>
+                  <span>
+                    {analysisStep || "Sedang Menganalisis Dokumen..."}
+                  </span>
                 </>
               ) : (
                 <>
@@ -282,26 +301,6 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
           </div>
         </div>
       )}
-
-      {/* Footer / Privacy & Demo Options */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl border border-stone-200/90 bg-white text-xs text-stone-600 shadow-2xs luxury-card">
-        <div className="flex items-center gap-2.5">
-          <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>
-            <strong>Zero-Database Privacy:</strong> Tidak ada berkas atau angka yang disimpan di server. Hasil ekstraksi hanya hidup di RAM browser Anda.
-          </span>
-        </div>
-
-        <button
-          type="button"
-          onClick={loadDemoData}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 font-bold text-stone-800 transition-colors shrink-0 cursor-pointer shadow-2xs active:scale-[0.98]"
-        >
-          <Eye className="w-3.5 h-3.5 text-[#fe5e37]" />
-          <span>Coba Portofolio Eksekutif Demo</span>
-        </button>
-      </div>
     </div>
   );
-
 }

@@ -2,7 +2,12 @@
 
 import React, { useState, useMemo } from "react";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
-import { formatIdr, formatCompactIdr } from "@/lib/formatters";
+import {
+  formatIdr,
+  formatCompactIdr,
+  formatCurrencyValue,
+  formatCompactCurrencyValue,
+} from "@/lib/formatters";
 import {
   AssetCategory,
   CategorySummary,
@@ -30,6 +35,7 @@ interface PieBreakdownSectionProps {
   onAddMore: () => void;
   isPrivate?: boolean;
   onSelectLiability?: (liability: ExtractedLiabilityItem) => void;
+  currencyMode?: "IDR" | "USD";
 }
 
 type FilterGroup = "ALL" | "LIQUID" | "CAPITAL_MARKETS" | "REAL_ASSETS";
@@ -41,8 +47,11 @@ export function PieBreakdownSection({
   onAddMore,
   isPrivate = false,
   onSelectLiability,
+  currencyMode = "IDR",
 }: PieBreakdownSectionProps) {
-  const [activeTab, setActiveTab] = useState<"assets" | "liabilities">("assets");
+  const [activeTab, setActiveTab] = useState<"assets" | "liabilities">(
+    "assets",
+  );
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [filterGroup, setFilterGroup] = useState<FilterGroup>("ALL");
   const [sortOrder, setSortOrder] = useState<"desc" | "alpha">("desc");
@@ -52,16 +61,32 @@ export function PieBreakdownSection({
   const liabilities = portfolio.liabilities || [];
 
   // Group definitions for assets
-  const liquidCategories: AssetCategory[] = ["KAS_DEPOSITO", "CRYPTO", "OBLIGASI_SBN"];
-  const capitalMarketCategories: AssetCategory[] = ["SAHAM", "OBLIGASI_SBN", "PERUSAHAAN_SENDIRI"];
-  const realAssetCategories: AssetCategory[] = ["PROPERTI", "EMAS_LOGAM_MULIA", "KENDARAAN", "LAINNYA"];
+  const liquidCategories: AssetCategory[] = [
+    "KAS_DEPOSITO",
+    "CRYPTO",
+    "OBLIGASI_SBN",
+  ];
+  const capitalMarketCategories: AssetCategory[] = [
+    "SAHAM",
+    "OBLIGASI_SBN",
+    "PERUSAHAAN_SENDIRI",
+  ];
+  const realAssetCategories: AssetCategory[] = [
+    "PROPERTI",
+    "EMAS_LOGAM_MULIA",
+    "KENDARAAN",
+    "LAINNYA",
+  ];
 
   // Filtered and sorted asset categories
   const filteredCategories = useMemo(() => {
     let result = categories.filter((cat) => {
-      if (filterGroup === "LIQUID") return liquidCategories.includes(cat.category);
-      if (filterGroup === "CAPITAL_MARKETS") return capitalMarketCategories.includes(cat.category);
-      if (filterGroup === "REAL_ASSETS") return realAssetCategories.includes(cat.category);
+      if (filterGroup === "LIQUID")
+        return liquidCategories.includes(cat.category);
+      if (filterGroup === "CAPITAL_MARKETS")
+        return capitalMarketCategories.includes(cat.category);
+      if (filterGroup === "REAL_ASSETS")
+        return realAssetCategories.includes(cat.category);
       return true;
     });
 
@@ -105,7 +130,8 @@ export function PieBreakdownSection({
     });
   }, [liabilities, portfolio.totalLiabilitiesIdr]);
 
-  const activeChartData = activeTab === "assets" ? assetChartData : liabilityChartData;
+  const activeChartData =
+    activeTab === "assets" ? assetChartData : liabilityChartData;
 
   // Active hovered or selected item
   const activeHoveredItem = useMemo(() => {
@@ -118,17 +144,16 @@ export function PieBreakdownSection({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="p-3.5 rounded-2xl border border-stone-200/90 bg-white/95 shadow-xl text-xs space-y-1.5 backdrop-blur-md">
-          <p className="font-bold text-stone-900 flex items-center gap-1.5">
-            <span>{data.icon}</span>
-            <span>{data.name}</span>
-          </p>
+        <div className="p-3 rounded-sm border border-stone-200 bg-white text-xs space-y-1.5">
+          <p className="font-bold text-stone-900">{data.name}</p>
           <p className="text-stone-900 font-mono font-bold text-sm tabular-nums">
-            {formatIdr(data.value, isPrivate)}
+            {formatCurrencyValue(data.value, currencyMode, isPrivate)}
           </p>
           <div className="flex items-center gap-2 text-stone-500 font-medium">
             <span>Porsi:</span>
-            <span className="font-bold text-[#fe5e37] font-mono">{data.percentage}%</span>
+            <span className="font-bold text-[#fe5e37] font-mono">
+              {data.percentage}%
+            </span>
           </div>
           {data.lender && (
             <p className="text-[11px] text-stone-400 font-medium">
@@ -144,8 +169,8 @@ export function PieBreakdownSection({
   return (
     <div className="w-full space-y-6">
       {/* Top Segmented Tabs: Liabilitas vs Total Aset */}
-      <div className="rounded-3xl border border-stone-200/80 bg-white shadow-sm overflow-hidden luxury-card">
-        <div className="grid grid-cols-2 text-center border-b border-stone-200/80">
+      <div className="rounded-sm border border-stone-200 bg-white overflow-hidden luxury-card">
+        <div className="grid grid-cols-2 text-center border-b border-stone-200">
           {/* Total Aset Tab */}
           <button
             type="button"
@@ -162,7 +187,7 @@ export function PieBreakdownSection({
             <div className="flex items-center justify-center gap-2 flex-wrap">
               <span>Total Aset</span>
               <span className="font-mono font-bold text-stone-900 tabular-nums">
-                {formatIdr(portfolio.totalAssetsIdr, isPrivate)}
+                {formatCurrencyValue(portfolio.totalAssetsIdr, currencyMode, isPrivate)}
               </span>
             </div>
             {activeTab === "assets" && (
@@ -186,7 +211,7 @@ export function PieBreakdownSection({
             <div className="flex items-center justify-center gap-2 flex-wrap">
               <span>Liabilitas</span>
               <span className="font-mono font-bold text-stone-800 tabular-nums">
-                {formatIdr(portfolio.totalLiabilitiesIdr, isPrivate)}
+                {formatCurrencyValue(portfolio.totalLiabilitiesIdr, currencyMode, isPrivate)}
               </span>
             </div>
             {activeTab === "liabilities" && (
@@ -200,11 +225,15 @@ export function PieBreakdownSection({
           <div className="flex items-center gap-2">
             <span
               className={`w-2.5 h-2.5 rounded-full inline-block ${
-                activeTab === "assets" ? "bg-emerald-500 animate-pulse" : "bg-rose-500"
+                activeTab === "assets"
+                  ? "bg-emerald-500 animate-pulse"
+                  : "bg-rose-500"
               }`}
             />
             <span className="text-stone-600 font-medium">
-              {activeTab === "assets" ? "Kekayaan Bersih (Net Worth):" : "Rasio Beban Hutang:"}
+              {activeTab === "assets"
+                ? "Kekayaan Bersih (Net Worth):"
+                : "Rasio Beban Hutang:"}
             </span>
             <span
               className={`font-mono font-bold text-sm sm:text-base tabular-nums ${
@@ -212,17 +241,18 @@ export function PieBreakdownSection({
               }`}
             >
               {activeTab === "assets"
-                ? formatIdr(portfolio.totalNetWorthIdr, isPrivate)
-                : `${(
-                    portfolio.totalAssetsIdr > 0
-                      ? (portfolio.totalLiabilitiesIdr / portfolio.totalAssetsIdr) * 100
-                      : 0
+                ? formatCurrencyValue(portfolio.totalNetWorthIdr, currencyMode, isPrivate)
+                : `${(portfolio.totalAssetsIdr > 0
+                    ? (portfolio.totalLiabilitiesIdr /
+                        portfolio.totalAssetsIdr) *
+                      100
+                    : 0
                   ).toFixed(1)}% dari Total Aset`}
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-stone-200/80 text-stone-700 font-semibold text-xs">
+            <span className="px-3 py-1 rounded-sm bg-stone-200 text-stone-700 font-semibold text-xs">
               {activeTab === "assets"
                 ? `${categories.length} Sektor Portofolio`
                 : `${liabilities.length} Item Liabilitas Aktif`}
@@ -234,7 +264,7 @@ export function PieBreakdownSection({
       {/* Main Split Section: Chart on Left, Detail List on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* LEFT COLUMN: Clean Chart Card */}
-        <div className="lg:col-span-5 rounded-3xl border border-stone-200/80 bg-white p-6 sm:p-7 shadow-sm flex flex-col justify-between luxury-card">
+        <div className="lg:col-span-5 rounded-sm border border-stone-200 bg-white p-6 sm:p-7 flex flex-col justify-between luxury-card">
           <div>
             {/* Header with View Toggle (Donut vs Bar) */}
             <div className="flex items-center justify-between mb-4">
@@ -250,13 +280,13 @@ export function PieBreakdownSection({
               </div>
 
               {/* View Mode Switcher */}
-              <div className="flex items-center p-0.5 rounded-xl bg-stone-100 border border-stone-200/80">
+              <div className="flex items-center p-0.5 rounded-sm bg-stone-100 border border-stone-200">
                 <button
                   type="button"
                   onClick={() => setChartViewMode("donut")}
-                  className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                  className={`p-1.5 rounded-sm transition-all cursor-pointer ${
                     chartViewMode === "donut"
-                      ? "bg-white shadow-2xs text-[#fe5e37]"
+                      ? "bg-white text-[#fe5e37] font-bold"
                       : "text-stone-400 hover:text-stone-700"
                   }`}
                   title="Tampilan Donut Chart"
@@ -266,9 +296,9 @@ export function PieBreakdownSection({
                 <button
                   type="button"
                   onClick={() => setChartViewMode("bar")}
-                  className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                  className={`p-1.5 rounded-sm transition-all cursor-pointer ${
                     chartViewMode === "bar"
-                      ? "bg-white shadow-2xs text-[#fe5e37]"
+                      ? "bg-white text-[#fe5e37] font-bold"
                       : "text-stone-400 hover:text-stone-700"
                   }`}
                   title="Tampilan Bar Distribusi"
@@ -309,7 +339,8 @@ export function PieBreakdownSection({
                       {activeChartData.map((entry, index) => {
                         const isHighlighted =
                           hoveredKey === entry.key ||
-                          (activeTab === "assets" && selectedCategory === entry.key);
+                          (activeTab === "assets" &&
+                            selectedCategory === entry.key);
                         return (
                           <Cell
                             key={`cell-${index}`}
@@ -318,11 +349,10 @@ export function PieBreakdownSection({
                             strokeWidth={isHighlighted ? 3 : 1.5}
                             className="transition-all duration-200"
                             style={{
-                              transform: isHighlighted ? "scale(1.02)" : "scale(1)",
+                              transform: isHighlighted
+                                ? "scale(1.02)"
+                                : "scale(1)",
                               transformOrigin: "center center",
-                              filter: isHighlighted
-                                ? "drop-shadow(0 6px 12px rgba(0,0,0,0.15))"
-                                : "none",
                             }}
                           />
                         );
@@ -335,7 +365,6 @@ export function PieBreakdownSection({
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4 max-w-[130px] mx-auto">
                   {activeHoveredItem ? (
                     <div className="animate-in fade-in zoom-in-95 duration-150 space-y-0.5">
-                      <span className="text-base">{activeHoveredItem.icon}</span>
                       <p className="text-[11px] font-bold text-stone-800 line-clamp-1 leading-tight">
                         {activeHoveredItem.name}
                       </p>
@@ -354,11 +383,12 @@ export function PieBreakdownSection({
                           : `${liabilities.length} Hutang`}
                       </p>
                       <p className="text-[10px] text-stone-400 font-mono">
-                        {formatCompactIdr(
+                        {formatCompactCurrencyValue(
                           activeTab === "assets"
                             ? portfolio.totalAssetsIdr
                             : portfolio.totalLiabilitiesIdr,
-                          isPrivate
+                          currencyMode,
+                          isPrivate,
                         )}
                       </p>
                     </div>
@@ -368,7 +398,7 @@ export function PieBreakdownSection({
             ) : (
               /* HORIZONTAL DISTRIBUTION BAR VIEW (UI/UX Pro Max A11y Recommendation) */
               <div className="py-6 space-y-4">
-                <div className="h-6 w-full rounded-xl overflow-hidden flex shadow-inner bg-stone-100">
+                <div className="h-6 w-full rounded-sm overflow-hidden flex bg-stone-100">
                   {activeChartData.map((item, idx) => (
                     <div
                       key={idx}
@@ -380,7 +410,8 @@ export function PieBreakdownSection({
                       onMouseEnter={() => setHoveredKey(item.key)}
                       onMouseLeave={() => setHoveredKey(null)}
                       onClick={() => {
-                        if (activeTab === "assets") onSelectCategory(item.key as AssetCategory);
+                        if (activeTab === "assets")
+                          onSelectCategory(item.key as AssetCategory);
                       }}
                     />
                   ))}
@@ -390,13 +421,15 @@ export function PieBreakdownSection({
                   {activeChartData.map((item, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 p-2 rounded-lg bg-stone-50 border border-stone-200/50"
+                      className="flex items-center gap-2 p-2 rounded-sm bg-stone-50 border border-stone-200"
                     >
                       <span
                         className="w-2.5 h-2.5 rounded-full shrink-0"
                         style={{ backgroundColor: item.color }}
                       />
-                      <span className="truncate font-medium text-stone-700">{item.name}</span>
+                      <span className="truncate font-medium text-stone-700">
+                        {item.name}
+                      </span>
                       <span className="ml-auto font-mono font-bold text-stone-900">
                         {item.percentage}%
                       </span>
@@ -408,16 +441,17 @@ export function PieBreakdownSection({
           </div>
 
           {/* Bottom Helpful Tip */}
-          <div className="mt-4 p-3 rounded-2xl bg-stone-50 border border-stone-200/70 text-xs text-stone-600 flex items-center gap-2.5">
+          <div className="mt-4 p-3 rounded-sm bg-stone-50 border border-stone-200 text-xs text-stone-600 flex items-center gap-2.5">
             <Lightbulb className="w-4 h-4 text-[#fe5e37] shrink-0" />
             <span>
-              <strong>Audit Tip:</strong> Klik irisan grafik atau baris aset untuk melihat dokumen sumber dan audit biner.
+              <strong>Audit Tip:</strong> Klik irisan grafik atau baris aset
+              untuk melihat dokumen sumber dan audit biner.
             </span>
           </div>
         </div>
 
         {/* RIGHT COLUMN: Rincian Items List Cards */}
-        <div className="lg:col-span-7 rounded-3xl border border-stone-200/80 bg-white p-6 sm:p-7 shadow-sm flex flex-col justify-between luxury-card">
+        <div className="lg:col-span-7 rounded-sm border border-stone-200 bg-white p-6 sm:p-7 flex flex-col justify-between luxury-card">
           <div className="space-y-4">
             {/* Header with Title & Filter Controls */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-100">
@@ -427,11 +461,6 @@ export function PieBreakdownSection({
                     ? "RINCIAN TOTAL ASET (KEKAYAAN)"
                     : "DAFTAR LIABILITAS & KEWAJIBAN"}
                 </h3>
-                <span className="text-[11px] text-stone-400">
-                  {activeTab === "assets"
-                    ? "Klik baris untuk meninjau berkas sumber"
-                    : "Porsi hutang terverifikasi"}
-                </span>
               </div>
 
               {/* Asset Filter Chips */}
@@ -440,7 +469,7 @@ export function PieBreakdownSection({
                   <button
                     type="button"
                     onClick={() => setFilterGroup("ALL")}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-sm text-[11px] font-semibold transition-all cursor-pointer ${
                       filterGroup === "ALL"
                         ? "bg-stone-900 text-white"
                         : "bg-stone-100 hover:bg-stone-200 text-stone-600"
@@ -451,7 +480,7 @@ export function PieBreakdownSection({
                   <button
                     type="button"
                     onClick={() => setFilterGroup("LIQUID")}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-sm text-[11px] font-semibold transition-all cursor-pointer ${
                       filterGroup === "LIQUID"
                         ? "bg-stone-900 text-white"
                         : "bg-stone-100 hover:bg-stone-200 text-stone-600"
@@ -462,7 +491,7 @@ export function PieBreakdownSection({
                   <button
                     type="button"
                     onClick={() => setFilterGroup("CAPITAL_MARKETS")}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-sm text-[11px] font-semibold transition-all cursor-pointer ${
                       filterGroup === "CAPITAL_MARKETS"
                         ? "bg-stone-900 text-white"
                         : "bg-stone-100 hover:bg-stone-200 text-stone-600"
@@ -473,7 +502,7 @@ export function PieBreakdownSection({
                   <button
                     type="button"
                     onClick={() => setFilterGroup("REAL_ASSETS")}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-sm text-[11px] font-semibold transition-all cursor-pointer ${
                       filterGroup === "REAL_ASSETS"
                         ? "bg-stone-900 text-white"
                         : "bg-stone-100 hover:bg-stone-200 text-stone-600"
@@ -498,18 +527,18 @@ export function PieBreakdownSection({
                       onClick={() => onSelectCategory(cat.category)}
                       onMouseEnter={() => setHoveredKey(cat.category)}
                       onMouseLeave={() => setHoveredKey(null)}
-                      className={`group flex flex-col p-3 sm:p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer ${
+                      className={`group flex flex-col p-3 sm:p-3.5 rounded-sm border transition-all duration-200 cursor-pointer ${
                         isSelected || isHovered
-                          ? "border-[#fe5e37] bg-orange-50/40 shadow-sm translate-x-0.5"
-                          : "border-stone-200/70 hover:border-stone-300 hover:bg-stone-50/60 bg-white"
+                          ? "border-[#fe5e37] bg-orange-50/40"
+                          : "border-stone-200 hover:border-stone-300 hover:bg-stone-50/60 bg-white"
                       }`}
                     >
                       <div className="flex items-center justify-between gap-3">
-                        {/* Left: Percentage Badge + Emoji & Name */}
+                        {/* Left: Percentage Badge + Name */}
                         <div className="flex items-center gap-3 min-w-0">
                           {/* Percentage Badge */}
                           <span
-                            className="px-2.5 py-1 rounded-xl text-xs font-bold font-mono shrink-0 shadow-2xs tabular-nums"
+                            className="px-2.5 py-1 rounded-sm text-xs font-bold font-mono shrink-0 tabular-nums"
                             style={{
                               backgroundColor: cat.badgeBg,
                               color: cat.badgeText,
@@ -519,33 +548,30 @@ export function PieBreakdownSection({
                             {cat.percentage}%
                           </span>
 
-                          {/* Icon + Label */}
-                          <div className="flex items-center gap-2 truncate">
-                            <span className="text-base shrink-0">{cat.icon}</span>
-                            <div>
-                              <span className="text-sm font-semibold text-stone-800 group-hover:text-stone-900 block truncate">
-                                {cat.label}
-                              </span>
-                              <span className="text-[10px] text-stone-400 font-medium">
-                                {cat.itemCount} aset terdaftar
-                              </span>
-                            </div>
+                          {/* Label (Clean text without icon) */}
+                          <div className="truncate">
+                            <span className="text-sm font-semibold text-stone-800 group-hover:text-stone-900 block truncate">
+                              {cat.label}
+                            </span>
+                            <span className="text-[10px] text-stone-400 font-medium">
+                              {cat.itemCount} aset terdaftar
+                            </span>
                           </div>
                         </div>
 
-                        {/* Right: IDR Amount + Chevron */}
+                        {/* Right: IDR / USD Amount + Chevron */}
                         <div className="flex items-center gap-3 shrink-0 ml-2">
                           <span className="text-sm sm:text-base font-bold font-mono text-stone-900 tabular-nums">
-                            {formatIdr(cat.totalIdr, isPrivate)}
+                            {formatCurrencyValue(cat.totalIdr, currencyMode, isPrivate)}
                           </span>
-                          <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-[#fe5e37] group-hover:translate-x-0.5 transition-all" />
+                          <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-[#fe5e37] transition-all" />
                         </div>
                       </div>
 
                       {/* Visual Allocation Progress Mini-bar */}
-                      <div className="mt-2.5 h-1.5 w-full bg-stone-100 rounded-full overflow-hidden">
+                      <div className="mt-2.5 h-1.5 w-full bg-stone-100 rounded-sm overflow-hidden">
                         <div
-                          className="h-full rounded-full transition-all duration-300"
+                          className="h-full rounded-sm transition-all duration-300"
                           style={{
                             width: `${cat.percentage}%`,
                             backgroundColor: cat.color,
@@ -564,9 +590,12 @@ export function PieBreakdownSection({
                 {liabilities.length === 0 ? (
                   <div className="py-12 text-center text-stone-400 space-y-2">
                     <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500" />
-                    <p className="text-sm font-semibold text-stone-700">Bebas Liabilitas</p>
+                    <p className="text-sm font-semibold text-stone-700">
+                      Bebas Liabilitas
+                    </p>
                     <p className="text-xs text-stone-400">
-                      Tidak ada catatan kewajiban atau hutang dari dokumen yang dianalisis.
+                      Tidak ada catatan kewajiban atau hutang dari dokumen yang
+                      dianalisis.
                     </p>
                   </div>
                 ) : (
@@ -583,16 +612,16 @@ export function PieBreakdownSection({
                         onMouseEnter={() => setHoveredKey(lia.id)}
                         onMouseLeave={() => setHoveredKey(null)}
                         onClick={() => onSelectLiability?.(lia)}
-                        className={`group p-4 rounded-2xl border transition-all duration-200 cursor-pointer ${
+                        className={`group p-4 rounded-sm border transition-all duration-200 cursor-pointer ${
                           isHovered
-                            ? "border-rose-400 bg-rose-50/30 shadow-sm"
-                            : "border-stone-200/80 bg-white hover:border-stone-300 hover:bg-stone-50/50"
+                            ? "border-rose-400 bg-rose-50/30"
+                            : "border-stone-200 bg-white hover:border-stone-300 hover:bg-stone-50/50"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
-                              <span className="px-2 py-0.5 rounded-md bg-rose-100 text-rose-700 text-[11px] font-bold font-mono">
+                              <span className="px-2 py-0.5 rounded-sm bg-rose-100 text-rose-700 text-[11px] font-bold font-mono">
                                 {pct}%
                               </span>
                               <h4 className="font-bold text-sm text-stone-900 group-hover:text-rose-600 transition-colors">
@@ -616,9 +645,9 @@ export function PieBreakdownSection({
 
                           <div className="text-right shrink-0">
                             <p className="text-sm sm:text-base font-bold font-mono text-stone-900 tabular-nums">
-                              {formatIdr(lia.amountIdr, isPrivate)}
+                              {formatCurrencyValue(lia.amountIdr, currencyMode, isPrivate)}
                             </p>
-                            <span className="inline-flex items-center gap-1 text-[10px] text-stone-500 px-2 py-0.5 rounded-md bg-stone-100 font-mono mt-1">
+                            <span className="inline-flex items-center gap-1 text-[10px] text-stone-500 px-2 py-0.5 rounded-sm bg-stone-100 font-mono mt-1">
                               <FileText className="w-3 h-3 text-stone-400" />
                               {lia.sourceFile}
                             </span>
@@ -642,7 +671,7 @@ export function PieBreakdownSection({
             <button
               type="button"
               onClick={onAddMore}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-medium text-xs transition-all shadow-sm cursor-pointer active:scale-[0.98]"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-stone-900 hover:bg-stone-800 text-white font-medium text-xs transition-all cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5 text-[#fe5e37]" />
               <span>Tambah Dokumen / Aset</span>

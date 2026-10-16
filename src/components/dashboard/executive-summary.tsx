@@ -18,14 +18,11 @@ export function ExecutiveSummary({ portfolio }: ExecutiveSummaryProps) {
   };
 
   return (
-    <div className="rounded-3xl border border-stone-200/80 bg-white p-6 sm:p-8 shadow-sm space-y-6 luxury-card relative overflow-hidden">
-      {/* Subtle Glow */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-orange-100/30 rounded-full blur-3xl pointer-events-none -mr-16 -mt-16" />
-
+    <div className="rounded-sm border border-stone-200 bg-white p-6 sm:p-8 space-y-6 luxury-card relative overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2.5 text-[#fe5e37]">
-          <div className="w-8 h-8 rounded-xl bg-orange-50 border border-orange-200/80 flex items-center justify-center text-[#fe5e37]">
+          <div className="w-8 h-8 rounded-sm bg-orange-50 border border-orange-200 flex items-center justify-center text-[#fe5e37]">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
@@ -41,7 +38,7 @@ export function ExecutiveSummary({ portfolio }: ExecutiveSummaryProps) {
         <button
           type="button"
           onClick={handleCopy}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs font-semibold transition-all cursor-pointer shadow-2xs active:scale-[0.98]"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs font-semibold transition-all cursor-pointer"
           title="Salin opini auditor"
         >
           {isCopied ? (
@@ -59,7 +56,7 @@ export function ExecutiveSummary({ portfolio }: ExecutiveSummaryProps) {
       </div>
 
       {/* Main Narrative Card with Editorial Typography */}
-      <div className="relative p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-stone-50 to-orange-50/20 border border-stone-200/70 text-sm sm:text-base leading-relaxed text-stone-800 font-medium">
+      <div className="relative p-5 sm:p-6 rounded-sm bg-stone-50 border border-stone-200 text-sm sm:text-base leading-relaxed text-stone-800 font-medium">
         <Quote className="w-8 h-8 text-orange-200 absolute top-4 left-4 -z-0 opacity-40" />
         <p className="relative z-10 font-normal leading-relaxed">
           {portfolio.executiveSummary}
@@ -76,7 +73,7 @@ export function ExecutiveSummary({ portfolio }: ExecutiveSummaryProps) {
             {portfolio.keyHighlights.map((highlight, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-2.5 p-4 rounded-2xl border border-stone-200/70 bg-white text-xs sm:text-sm shadow-2xs hover:border-stone-300 transition-colors"
+                className="flex items-start gap-2.5 p-4 rounded-sm border border-stone-200 bg-white text-xs sm:text-sm hover:border-stone-300 transition-colors"
               >
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                 <span className="text-stone-700 font-medium leading-snug">{highlight}</span>
@@ -98,7 +95,7 @@ export function ExecutiveSummary({ portfolio }: ExecutiveSummaryProps) {
             {portfolio.sourceFiles.map((file, idx) => (
               <span
                 key={idx}
-                className="px-2.5 py-1 rounded-lg bg-stone-100/80 border border-stone-200 text-[11px] font-mono text-stone-700 shadow-2xs"
+                className="px-2.5 py-1 rounded-sm bg-stone-100 border border-stone-200 text-[11px] font-mono text-stone-700"
               >
                 {file}
               </span>

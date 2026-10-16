@@ -24,14 +24,13 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.75rem;
+  --radius-3xl: 1rem;
 }
-
 
 /* Fluent HQ Warm Light Mode Palette */
 :root {
@@ -53,7 +52,7 @@
   --border: #e9e5df;
   --input: #e9e5df;
   --ring: #fe5e37;
-  --radius: 1rem;
+  --radius: 0.25rem;
 }
 
 @layer base {
@@ -79,13 +78,9 @@
   transition: filter 0.2s ease-in-out;
 }
 
-/* Subtle Card Glows & Micro-interactions */
+/* Crisp Clean Card styling without shadows */
 .luxury-card {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
-}
-
-.luxury-card:hover {
-  transform: translateY(-1px);
+  transition: border-color 0.15s ease;
 }
 
 @media print {

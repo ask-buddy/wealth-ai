@@ -20,7 +20,7 @@ export const CATEGORY_CONFIG: Record<
 > = {
   PROPERTI: {
     label: "Properti & Tanah",
-    icon: "🏠",
+    icon: "",
     color: "#FF5E48", // Vibrant Salmon/Coral
     badgeBg: "#FFF1F0",
     badgeText: "#E02E1B",
@@ -28,7 +28,7 @@ export const CATEGORY_CONFIG: Record<
   },
   SAHAM: {
     label: "Saham (IHSG & US)",
-    icon: "📈",
+    icon: "",
     color: "#FF8A3D", // Warm Orange
     badgeBg: "#FFF4ED",
     badgeText: "#EA580C",
@@ -36,7 +36,7 @@ export const CATEGORY_CONFIG: Record<
   },
   KAS_DEPOSITO: {
     label: "Kas & Deposito",
-    icon: "💰",
+    icon: "",
     color: "#FFD13B", // Warm Golden Yellow
     badgeBg: "#FEFCE8",
     badgeText: "#CA8A04",
@@ -44,7 +44,7 @@ export const CATEGORY_CONFIG: Record<
   },
   OBLIGASI_SBN: {
     label: "Obligasi & SBN",
-    icon: "🏛️",
+    icon: "",
     color: "#D2EE38", // Lime / Chartreuse
     badgeBg: "#F7FEE7",
     badgeText: "#65A30D",
@@ -52,7 +52,7 @@ export const CATEGORY_CONFIG: Record<
   },
   EMAS_LOGAM_MULIA: {
     label: "Emas & Logam Mulia",
-    icon: "🪙",
+    icon: "",
     color: "#86EFAC", // Soft Mint Green
     badgeBg: "#F0FDF4",
     badgeText: "#16A34A",
@@ -60,7 +60,7 @@ export const CATEGORY_CONFIG: Record<
   },
   KENDARAAN: {
     label: "Kendaraan",
-    icon: "🚗",
+    icon: "",
     color: "#5EEAD4", // Sky Teal / Turquoise
     badgeBg: "#F0FDFA",
     badgeText: "#0D9488",
@@ -68,7 +68,7 @@ export const CATEGORY_CONFIG: Record<
   },
   CRYPTO: {
     label: "Kripto (BTC & ETH)",
-    icon: "⚡",
+    icon: "",
     color: "#C084FC", // Lilac / Purple
     badgeBg: "#FAF5FF",
     badgeText: "#9333EA",
@@ -76,7 +76,7 @@ export const CATEGORY_CONFIG: Record<
   },
   PERUSAHAAN_SENDIRI: {
     label: "Perusahaan & Bisnis",
-    icon: "💼",
+    icon: "",
     color: "#A78BFA", // Lavender Indigo
     badgeBg: "#EEF2FF",
     badgeText: "#4F46E5",
@@ -84,7 +84,7 @@ export const CATEGORY_CONFIG: Record<
   },
   LAINNYA: {
     label: "Aset Lainnya",
-    icon: "💎",
+    icon: "",
     color: "#F472B6", // Pink
     badgeBg: "#FDF2F8",
     badgeText: "#DB2777",
@@ -94,18 +94,21 @@ export const CATEGORY_CONFIG: Record<
 
 export function calculatePortfolio(
   raw: RawWealthAnalysis,
-  sourceFiles: string[] = []
+  sourceFiles: string[] = [],
 ): WealthPortfolio {
   const assets = raw.assets || [];
   const liabilities = raw.liabilities || [];
 
   // Sum total assets
-  const totalAssetsIdr = assets.reduce((sum, item) => sum + (Number(item.valueIdr) || 0), 0);
+  const totalAssetsIdr = assets.reduce(
+    (sum, item) => sum + (Number(item.valueIdr) || 0),
+    0,
+  );
 
   // Sum total liabilities
   const totalLiabilitiesIdr = liabilities.reduce(
     (sum, item) => sum + (Number(item.amountIdr) || 0),
-    0
+    0,
   );
 
   // Net worth
@@ -124,11 +127,18 @@ export function calculatePortfolio(
     "LAINNYA",
   ];
 
-  const categoryMap = new Map<AssetCategory, { total: number; count: number }>();
-  categoriesOrder.forEach((cat) => categoryMap.set(cat, { total: 0, count: 0 }));
+  const categoryMap = new Map<
+    AssetCategory,
+    { total: number; count: number }
+  >();
+  categoriesOrder.forEach((cat) =>
+    categoryMap.set(cat, { total: 0, count: 0 }),
+  );
 
   assets.forEach((item) => {
-    const cat = categoriesOrder.includes(item.category) ? item.category : "LAINNYA";
+    const cat = categoriesOrder.includes(item.category)
+      ? item.category
+      : "LAINNYA";
     const current = categoryMap.get(cat) || { total: 0, count: 0 };
     categoryMap.set(cat, {
       total: current.total + (Number(item.valueIdr) || 0),
@@ -140,7 +150,8 @@ export function calculatePortfolio(
     .map((cat) => {
       const data = categoryMap.get(cat) || { total: 0, count: 0 };
       const config = CATEGORY_CONFIG[cat] || CATEGORY_CONFIG.LAINNYA;
-      const percentage = totalAssetsIdr > 0 ? (data.total / totalAssetsIdr) * 100 : 0;
+      const percentage =
+        totalAssetsIdr > 0 ? (data.total / totalAssetsIdr) * 100 : 0;
 
       return {
         category: cat,
@@ -165,7 +176,9 @@ export function calculatePortfolio(
     (categoryMap.get("OBLIGASI_SBN")?.total || 0);
 
   const liquidRatioPercentage =
-    totalAssetsIdr > 0 ? Number(((liquidAssets / totalAssetsIdr) * 100).toFixed(1)) : 0;
+    totalAssetsIdr > 0
+      ? Number(((liquidAssets / totalAssetsIdr) * 100).toFixed(1))
+      : 0;
 
   // Collect unique source files if not passed
   const detectedFiles =
@@ -178,7 +191,8 @@ export function calculatePortfolio(
     totalAssetsIdr,
     totalLiabilitiesIdr,
     liquidRatioPercentage,
-    executiveSummary: raw.executiveSummary || "Ringkasan portofolio berhasil diekstraksi.",
+    executiveSummary:
+      raw.executiveSummary || "Ringkasan portofolio berhasil diekstraksi.",
     keyHighlights: raw.keyHighlights || [],
     categories,
     assets,

@@ -12,10 +12,7 @@ import {
   AssetCategory,
   ExtractedLiabilityItem,
 } from "@/types/wealth";
-import {
-  loadPortfolioFromStorage,
-  clearPortfolioStorage,
-} from "@/lib/storage";
+import { loadPortfolioFromStorage, clearPortfolioStorage } from "@/lib/storage";
 import {
   ShieldCheck,
   Sparkles,
@@ -31,8 +28,10 @@ import {
 export default function Home() {
   const [portfolio, setPortfolio] = useState<WealthPortfolio | null>(null);
   const [isAddingMore, setIsAddingMore] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<AssetCategory | null>(null);
-  const [selectedLiability, setSelectedLiability] = useState<ExtractedLiabilityItem | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<AssetCategory | null>(null);
+  const [selectedLiability, setSelectedLiability] =
+    useState<ExtractedLiabilityItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
@@ -66,7 +65,11 @@ export default function Home() {
   };
 
   const handleReset = () => {
-    if (confirm("Apakah Anda yakin ingin menghapus seluruh data portofolio dari browser ini?")) {
+    if (
+      confirm(
+        "Apakah Anda yakin ingin menghapus seluruh data portofolio dari browser ini?",
+      )
+    ) {
       clearPortfolioStorage();
       setPortfolio(null);
       setIsAddingMore(false);
@@ -117,36 +120,34 @@ export default function Home() {
 
       {/* Screen View */}
       <div className="no-print flex-1 flex flex-col">
-        {/* Navigation Bar in Fluent HQ Clean Luxury Style */}
-        <header className="sticky top-0 z-40 w-full border-b border-stone-200/80 bg-white/90 backdrop-blur-md">
+        {/* Navigation Bar in Clean Minimal Luxury Style */}
+        <header className="sticky top-0 z-40 w-full border-b border-stone-200 bg-white/95 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#ea4e28] to-[#fe5e37] flex items-center justify-center text-white shadow-sm shadow-[#fe5e37]/30 font-bold text-lg">
+              <div className="w-9 h-9 rounded-sm bg-[#fe5e37] flex items-center justify-center text-white font-bold text-lg">
                 A
               </div>
               <div>
                 <span className="font-extrabold text-base tracking-tight text-stone-900 flex items-center gap-2">
                   AngelWealth
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-100 text-[#fe5e37] font-bold border border-orange-200 shadow-2xs">
-                    AI AGGREGATOR
-                  </span>
                 </span>
                 <p className="text-[11px] text-stone-500 hidden sm:block font-medium">
-                  Private Wealth & Asset Intelligence for High-Net-Worth Individuals
+                  Private Wealth & Asset Intelligence for High-Net-Worth
+                  Individuals
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2">
               {/* Privacy Quick Toggle in Header */}
               {portfolio && (
                 <button
                   type="button"
                   onClick={togglePrivacy}
-                  className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer shadow-2xs ${
+                  className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-semibold border transition-all cursor-pointer ${
                     isPrivate
                       ? "bg-stone-900 border-stone-800 text-stone-100"
-                      : "bg-stone-100/90 border-stone-200 hover:bg-stone-200/70 text-stone-700"
+                      : "bg-stone-100 border-stone-200 hover:bg-stone-200 text-stone-700"
                   }`}
                   title="Tekan 'P' di keyboard untuk toggle privasi cepat"
                 >
@@ -164,12 +165,35 @@ export default function Home() {
                 </button>
               )}
 
-              {/* Zero Database Privacy Indicator */}
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200 text-xs text-emerald-700 font-semibold shadow-2xs">
-                <Lock className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="hidden md:inline">Zero-Database • In-Memory AI</span>
-                <span className="md:hidden">Privat</span>
-              </div>
+              {/* Currency Switcher in Header (right of Mode Privat) */}
+              {portfolio && (
+                <button
+                  type="button"
+                  onClick={toggleCurrency}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-sm border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-colors cursor-pointer"
+                  title="Ganti mata uang tampilan (IDR / USD)"
+                >
+                  <span
+                    className={
+                      currencyMode === "IDR"
+                        ? "font-bold text-[#fe5e37]"
+                        : "text-stone-400"
+                    }
+                  >
+                    IDR
+                  </span>
+                  <span className="text-stone-300">/</span>
+                  <span
+                    className={
+                      currencyMode === "USD"
+                        ? "font-bold text-[#fe5e37]"
+                        : "text-stone-400"
+                    }
+                  >
+                    USD
+                  </span>
+                </button>
+              )}
             </div>
           </div>
         </header>
@@ -180,21 +204,12 @@ export default function Home() {
             <div className="space-y-8 animate-in fade-in duration-300">
               {/* Value Proposition Hero */}
               <div className="text-center max-w-3xl mx-auto space-y-4 pt-4">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-[#fe5e37] text-xs font-bold shadow-2xs">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Powered by Gemini 3.8 Flash Multimodal</span>
-                </div>
-
                 <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-stone-900 leading-tight">
                   Hitung Total Kekayaan Bersih Anda Secara{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fe5e37] via-[#f97316] to-[#eab308]">
                     Instan & 100% Privat
                   </span>
                 </h1>
-
-                <p className="text-sm sm:text-base text-stone-600 max-w-2xl mx-auto leading-relaxed font-medium">
-                  Unggah berbagai dokumen aset Anda yang tercecer—screenshot portofolio saham, sertifikat tanah, akta perusahaan, atau rekening koran PDF. Tanpa database server, data aman di peramban Anda.
-                </p>
 
                 {isAddingMore && (
                   <button
@@ -212,33 +227,36 @@ export default function Home() {
 
               {/* Security & Feature Badges */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 max-w-4xl mx-auto text-left">
-                <div className="p-4 rounded-2xl border border-stone-200/80 bg-white space-y-1.5 shadow-2xs luxury-card">
+                <div className="p-4 rounded-sm border border-stone-200 bg-white space-y-1.5 luxury-card">
                   <div className="flex items-center gap-2 font-bold text-sm text-stone-900">
                     <ShieldCheck className="w-4 h-4 text-emerald-600" />
                     <span>Zero-Database Storage</span>
                   </div>
                   <p className="text-xs text-stone-500 leading-relaxed font-medium">
-                    Tidak ada data dokumen atau nominal yang tersimpan di server. Hasil ekstraksi hanya hidup di RAM dan browser Anda.
+                    Tidak ada data dokumen atau nominal yang tersimpan di
+                    server. Hasil ekstraksi hanya hidup di RAM dan browser Anda.
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl border border-stone-200/80 bg-white space-y-1.5 shadow-2xs luxury-card">
+                <div className="p-4 rounded-sm border border-stone-200 bg-white space-y-1.5 luxury-card">
                   <div className="flex items-center gap-2 font-bold text-sm text-stone-900">
                     <Zap className="w-4 h-4 text-[#fe5e37]" />
                     <span>Multimodal One-Shot</span>
                   </div>
                   <p className="text-xs text-stone-500 leading-relaxed font-medium">
-                    Membaca screenshot JPG/PNG dan dokumen PDF sekaligus tanpa OCR terpisah menggunakan kapabilitas multimodal Gemini.
+                    Membaca screenshot JPG/PNG dan dokumen PDF sekaligus tanpa
+                    OCR terpisah menggunakan kapabilitas multimodal Gemini.
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl border border-stone-200/80 bg-white space-y-1.5 shadow-2xs luxury-card">
+                <div className="p-4 rounded-sm border border-stone-200 bg-white space-y-1.5 luxury-card">
                   <div className="flex items-center gap-2 font-bold text-sm text-stone-900">
                     <TrendingUp className="w-4 h-4 text-blue-600" />
                     <span>Auditable Source Tracking</span>
                   </div>
                   <p className="text-xs text-stone-500 leading-relaxed font-medium">
-                    Setiap angka aset terikat langsung dengan nama file sumber dokumen aslinya untuk verifikasi yang akurat.
+                    Setiap angka aset terikat langsung dengan nama file sumber
+                    dokumen aslinya untuk verifikasi yang akurat.
                   </p>
                 </div>
               </div>
@@ -267,6 +285,7 @@ export default function Home() {
                 onAddMore={() => setIsAddingMore(true)}
                 isPrivate={isPrivate}
                 onSelectLiability={handleSelectLiability}
+                currencyMode={currencyMode}
               />
 
               {/* Executive Summary */}
@@ -289,15 +308,18 @@ export default function Home() {
             liabilities={portfolio.liabilities}
             isPrivate={isPrivate}
             selectedLiability={selectedLiability}
+            currencyMode={currencyMode}
           />
         )}
 
         {/* Footer */}
         <footer className="border-t border-stone-200/80 py-6 text-center text-xs text-stone-500 bg-white mt-12">
           <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span>© 2026 AngelWealth. Private Wealth & Asset Aggregator AI.</span>
+            <span>
+              © 2026 AngelWealth. Private Wealth & Asset Aggregator AI.
+            </span>
             <span className="font-mono text-[11px] text-stone-400">
-              Fluent HQ Inspired Luxury Design • Zero-Database Local Privacy
+              Zero-Database Local Privacy
             </span>
           </div>
         </footer>

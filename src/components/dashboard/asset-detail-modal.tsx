@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { formatIdr } from "@/lib/formatters";
+import { formatIdr, formatCurrencyValue } from "@/lib/formatters";
 import { CATEGORY_CONFIG } from "@/lib/math";
 import {
   AssetCategory,
@@ -31,6 +31,7 @@ interface AssetDetailModalProps {
   liabilities: ExtractedLiabilityItem[];
   isPrivate?: boolean;
   selectedLiability?: ExtractedLiabilityItem | null;
+  currencyMode?: "IDR" | "USD";
 }
 
 export function AssetDetailModal({
@@ -41,6 +42,7 @@ export function AssetDetailModal({
   liabilities,
   isPrivate = false,
   selectedLiability,
+  currencyMode = "IDR",
 }: AssetDetailModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -63,7 +65,7 @@ export function AssetDetailModal({
   const modalTitle = isLiabilityMode
     ? "Rincian Liabilitas & Kewajiban"
     : currentCategoryConfig
-    ? `${currentCategoryConfig.icon} ${currentCategoryConfig.label}`
+    ? currentCategoryConfig.label
     : "Rincian Semua Aset";
 
   // Filter assets
@@ -99,18 +101,18 @@ export function AssetDetailModal({
       {/* Click outside backdrop */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col rounded-3xl border border-stone-200/90 bg-white shadow-2xl overflow-hidden z-10 luxury-card">
+      <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col rounded-sm border border-stone-200 bg-white overflow-hidden z-10 luxury-card">
         {/* Header */}
         <div className="p-6 border-b border-stone-100 flex items-center justify-between gap-4 bg-stone-50/70">
           <div className="flex items-center gap-3">
             {currentCategoryConfig && (
               <span
-                className="w-4 h-4 rounded-full shadow-2xs"
+                className="w-4 h-4 rounded-full"
                 style={{ backgroundColor: currentCategoryConfig.color }}
               />
             )}
             {isLiabilityMode && (
-              <span className="w-4 h-4 rounded-full bg-rose-500 shadow-2xs" />
+              <span className="w-4 h-4 rounded-full bg-rose-500" />
             )}
             <div>
               <h3 className="text-lg sm:text-xl font-bold tracking-tight text-stone-900">
@@ -121,14 +123,14 @@ export function AssetDetailModal({
                   <span>
                     Audit Hutang • Nominal:{" "}
                     <strong className="font-bold text-rose-600 font-mono tabular-nums">
-                      {formatIdr(selectedLiability?.amountIdr || 0, isPrivate)}
+                      {formatCurrencyValue(selectedLiability?.amountIdr || 0, currencyMode, isPrivate)}
                     </strong>
                   </span>
                 ) : (
                   <span>
                     {filteredAssets.length} aset terdata • Subtotal:{" "}
                     <strong className="font-bold text-stone-900 font-mono tabular-nums">
-                      {formatIdr(categoryTotal, isPrivate)}
+                      {formatCurrencyValue(categoryTotal, currencyMode, isPrivate)}
                     </strong>
                   </span>
                 )}
@@ -139,7 +141,7 @@ export function AssetDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
+            className="p-2 rounded-sm text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -173,7 +175,7 @@ export function AssetDetailModal({
           {/* LIABILITY DETAIL VIEW */}
           {isLiabilityMode && selectedLiability && (
             <div className="space-y-4">
-              <div className="p-5 rounded-2xl border border-rose-200/80 bg-rose-50/30 space-y-3">
+              <div className="p-5 rounded-sm border border-rose-200 bg-rose-50/30 space-y-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-rose-600">
@@ -188,7 +190,7 @@ export function AssetDetailModal({
                       Sisa Pokok
                     </span>
                     <p className="text-xl font-bold font-mono text-rose-600 tabular-nums">
-                      {formatIdr(selectedLiability.amountIdr, isPrivate)}
+                      {formatCurrencyValue(selectedLiability.amountIdr, currencyMode, isPrivate)}
                     </p>
                   </div>
                 </div>
@@ -210,7 +212,7 @@ export function AssetDetailModal({
                 <div className="flex items-center gap-2 text-xs text-stone-600 pt-2 border-t border-rose-100">
                   <FileText className="w-3.5 h-3.5 text-rose-500" />
                   <span>Berkas Audit:</span>
-                  <span className="px-2.5 py-1 rounded-md bg-white border border-rose-200 font-mono text-[11px] text-stone-800">
+                  <span className="px-2.5 py-1 rounded-sm bg-white border border-rose-200 font-mono text-[11px] text-stone-800">
                     {selectedLiability.sourceFile}
                   </span>
                 </div>
@@ -229,7 +231,7 @@ export function AssetDetailModal({
             filteredAssets.map((item) => (
               <div
                 key={item.id}
-                className="p-4 sm:p-4.5 rounded-2xl border border-stone-200/70 bg-stone-50/30 hover:border-stone-300 hover:bg-stone-50/80 transition-all space-y-3 luxury-card"
+                className="p-4 sm:p-4.5 rounded-sm border border-stone-200 bg-stone-50/30 hover:border-stone-300 hover:bg-stone-50/80 transition-all space-y-3 luxury-card"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="space-y-0.5">
@@ -242,10 +244,10 @@ export function AssetDetailModal({
                         onClick={() =>
                           handleCopy(
                             item.id,
-                            `${item.name} - ${formatIdr(item.valueIdr)} (${item.sourceFile})`
+                            `${item.name} - ${formatCurrencyValue(item.valueIdr, currencyMode)} (${item.sourceFile})`
                           )
                         }
-                        className="p-1 rounded text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
+                        className="p-1 rounded-sm text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
                         title="Salin rincian item"
                       >
                         {copiedId === item.id ? (
@@ -266,7 +268,7 @@ export function AssetDetailModal({
 
                   <div className="text-left sm:text-right">
                     <p className="text-base sm:text-lg font-bold font-mono text-stone-900 tabular-nums">
-                      {formatIdr(item.valueIdr, isPrivate)}
+                      {formatCurrencyValue(item.valueIdr, currencyMode, isPrivate)}
                     </p>
                     {item.originalCurrency &&
                       item.originalCurrency !== "IDR" &&
@@ -283,7 +285,7 @@ export function AssetDetailModal({
                 {(item.quantity || item.notes) && (
                   <div className="flex items-center gap-2.5 text-xs text-stone-600 pt-1 flex-wrap">
                     {item.quantity && (
-                      <span className="px-2 py-0.5 rounded-md bg-stone-100 border border-stone-200 font-mono text-[11px] text-stone-800">
+                      <span className="px-2 py-0.5 rounded-sm bg-stone-100 border border-stone-200 font-mono text-[11px] text-stone-800">
                         Volume: {item.quantity.toLocaleString()} {item.unit || "unit"}
                       </span>
                     )}
@@ -297,11 +299,11 @@ export function AssetDetailModal({
                 )}
 
                 {/* Audit Source Badge */}
-                <div className="pt-2 border-t border-stone-200/50 flex items-center justify-between text-[11px] text-stone-500 flex-wrap gap-2">
+                <div className="pt-2 border-t border-stone-200 flex items-center justify-between text-[11px] text-stone-500 flex-wrap gap-2">
                   <div className="flex items-center gap-1.5">
                     {getFileIcon(item.sourceFile)}
                     <span className="text-stone-400">Berkas Sumber:</span>
-                    <span className="font-mono font-semibold text-stone-800 px-2 py-0.5 rounded-md bg-orange-50/80 border border-orange-200/60 text-[10px]">
+                    <span className="font-mono font-semibold text-stone-800 px-2 py-0.5 rounded-sm bg-orange-50/80 border border-orange-200/60 text-[10px]">
                       {item.sourceFile}
                     </span>
                   </div>
@@ -326,7 +328,7 @@ export function AssetDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-white font-medium text-xs transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-sm bg-stone-900 hover:bg-stone-800 text-white font-medium text-xs transition-colors cursor-pointer"
           >
             Tutup
           </button>
