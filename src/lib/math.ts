@@ -21,73 +21,73 @@ export const CATEGORY_CONFIG: Record<
   PROPERTI: {
     label: "Properti & Tanah",
     icon: "",
-    color: "#80283E", // Deep Rich Burgundy
-    badgeBg: "#FDF2F4",
-    badgeText: "#6E1B2E",
+    color: "#D9826C", // Soft Terracotta / Warm Brick (identik dengan bata & tanah liat)
+    badgeBg: "#FDF3F0",
+    badgeText: "#9E4732",
     description: "Tanah, rumah hunian, ruko komersial, dan apartemen",
   },
   SAHAM: {
     label: "Saham (IHSG & US)",
     icon: "",
-    color: "#2563EB", // Vibrant Royal Blue
-    badgeBg: "#EFF6FF",
-    badgeText: "#1D4ED8",
+    color: "#5B9BD5", // Lively Cornflower Blue (identik dengan grafik bursa & korporat modern)
+    badgeBg: "#EFF6FC",
+    badgeText: "#2B6296",
     description: "Portofolio saham bursa dan indeks ekuitas",
   },
   KAS_DEPOSITO: {
     label: "Kas & Deposito",
     icon: "",
-    color: "#059669", // Emerald Cash Green
-    badgeBg: "#ECFDF5",
-    badgeText: "#047857",
+    color: "#52B788", // Fresh Mint Emerald (identik dengan uang tunai, likuiditas & pertumbuhan)
+    badgeBg: "#EEF8F3",
+    badgeText: "#287A54",
     description: "Tabungan bank, deposito berjangka, dan kas likuid",
   },
   OBLIGASI_SBN: {
     label: "Obligasi & SBN",
     icon: "",
-    color: "#0284C7", // Cerulean Sky Blue
-    badgeBg: "#F0F9FF",
-    badgeText: "#0369A1",
+    color: "#48A9A6", // Soft Seafoam Teal (memberi kesan stabil, aman, & institusional)
+    badgeBg: "#EDF7F7",
+    badgeText: "#256E6C",
     description: "Surat Berharga Negara, Sukuk, dan Obligasi korporasi",
   },
   EMAS_LOGAM_MULIA: {
     label: "Emas & Logam Mulia",
     icon: "",
-    color: "#D97706", // Warm Amber Gold
-    badgeBg: "#FFFBEB",
-    badgeText: "#B45309",
+    color: "#E0A952", // Warm Honey Gold (kuning keemasan yang hidup, tidak kusam/cokelat)
+    badgeBg: "#FCF7EE",
+    badgeText: "#94661B",
     description: "Emas batangan Antam, perak, dan logam mulia fisik",
   },
   KENDARAAN: {
     label: "Kendaraan",
     icon: "",
-    color: "#EA580C", // Terracotta Coral
-    badgeBg: "#FFF7ED",
-    badgeText: "#C2410C",
+    color: "#6C8EAD", // Soft Steel Blue / Automotive Silver-Blue (dipisah dari warna tanah properti)
+    badgeBg: "#F1F5F9",
+    badgeText: "#3D5A75",
     description: "Mobil mewah, motor koleksi, dan kendaraan pribadi",
   },
   CRYPTO: {
     label: "Kripto (BTC & ETH)",
     icon: "",
-    color: "#7C3AED", // Royal Violet Purple
-    badgeBg: "#F5F3FF",
-    badgeText: "#6D28D9",
+    color: "#9B7EDE", // Lively Soft Lavender / Web3 Purple (modern, digital, & hidup)
+    badgeBg: "#F5F2FC",
+    badgeText: "#5E41A1",
     description: "Bitcoin, Ethereum, stablecoin, dan web3 assets",
   },
   PERUSAHAAN_SENDIRI: {
     label: "Perusahaan & Bisnis",
     icon: "",
-    color: "#475569", // Slate Charcoal Steel
-    badgeBg: "#F8FAFC",
-    badgeText: "#334155",
+    color: "#6E78B8", // Soft Periwinkle Indigo (kesan eksekutif, profesional, namun tetap cerah)
+    badgeBg: "#F1F2FA",
+    badgeText: "#414A87",
     description: "Kepemilikan saham perseroan tertutup, CV, dan ekuitas bisnis",
   },
   LAINNYA: {
     label: "Aset Lainnya",
     icon: "",
-    color: "#78716C", // Neutral Stone Taupe
-    badgeBg: "#F5F5F4",
-    badgeText: "#44403C",
+    color: "#B5927B", // Soft Warm Camel / Sand (kesan barang koleksi, kulit, & jam tangan mewah)
+    badgeBg: "#F9F5F2",
+    badgeText: "#785843",
     description: "Barang seni, jam tangan mewah, dan koleksi berharga",
   },
 };

@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { genAI, GEMINI_MODEL, GEMINI_BASE_URL, GEMINI_API_KEY } from "@/lib/gemini";
+import {
+  genAI,
+  GEMINI_MODEL,
+  GEMINI_BASE_URL,
+  GEMINI_API_KEY,
+  GEMINI_CANDIDATE_MODELS,
+} from "@/lib/gemini";
 import { assetExtractionSchema } from "@/lib/schema";
 import {
   ExtractedAssetItem,
@@ -203,10 +209,7 @@ export async function POST(req: NextRequest) {
     let lastError: any = null;
     const maxRetries = 2;
 
-    const candidateModels = [GEMINI_MODEL];
-    if (GEMINI_MODEL !== "FireAce") {
-      candidateModels.push("FireAce");
-    }
+    const candidateModels = GEMINI_CANDIDATE_MODELS;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       const modelToUse =
