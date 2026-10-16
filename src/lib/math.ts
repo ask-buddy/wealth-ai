@@ -21,73 +21,73 @@ export const CATEGORY_CONFIG: Record<
   PROPERTI: {
     label: "Properti & Tanah",
     icon: "",
-    color: "#A56372", // Soft Dusty Rose-Burgundy
-    badgeBg: "#F7EDF0",
-    badgeText: "#7A2D3E",
+    color: "#80283E", // Deep Rich Burgundy
+    badgeBg: "#FDF2F4",
+    badgeText: "#6E1B2E",
     description: "Tanah, rumah hunian, ruko komersial, dan apartemen",
   },
   SAHAM: {
     label: "Saham (IHSG & US)",
     icon: "",
-    color: "#5C7993", // Soft Slate Steel Blue
-    badgeBg: "#EDF3F7",
-    badgeText: "#2F4D66",
+    color: "#2563EB", // Vibrant Royal Blue
+    badgeBg: "#EFF6FF",
+    badgeText: "#1D4ED8",
     description: "Portofolio saham bursa dan indeks ekuitas",
   },
   KAS_DEPOSITO: {
     label: "Kas & Deposito",
     icon: "",
-    color: "#B3976B", // Soft Warm Champagne Sand
-    badgeBg: "#F7F4EE",
-    badgeText: "#6F562E",
+    color: "#059669", // Emerald Cash Green
+    badgeBg: "#ECFDF5",
+    badgeText: "#047857",
     description: "Tabungan bank, deposito berjangka, dan kas likuid",
   },
   OBLIGASI_SBN: {
     label: "Obligasi & SBN",
     icon: "",
-    color: "#768E77", // Soft Muted Sage
-    badgeBg: "#EFF4F0",
-    badgeText: "#3D543E",
+    color: "#0284C7", // Cerulean Sky Blue
+    badgeBg: "#F0F9FF",
+    badgeText: "#0369A1",
     description: "Surat Berharga Negara, Sukuk, dan Obligasi korporasi",
   },
   EMAS_LOGAM_MULIA: {
     label: "Emas & Logam Mulia",
     icon: "",
-    color: "#BA9C5E", // Soft Antique Gold
-    badgeBg: "#F9F6EE",
-    badgeText: "#735A22",
+    color: "#D97706", // Warm Amber Gold
+    badgeBg: "#FFFBEB",
+    badgeText: "#B45309",
     description: "Emas batangan Antam, perak, dan logam mulia fisik",
   },
   KENDARAAN: {
     label: "Kendaraan",
     icon: "",
-    color: "#5F8F94", // Soft Ocean Pine / Muted Teal
-    badgeBg: "#EFF5F6",
-    badgeText: "#2E5B60",
+    color: "#EA580C", // Terracotta Coral
+    badgeBg: "#FFF7ED",
+    badgeText: "#C2410C",
     description: "Mobil mewah, motor koleksi, dan kendaraan pribadi",
   },
   CRYPTO: {
     label: "Kripto (BTC & ETH)",
     icon: "",
-    color: "#8F799E", // Soft Dusty Plum / Mauve
-    badgeBg: "#F4EFF6",
-    badgeText: "#5A426B",
+    color: "#7C3AED", // Royal Violet Purple
+    badgeBg: "#F5F3FF",
+    badgeText: "#6D28D9",
     description: "Bitcoin, Ethereum, stablecoin, dan web3 assets",
   },
   PERUSAHAAN_SENDIRI: {
     label: "Perusahaan & Bisnis",
     icon: "",
-    color: "#6D7C9E", // Soft Slate Dusk
-    badgeBg: "#EFF2F7",
-    badgeText: "#3A4A6E",
+    color: "#475569", // Slate Charcoal Steel
+    badgeBg: "#F8FAFC",
+    badgeText: "#334155",
     description: "Kepemilikan saham perseroan tertutup, CV, dan ekuitas bisnis",
   },
   LAINNYA: {
     label: "Aset Lainnya",
     icon: "",
-    color: "#9E8075", // Soft Warm Rosewood
-    badgeBg: "#F6F1F0",
-    badgeText: "#63483E",
+    color: "#78716C", // Neutral Stone Taupe
+    badgeBg: "#F5F5F4",
+    badgeText: "#44403C",
     description: "Barang seni, jam tangan mewah, dan koleksi berharga",
   },
 };
@@ -120,7 +120,10 @@ export function parseFlexibleNumber(val: any): number {
     // Only commas (e.g. "56,498" or "12,5")
     if (s.includes(",") && !s.includes(".")) {
       const parts = s.split(",");
-      if (parts.length > 1 && parts.every((p, i) => i === 0 || p.length === 3)) {
+      if (
+        parts.length > 1 &&
+        parts.every((p, i) => i === 0 || p.length === 3)
+      ) {
         s = s.replace(/,/g, "");
       } else {
         s = s.replace(",", ".");
@@ -164,7 +167,26 @@ export function parseFlexibleNumber(val: any): number {
 
 export function normalizeCategory(cat: string | undefined): AssetCategory {
   if (!cat) return "LAINNYA";
-  const upper = String(cat).toUpperCase().replace(/[\s-_]+/g, "_");
+  const upper = String(cat)
+    .toUpperCase()
+    .trim()
+    .replace(/[\s-_]+/g, "_");
+
+  // Direct exact match
+  const validCategories: AssetCategory[] = [
+    "PROPERTI",
+    "SAHAM",
+    "KAS_DEPOSITO",
+    "OBLIGASI_SBN",
+    "EMAS_LOGAM_MULIA",
+    "KENDARAAN",
+    "CRYPTO",
+    "PERUSAHAAN_SENDIRI",
+    "LAINNYA",
+  ];
+  if (validCategories.includes(upper as AssetCategory)) {
+    return upper as AssetCategory;
+  }
 
   if (
     upper.includes("SAHAM") ||
@@ -181,7 +203,9 @@ export function normalizeCategory(cat: string | undefined): AssetCategory {
     upper.includes("BANK") ||
     upper.includes("CASH") ||
     upper.includes("SAVING") ||
-    upper.includes("GIRO")
+    upper.includes("GIRO") ||
+    upper.includes("DOMPET") ||
+    upper.includes("WALLET")
   ) {
     return "KAS_DEPOSITO";
   }
@@ -217,7 +241,8 @@ export function normalizeCategory(cat: string | undefined): AssetCategory {
     upper.includes("EMAS") ||
     upper.includes("GOLD") ||
     upper.includes("LOGAM") ||
-    upper.includes("PERAK")
+    upper.includes("PERAK") ||
+    upper.includes("SILVER")
   ) {
     return "EMAS_LOGAM_MULIA";
   }
@@ -225,7 +250,8 @@ export function normalizeCategory(cat: string | undefined): AssetCategory {
     upper.includes("KENDARAAN") ||
     upper.includes("VEHICLE") ||
     upper.includes("MOBIL") ||
-    upper.includes("MOTOR")
+    upper.includes("MOTOR") ||
+    upper.includes("CAR")
   ) {
     return "KENDARAAN";
   }
@@ -240,6 +266,7 @@ export function normalizeCategory(cat: string | undefined): AssetCategory {
     return "PERUSAHAAN_SENDIRI";
   }
 
+  // Fallback to LAINNYA if not recognized
   return "LAINNYA";
 }
 
@@ -247,63 +274,106 @@ export function calculatePortfolio(
   raw: RawWealthAnalysis,
   sourceFiles: string[] = [],
 ): WealthPortfolio {
-  const rawAssets = raw.assets || (raw as any).assetList || (raw as any).Assets || [];
-  const rawLiabilities = raw.liabilities || (raw as any).liabilityList || (raw as any).Liabilities || [];
+  const rawAssets =
+    raw.assets || (raw as any).assetList || (raw as any).Assets || [];
+  const rawLiabilities =
+    raw.liabilities ||
+    (raw as any).liabilityList ||
+    (raw as any).Liabilities ||
+    [];
 
   // Robust asset normalization supporting valueIdr, valueIDR, description, etc.
-  const assets: ExtractedAssetItem[] = rawAssets.map((item: any, idx: number) => {
-    const value = parseFlexibleNumber(
-      item.valueIdr ??
-      item.valueIDR ??
-      item.value_idr ??
-      item.value ??
-      item.amountIdr ??
-      item.amountIDR ??
-      item.amount ??
-      item.nominal ??
-      item.totalValue ??
-      item.totalValueIDR ??
-      item.total
-    );
+  const assets: ExtractedAssetItem[] = rawAssets.map(
+    (item: any, idx: number) => {
+      const value = parseFlexibleNumber(
+        item.valueIdr ??
+          item.valueIDR ??
+          item.value_idr ??
+          item.value ??
+          item.amountIdr ??
+          item.amountIDR ??
+          item.amount ??
+          item.nominal ??
+          item.totalValue ??
+          item.totalValueIDR ??
+          item.total,
+      );
 
-    return {
-      id: String(item.id || item.ID || `ast-${idx + 1}-${Math.random().toString(36).substring(2, 7)}`),
-      name: item.name || item.assetName || item.nama || `Aset #${idx + 1}`,
-      category: normalizeCategory(item.category),
-      institution: item.institution || item.platform || item.broker || item.bank || "",
-      quantity: parseFlexibleNumber(item.quantity ?? item.volume ?? item.lot ?? item.shares) || undefined,
-      unit: item.unit || item.satuan || undefined,
-      valueIdr: value,
-      originalCurrency: item.originalCurrency || item.currency || "IDR",
-      originalValue: parseFlexibleNumber(item.originalValue ?? item.original_value) || value,
-      sourceFile: item.sourceFile || item.source_file || item.fileName || sourceFiles[0] || "Dokumen Sumber",
-      notes: item.notes || item.description || item.keterangan || item.deskripsi || undefined,
-    };
-  });
+      return {
+        id: String(
+          item.id ||
+            item.ID ||
+            `ast-${idx + 1}-${Math.random().toString(36).substring(2, 7)}`,
+        ),
+        name: item.name || item.assetName || item.nama || `Aset #${idx + 1}`,
+        category: normalizeCategory(item.category),
+        institution:
+          item.institution || item.platform || item.broker || item.bank || "",
+        quantity:
+          parseFlexibleNumber(
+            item.quantity ?? item.volume ?? item.lot ?? item.shares,
+          ) || undefined,
+        unit: item.unit || item.satuan || undefined,
+        valueIdr: value,
+        originalCurrency: item.originalCurrency || item.currency || "IDR",
+        originalValue:
+          parseFlexibleNumber(item.originalValue ?? item.original_value) ||
+          value,
+        sourceFile:
+          item.sourceFile ||
+          item.source_file ||
+          item.fileName ||
+          sourceFiles[0] ||
+          "Dokumen Sumber",
+        notes:
+          item.notes ||
+          item.description ||
+          item.keterangan ||
+          item.deskripsi ||
+          undefined,
+      };
+    },
+  );
 
   // Robust liability normalization supporting amountIdr, amountIDR, etc.
-  const liabilities: ExtractedLiabilityItem[] = rawLiabilities.map((item: any, idx: number) => {
-    const amount = parseFlexibleNumber(
-      item.amountIdr ??
-      item.amountIDR ??
-      item.amount_idr ??
-      item.amount ??
-      item.valueIdr ??
-      item.valueIDR ??
-      item.value ??
-      item.nominal ??
-      item.total
-    );
+  const liabilities: ExtractedLiabilityItem[] = rawLiabilities.map(
+    (item: any, idx: number) => {
+      const amount = parseFlexibleNumber(
+        item.amountIdr ??
+          item.amountIDR ??
+          item.amount_idr ??
+          item.amount ??
+          item.valueIdr ??
+          item.valueIDR ??
+          item.value ??
+          item.nominal ??
+          item.total,
+      );
 
-    return {
-      id: String(item.id || item.ID || `lia-${idx + 1}-${Math.random().toString(36).substring(2, 7)}`),
-      name: item.name || item.liabilityName || item.nama || `Liabilitas #${idx + 1}`,
-      lender: item.lender || item.creditor || item.kreditor || item.bank || "",
-      amountIdr: amount,
-      sourceFile: item.sourceFile || item.source_file || item.fileName || sourceFiles[0] || "Dokumen Sumber",
-      notes: item.notes || item.description || item.keterangan || undefined,
-    };
-  });
+      return {
+        id: String(
+          item.id ||
+            item.ID ||
+            `lia-${idx + 1}-${Math.random().toString(36).substring(2, 7)}`,
+        ),
+        name:
+          item.name ||
+          item.liabilityName ||
+          item.nama ||
+          `Liabilitas #${idx + 1}`,
+        lender:
+          item.lender || item.creditor || item.kreditor || item.bank || "",
+        amountIdr: amount,
+        sourceFile:
+          item.sourceFile ||
+          item.source_file ||
+          item.fileName ||
+          sourceFiles[0] ||
+          "Dokumen Sumber",
+        notes: item.notes || item.description || item.keterangan || undefined,
+      };
+    },
+  );
 
   // Sum total assets
   const calculatedAssetsTotal = assets.reduce(
@@ -312,8 +382,8 @@ export function calculatePortfolio(
   );
   const rawFallbackAssetsTotal = parseFlexibleNumber(
     (raw as any).totalAssetsIdr ??
-    (raw as any).totalAssetsIDR ??
-    (raw as any).total_assets_idr
+      (raw as any).totalAssetsIDR ??
+      (raw as any).total_assets_idr,
   );
   const totalAssetsIdr =
     calculatedAssetsTotal > 0 ? calculatedAssetsTotal : rawFallbackAssetsTotal;
@@ -325,11 +395,13 @@ export function calculatePortfolio(
   );
   const rawFallbackLiabilitiesTotal = parseFlexibleNumber(
     (raw as any).totalLiabilitiesIdr ??
-    (raw as any).totalLiabilitiesIDR ??
-    (raw as any).total_liabilities_idr
+      (raw as any).totalLiabilitiesIDR ??
+      (raw as any).total_liabilities_idr,
   );
   const totalLiabilitiesIdr =
-    calculatedLiabilitiesTotal > 0 ? calculatedLiabilitiesTotal : rawFallbackLiabilitiesTotal;
+    calculatedLiabilitiesTotal > 0
+      ? calculatedLiabilitiesTotal
+      : rawFallbackLiabilitiesTotal;
 
   // Net worth
   const totalNetWorthIdr = totalAssetsIdr - totalLiabilitiesIdr;
@@ -418,7 +490,8 @@ export function calculatePortfolio(
       const topCategory = categories[0]?.label || "Aset Terdaftar";
       executiveSummary = `Audit portofolio berhasil mengidentifikasi ${assets.length} instrumen aset dengan total akumulasi ${new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(totalNetWorthIdr)}. Konsentrasi alokasi terbesar berada pada sektor ${topCategory}.`;
     } else {
-      executiveSummary = "Dokumen berhasil diproses in-memory tanpa liabilitas berlebih.";
+      executiveSummary =
+        "Dokumen berhasil diproses in-memory tanpa liabilitas berlebih.";
     }
   }
 

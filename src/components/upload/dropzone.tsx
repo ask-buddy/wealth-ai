@@ -20,9 +20,17 @@ import { savePortfolioToStorage } from "@/lib/storage";
 
 interface DropzoneProps {
   onAnalysisSuccess: (portfolio: WealthPortfolio) => void;
+  existingPortfolio?: WealthPortfolio | null;
+  isAddingMore?: boolean;
+  onCancel?: () => void;
 }
 
-export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
+export function DocumentDropzone({
+  onAnalysisSuccess,
+  existingPortfolio,
+  isAddingMore = false,
+  onCancel,
+}: DropzoneProps) {
   const [files, setFiles] = useState<UploadedFileItem[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -182,13 +190,75 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
         throw new Error(json.error || "Gagal memproses dokumen.");
       }
 
-      setAnalysisStep("Mengkalkulasi alokasi 8 kategori aset...");
+      setAnalysisStep(
+        existingPortfolio && isAddingMore
+          ? "Menggabungkan dokumen baru & mengkalkulasi ulang alokasi aset..."
+          : "Mengkalkulasi alokasi 8 kategori aset..."
+      );
       setScanProgress(100);
       const fileNames = files.map((f) => f.fileName);
-      const calculatedPortfolio = calculatePortfolio(json.data, fileNames);
 
-      savePortfolioToStorage(calculatedPortfolio);
-      onAnalysisSuccess(calculatedPortfolio);
+      let finalPortfolio: WealthPortfolio;
+      if (existingPortfolio && isAddingMore) {
+        // Extract all existing assets
+        const existingAssets = existingPortfolio.assets || [];
+        const newAssets = json.data.assets || [];
+
+        // Merge assets avoiding identical duplicates
+        const mergedAssets = [...existingAssets];
+        for (const n of newAssets) {
+          const isDup = mergedAssets.some(
+            (e) =>
+              e.sourceFile.trim().toLowerCase() ===
+                n.sourceFile.trim().toLowerCase() &&
+              e.name.trim().toLowerCase() === n.name.trim().toLowerCase() &&
+              e.valueIdr === n.valueIdr
+          );
+          if (!isDup) {
+            mergedAssets.push(n);
+          }
+        }
+
+        // Merge liabilities avoiding duplicates
+        const existingLiabilities = existingPortfolio.liabilities || [];
+        const newLiabilities = json.data.liabilities || [];
+        const mergedLiabilities = [...existingLiabilities];
+        for (const n of newLiabilities) {
+          const isDup = mergedLiabilities.some(
+            (e) =>
+              e.sourceFile.trim().toLowerCase() ===
+                n.sourceFile.trim().toLowerCase() &&
+              e.name.trim().toLowerCase() === n.name.trim().toLowerCase() &&
+              e.amountIdr === n.amountIdr
+          );
+          if (!isDup) {
+            mergedLiabilities.push(n);
+          }
+        }
+
+        const combinedFiles = Array.from(
+          new Set([
+            ...(existingPortfolio.sourceFiles || []),
+            ...fileNames,
+          ])
+        );
+
+        const mergedRawData: any = {
+          currency: "IDR",
+          assets: mergedAssets,
+          liabilities: mergedLiabilities,
+          keyHighlights: json.data.keyHighlights || existingPortfolio.keyHighlights || [],
+          executiveSummary:
+            json.data.executiveSummary || existingPortfolio.executiveSummary,
+        };
+
+        finalPortfolio = calculatePortfolio(mergedRawData, combinedFiles);
+      } else {
+        finalPortfolio = calculatePortfolio(json.data, fileNames);
+      }
+
+      savePortfolioToStorage(finalPortfolio);
+      onAnalysisSuccess(finalPortfolio);
     } catch (err: any) {
       clearTimeout(timeoutId);
       console.error("Analysis process error:", err);
@@ -224,6 +294,29 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
+      {/* Mode Tambah Aset Informative Alert */}
+      {isAddingMore && (
+        <div className="p-3.5 sm:p-4 rounded-sm bg-[#faf0f3] border border-[#ecd0d8] flex items-center justify-between gap-3 text-xs text-[#80283e] animate-in fade-in duration-200">
+          <div className="flex items-center gap-2.5 font-medium">
+            <Sparkles className="w-4 h-4 shrink-0 text-[#80283e]" />
+            <span>
+              <strong>Mode Tambah Aset:</strong> Dokumen yang Anda unggah akan otomatis digabungkan dengan{" "}
+              {existingPortfolio?.assets?.length || 0}{" "}
+              aset yang sudah ada tanpa menghapus data sebelumnya.
+            </span>
+          </div>
+          {onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-3 py-1.5 rounded-sm bg-white hover:bg-stone-50 border border-[#ecd0d8] text-stone-700 text-xs font-semibold cursor-pointer shrink-0 transition-all shadow-2xs"
+            >
+              Batal
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Upload Drop Zone / Active Document Scanner View */}
       {isAnalyzing ? (
         <div className="relative border-2 border-[#80283e]/30 rounded-sm p-6 sm:p-10 text-center bg-gradient-to-b from-[#faf0f3]/70 via-white to-[#faf0f3]/40 luxury-card overflow-hidden animate-in fade-in duration-300">

@@ -149,7 +149,7 @@ export function PieBreakdownSection({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="p-3 rounded-sm border border-stone-200 bg-white text-xs space-y-1.5">
+        <div className="p-3 rounded-md border border-stone-200/90 bg-white/95 backdrop-blur-md shadow-2xl text-xs space-y-1.5 relative z-50 pointer-events-none min-w-[130px]">
           <p className="font-bold text-stone-900">{data.name}</p>
           <p className="text-stone-900 font-mono font-bold text-sm tabular-nums">
             {formatCurrencyValue(data.value, currencyMode, isPrivate)}
@@ -225,7 +225,10 @@ export function PieBreakdownSection({
               <div className="h-[340px] w-full relative flex items-center justify-center">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Tooltip content={<CustomTooltip />} />
+                    <Tooltip
+                      content={<CustomTooltip />}
+                      wrapperStyle={{ zIndex: 50, pointerEvents: "none" }}
+                    />
                     <Pie
                       data={activeChartData}
                       dataKey="value"
@@ -273,38 +276,31 @@ export function PieBreakdownSection({
                   </PieChart>
                 </ResponsiveContainer>
 
-                {/* DYNAMIC CENTER DISPLAY */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4 max-w-[130px] mx-auto">
-                  {activeHoveredItem ? (
-                    <div className="animate-in fade-in zoom-in-95 duration-150 space-y-0.5">
-                      <p className="text-[11px] font-bold text-stone-800 line-clamp-1 leading-tight">
-                        {activeHoveredItem.name}
-                      </p>
-                      <p className="text-xs font-extrabold font-mono text-[#80283e]">
-                        {activeHoveredItem.percentage}%
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-0.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                        {activeTab === "assets" ? "Konsolidasi" : "Total Beban"}
-                      </span>
-                      <p className="text-xs font-extrabold text-stone-900 font-mono">
-                        {activeTab === "assets"
-                          ? `${categories.length} Sektor`
-                          : `${liabilities.length} Hutang`}
-                      </p>
-                      <p className="text-[10px] text-stone-400 font-mono">
-                        {formatCompactCurrencyValue(
-                          activeTab === "assets"
-                            ? portfolio.totalAssetsIdr
-                            : portfolio.totalLiabilitiesIdr,
-                          currencyMode,
-                          isPrivate,
-                        )}
-                      </p>
-                    </div>
-                  )}
+                {/* DYNAMIC CENTER DISPLAY (Hides when hovered to prevent collision with floating card) */}
+                <div
+                  className={`absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4 max-w-[130px] mx-auto z-0 transition-opacity duration-150 ${
+                    hoveredKey ? "opacity-0" : "opacity-100"
+                  }`}
+                >
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                      {activeTab === "assets" ? "Konsolidasi" : "Total Beban"}
+                    </span>
+                    <p className="text-xs font-extrabold text-stone-900 font-mono">
+                      {activeTab === "assets"
+                        ? `${categories.length} Sektor`
+                        : `${liabilities.length} Hutang`}
+                    </p>
+                    <p className="text-[10px] text-stone-400 font-mono">
+                      {formatCompactCurrencyValue(
+                        activeTab === "assets"
+                          ? portfolio.totalAssetsIdr
+                          : portfolio.totalLiabilitiesIdr,
+                        currencyMode,
+                        isPrivate,
+                      )}
+                    </p>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -579,23 +575,6 @@ export function PieBreakdownSection({
                 )}
               </div>
             )}
-          </div>
-
-          {/* Footer Controls */}
-          <div className="mt-5 pt-4 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Data terverifikasi in-memory dari berkas audit</span>
-            </span>
-
-            <button
-              type="button"
-              onClick={onAddMore}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-stone-900 hover:bg-stone-800 text-white font-medium text-xs transition-all cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5 text-[#80283e]" />
-              <span>Tambah Dokumen / Aset</span>
-            </button>
           </div>
         </div>
       </div>

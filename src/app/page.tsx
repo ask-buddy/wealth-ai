@@ -6,6 +6,7 @@ import { NetWorthHero } from "@/components/dashboard/net-worth-hero";
 import { ExecutiveSummary } from "@/components/dashboard/executive-summary";
 import { PieBreakdownSection } from "@/components/dashboard/pie-breakdown-section";
 import { AssetDetailModal } from "@/components/dashboard/asset-detail-modal";
+import { ConfirmDeleteModal } from "@/components/dashboard/confirm-delete-modal";
 import { PrintableReport } from "@/components/export/printable-report";
 import {
   WealthPortfolio,
@@ -33,6 +34,7 @@ export default function Home() {
   const [selectedLiability, setSelectedLiability] =
     useState<ExtractedLiabilityItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [currencyMode, setCurrencyMode] = useState<"IDR" | "USD">("IDR");
@@ -66,18 +68,16 @@ export default function Home() {
   };
 
   const handleReset = () => {
-    if (
-      confirm(
-        "Apakah Anda yakin ingin menghapus seluruh data portofolio dari browser ini?",
-      )
-    ) {
-      clearPortfolioStorage();
-      setPortfolio(null);
-      setIsAddingMore(false);
-      setSelectedCategory(null);
-      setSelectedLiability(null);
-      setIsModalOpen(false);
-    }
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    clearPortfolioStorage();
+    setPortfolio(null);
+    setIsAddingMore(false);
+    setSelectedCategory(null);
+    setSelectedLiability(null);
+    setIsModalOpen(false);
   };
 
   const handleSelectCategory = (cat: AssetCategory) => {
@@ -224,7 +224,12 @@ export default function Home() {
               </div>
 
               {/* Upload Dropzone */}
-              <DocumentDropzone onAnalysisSuccess={handleAnalysisSuccess} />
+              <DocumentDropzone
+                onAnalysisSuccess={handleAnalysisSuccess}
+                existingPortfolio={portfolio}
+                isAddingMore={isAddingMore}
+                onCancel={() => setIsAddingMore(false)}
+              />
 
               {/* Security & Feature Badges */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 max-w-4xl mx-auto text-left">
@@ -316,6 +321,13 @@ export default function Home() {
             currencyMode={currencyMode}
           />
         )}
+
+        {/* Custom Confirmation Modal for Deletion */}
+        <ConfirmDeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={handleConfirmDelete}
+        />
 
         {/* Footer */}
         <footer className="border-t border-stone-200/80 py-6 text-center text-xs text-stone-500 bg-white mt-12">
