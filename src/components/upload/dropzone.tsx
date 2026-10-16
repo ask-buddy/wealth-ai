@@ -184,10 +184,32 @@ export function DocumentDropzone({
 
       clearTimeout(timeoutId);
 
-      const json = await res.json();
+      let json: any = null;
+      try {
+        json = await res.json();
+      } catch {
+        const text = await res.text().catch(() => "");
+        if (
+          res.status === 530 ||
+          text.includes("530") ||
+          text.toLowerCase().includes("cloudflare") ||
+          text.toLowerCase().includes("tunnel error")
+        ) {
+          throw new Error("Servernya lagi mati bang, besok lagi gwa nyalain wkwkwkw");
+        }
+        throw new Error("Gagal memproses dokumen dari server.");
+      }
 
       if (!res.ok || !json.success) {
-        throw new Error(json.error || "Gagal memproses dokumen.");
+        const errorMsg = json.error || "Gagal memproses dokumen.";
+        if (
+          errorMsg.includes("530") ||
+          errorMsg.toLowerCase().includes("cloudflare") ||
+          errorMsg.toLowerCase().includes("tunnel error")
+        ) {
+          throw new Error("Servernya lagi mati bang, besok lagi gwa nyalain wkwkwkw");
+        }
+        throw new Error(errorMsg);
       }
 
       setAnalysisStep(
@@ -283,11 +305,19 @@ export function DocumentDropzone({
       clearTimeout(timeoutId);
       console.error("Analysis process error:", err);
 
+      const msg = err.message || "";
       if (err.name === "AbortError") {
         setErrorMessage("Pemindaian dokumen telah dibatalkan.");
       } else if (
-        err.message?.includes("Failed to fetch") ||
-        err.message?.includes("NetworkError") ||
+        msg.includes("530") ||
+        msg.toLowerCase().includes("cloudflare") ||
+        msg.toLowerCase().includes("tunnel error") ||
+        msg.includes("Servernya lagi mati bang")
+      ) {
+        setErrorMessage("Servernya lagi mati bang, besok lagi gwa nyalain wkwkwkw");
+      } else if (
+        msg.includes("Failed to fetch") ||
+        msg.includes("NetworkError") ||
         (typeof navigator !== "undefined" && !navigator.onLine)
       ) {
         setErrorMessage(
@@ -295,7 +325,7 @@ export function DocumentDropzone({
         );
       } else {
         setErrorMessage(
-          err.message ||
+          msg ||
             "Terjadi kendala saat analisis. Silakan periksa koneksi dan coba kembali."
         );
       }

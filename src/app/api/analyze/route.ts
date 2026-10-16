@@ -450,6 +450,14 @@ export async function POST(req: NextRequest) {
     let friendlyMessage = "Terjadi kendala saat menganalisis dokumen.";
 
     if (
+      rawMsg.includes("530") ||
+      rawMsg.toLowerCase().includes("cloudflare") ||
+      rawMsg.toLowerCase().includes("tunnel error") ||
+      rawMsg.toLowerCase().includes("trycloudflare")
+    ) {
+      friendlyMessage =
+        "Servernya lagi mati bang, besok lagi gwa nyalain wkwkwkw";
+    } else if (
       rawMsg.includes("503") ||
       rawMsg.toLowerCase().includes("high demand") ||
       rawMsg.toLowerCase().includes("unavailable")
@@ -473,7 +481,11 @@ export async function POST(req: NextRequest) {
         "Respon analisis dokumen terpotong akibat gangguan jaringan. Silakan klik tombol untuk memproses ulang dokumen.";
     } else if (rawMsg) {
       friendlyMessage = rawMsg.replace(/^[^{]*\{/, "{").slice(0, 150);
-      if (friendlyMessage.startsWith("{")) {
+      if (
+        friendlyMessage.startsWith("{") ||
+        friendlyMessage.includes("<!DOCTYPE") ||
+        friendlyMessage.includes("<html")
+      ) {
         friendlyMessage =
           "Gagal memproses dokumen akibat gangguan jaringan atau layanan AI.";
       }
