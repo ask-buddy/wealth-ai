@@ -46,11 +46,15 @@ export default function Home() {
     useState<ExtractedLiabilityItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedPreviewFile, setSelectedPreviewFile] = useState<string | null>(null);
+  const [selectedPreviewFile, setSelectedPreviewFile] = useState<string | null>(
+    null,
+  );
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [currencyMode, setCurrencyMode] = useState<"IDR" | "USD">("IDR");
-  const [dashboardTab, setDashboardTab] = useState<"assets" | "liabilities">("assets");
+  const [dashboardTab, setDashboardTab] = useState<"assets" | "liabilities">(
+    "assets",
+  );
   const [usdRate, setUsdRate] = useState<number>(() => getGlobalUsdRate());
   const [rateLoading, setRateLoading] = useState(false);
   const [rateInfo, setRateInfo] = useState<{
@@ -335,7 +339,7 @@ export default function Home() {
                   </div>
                   <p className="text-xs text-stone-500 leading-relaxed font-medium">
                     Membaca screenshot JPG/PNG dan dokumen PDF sekaligus tanpa
-                    OCR terpisah menggunakan kapabilitas multimodal Gemini.
+                    OCR terpisah menggunakan kapabilitas multimodal.
                   </p>
                 </div>
 

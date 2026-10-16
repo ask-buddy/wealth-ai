@@ -123,8 +123,8 @@ export function AssetDetailModal({
   const getFileIcon = (fileName: string) => {
     const lower = fileName.toLowerCase();
     if (lower.endsWith(".pdf"))
-      return <FileText className="w-3.5 h-3.5 text-[#80283e]" />;
-    return <ImageIcon className="w-3.5 h-3.5 text-[#80283e]" />;
+      return <FileText className="w-3.5 h-3.5 text-stone-400" />;
+    return <ImageIcon className="w-3.5 h-3.5 text-stone-400" />;
   };
 
   return (
@@ -260,7 +260,7 @@ export function AssetDetailModal({
                 )}
 
                 <div className="flex items-center gap-2 text-xs text-stone-600 pt-2 border-t border-rose-100">
-                  <FileText className="w-3.5 h-3.5 text-[#80283e]" />
+                  <FileText className="w-3.5 h-3.5 text-stone-400" />
                   <span>Berkas Audit:</span>
                   <button
                     type="button"

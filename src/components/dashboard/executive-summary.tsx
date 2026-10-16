@@ -96,13 +96,13 @@ export function ExecutiveSummary({
 
       {/* Detected Source Documents Badge List */}
       {portfolio.sourceFiles && portfolio.sourceFiles.length > 0 && (
-        <div className="pt-3 border-t border-stone-100 flex flex-col sm:flex-row sm:items-center gap-3 text-xs text-stone-500">
-          <span className="font-semibold text-stone-800 flex items-center gap-1.5 shrink-0">
+        <div className="pt-3 border-t border-stone-100 flex items-start gap-2.5 sm:gap-3 text-xs text-stone-500">
+          <span className="font-semibold text-stone-800 flex items-center gap-1.5 shrink-0 pt-1">
             <FileText className="w-3.5 h-3.5 text-[#80283e]" />
             Dokumen Sumber Terverifikasi ({portfolio.sourceFiles.length}):
           </span>
 
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap flex-1">
             {portfolio.sourceFiles.map((file, idx) => (
               <button
                 key={idx}
