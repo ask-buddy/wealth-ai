@@ -17,10 +17,11 @@ npm install @google/genai recharts react-to-print zod
 ## 2. Phase-by-Phase Roadmap
 
 ### Phase 1: Environment & SDK Foundation
-- [ ] Buat file `.env.local` untuk menyimpan `GEMINI_API_KEY` (mengambil dari `apikey.txt`).
-- [ ] Install library yang diperlukan (`@google/genai`, `recharts`, `react-to-print`, `zod`).
-- [ ] Buat file `src/types/wealth.ts` untuk model data TypeScript yang lengkap.
-- [ ] Buat helper `src/lib/gemini.ts` dan schema validator di `src/lib/schema.ts`.
+- [x] Buat file `.env.local` untuk menyimpan `GEMINI_API_KEY` dan `GEMINI_BASE_URL` (mengarah ke 9router `http://localhost:2208/v1`).
+- [x] Install library yang diperlukan (`@google/genai`, `recharts`, `react-to-print`, `zod`).
+- [x] Buat file `src/types/wealth.ts` untuk model data TypeScript yang lengkap.
+- [x] Buat helper `src/lib/gemini.ts` dan schema validator di `src/lib/schema.ts` terhubung ke 9router.
+
 
 ### Phase 2: Stateless API Route (`/api/analyze`)
 - [ ] Buat `src/app/api/analyze/route.ts` dengan Next.js App Router POST handler.

@@ -1,13 +1,16 @@
 # Data Schema & Gemini AI Extraction Strategy
 
-## 1. SDK & Model Configuration
+## 1. SDK, Gateway & Model Configuration
 
-- **SDK:** `@google/genai` (Official Google Gen AI SDK)
-- **Model:** `gemini-2.5-flash` (or latest Flash multimodal model supporting structured outputs & multi-document parsing)
+- **AI Gateway & Proxy:** **9router** (`http://localhost:2208/v1`)
+- **API Key:** `sk-ce72aa2310c36158-dsg15r-2de4b7b2`
+- **SDK:** `@google/genai` (Official Google Gen AI SDK terhubung melalui `baseUrl` 9router)
+- **Model:** `gemini-3.8-flash` (model multimodal native Google dengan dukungan parsing dokumen PDF dan gambar multi-format)
 - **Parameters:**
   - `responseMimeType: "application/json"`
   - `responseSchema: wealthAnalysisSchema`
   - `temperature: 0.1` (Sangat rendah untuk memaksimalkan presisi ekstraksi angka dan meminimalkan halusinasi)
+
 
 ---
 

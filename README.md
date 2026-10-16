@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AngelWealth | Private Wealth & Asset Aggregator AI
 
-## Getting Started
+Aplikasi web intelijen portofolio kekayaan untuk **High-Net-Worth Individuals (HNWI)** berbasis **Next.js (App Router)** yang menghitung dan memetakan total kekayaan (*Net Worth*) secara instan dari dokumen finansial multi-format (*PDF laporan sekuritas, rekening koran, screenshot portofolio saham/kripto, sertifikat properti, akta perusahaan*).
 
-First, run the development server:
+Menggunakan arsitektur **Zero-Database & Local-First Privacy** dengan pemrosesan *in-memory* dan ekstraksi multimodal oleh model **Gemini 3.8 Flash** via **9router** gateway lokal.
+
+---
+
+## 🛠️ Konfigurasi Environment & 9router
+
+Aplikasi ini terhubung ke **9router** lokal sebagai router/proxy API LLM.
+
+### File `.env.local`
+Konfigurasi file `.env.local` di root proyek:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 9router Local Proxy Configuration
+GEMINI_API_KEY=sk-ce72aa2310c36158-dsg15r-2de4b7b2
+GEMINI_BASE_URL=http://localhost:2208/v1
+GEMINI_MODEL=gemini-3.8-flash
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Variabel | Nilai Default | Deskripsi |
+|---|---|---|
+| `GEMINI_API_KEY` | `sk-ce72aa23...` | API key autentikasi 9router |
+| `GEMINI_BASE_URL` | `http://localhost:2208/v1` | URL base endpoint proxy 9router lokal |
+| `GEMINI_MODEL` | `gemini-3.8-flash` | Model multimodal untuk ekstraksi terstruktur |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Memulai Aplikasi
 
-## Learn More
+1. **Install dependensi**:
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Jalankan development server**:
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Buka aplikasi**:
+   Akses [http://localhost:3000](http://localhost:3000) di browser Anda.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ✨ Fitur Utama
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Zero-Database & In-Memory Privacy**: Tidak ada database server. Semua dokumen dan nominal diproses secara *stateless in-memory* dan disimpan di `localStorage` peramban pengguna.
+- **Multimodal One-Shot Extraction**: Menganalisis dokumen PDF, JPG, JPEG, dan PNG sekaligus dengan interleaved prompting dan JSON Schema terstruktur.
+- **Auditable Source Tracking**: Setiap aset dan liabilitas terikat dengan berkas asal (`sourceFile`) untuk memudahkan peninjauan.
+- **Interactive Wealth Allocation**:
+  - Donut Chart & Stacked Bar distribusi aset interaktif.
+  - Drill-down rincian aset per kategori.
+  - Pemisahan tab *Total Aset* dan *Liabilitas* yang berfungsi penuh.
+- **Mode Privat (Stealth Mode)**: Tombol privasi untuk menyamarkan nilai nominal (`Rp ••••••••••`) seketika saat di tempat umum, dengan pintasan keyboard `P`.
+- **Ekspor Laporan PDF**: Unduh ringkasan audit kekayaan bersih langsung dalam format cetak resmi.

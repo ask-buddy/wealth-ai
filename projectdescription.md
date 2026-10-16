@@ -39,10 +39,12 @@ Pemilik bisnis dan eksekutif sering kali memiliki aset yang tersebar di banyak i
 - **Framework:** Next.js (App Router, TypeScript)
 - **Styling & UI Components:** Tailwind CSS, Shadcn UI, Lucide Icons
 - **Data Visualization:** Recharts (Pie Chart / Donut Chart interaktif)
-- **AI SDK:** `@google/genai` (Official Google Gen AI SDK terbaru — **JANGAN** gunakan `@google/generative-ai` yang sudah _deprecated_)
-- **AI Model:** `gemini-terbaru` (dengan `responseMimeType: "application/json"` dan `responseSchema`)
+- **AI Gateway & Proxy:** **9router** (`http://localhost:2208/v1`) dengan API Key `sk-ce72aa2310c36158-dsg15r-2de4b7b2`
+- **AI SDK:** `@google/genai` (Official Google Gen AI SDK terbaru terintegrasi via custom base URL 9router)
+- **AI Model:** `gemini-3.8-flash` (dengan `responseMimeType: "application/json"` dan `responseSchema`)
 - **State & Storage:** React State (`useState`, `useEffect`) + Browser `localStorage`
 - **PDF Export:** `react-to-print` atau `jspdf` + `html2canvas`
+
 
 ---
 
