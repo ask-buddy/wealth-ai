@@ -173,50 +173,6 @@ export function PieBreakdownSection({
 
   return (
     <div className="w-full space-y-6">
-      {/* Status Banner */}
-      <div className="rounded-sm border border-stone-200 bg-white overflow-hidden luxury-card">
-
-        {/* Sub-bar: Status Banner */}
-        <div className="px-6 py-3 bg-stone-50/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
-          <div className="flex items-center gap-2">
-            <span
-              className={`w-2.5 h-2.5 rounded-full inline-block ${
-                activeTab === "assets"
-                  ? "bg-emerald-500 animate-pulse"
-                  : "bg-[#80283e]"
-              }`}
-            />
-            <span className="text-stone-600 font-medium">
-              {activeTab === "assets"
-                ? "Kekayaan Bersih (Net Worth):"
-                : "Rasio Beban Hutang:"}
-            </span>
-            <span
-              className={`font-mono font-bold text-sm sm:text-base tabular-nums ${
-                activeTab === "assets" ? "text-emerald-600" : "text-rose-600"
-              }`}
-            >
-              {activeTab === "assets"
-                ? formatCurrencyValue(portfolio.totalNetWorthIdr, currencyMode, isPrivate)
-                : `${(portfolio.totalAssetsIdr > 0
-                    ? (portfolio.totalLiabilitiesIdr /
-                        portfolio.totalAssetsIdr) *
-                      100
-                    : 0
-                  ).toFixed(1)}% dari Total Aset`}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-sm bg-stone-200 text-stone-700 font-semibold text-xs">
-              {activeTab === "assets"
-                ? `${categories.length} Sektor Portofolio`
-                : `${liabilities.length} Item Liabilitas Aktif`}
-            </span>
-          </div>
-        </div>
-      </div>
-
       {/* Main Split Section: Chart on Left, Detail List on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* LEFT COLUMN: Clean Chart Card */}
@@ -518,7 +474,11 @@ export function PieBreakdownSection({
                         {/* Right: IDR / USD Amount + Chevron */}
                         <div className="flex items-center gap-3 shrink-0 ml-2">
                           <span className="text-sm sm:text-base font-bold font-mono text-stone-900 tabular-nums">
-                            {formatCurrencyValue(cat.totalIdr, currencyMode, isPrivate)}
+                            {formatCurrencyValue(
+                              cat.totalIdr,
+                              currencyMode,
+                              isPrivate,
+                            )}
                           </span>
                           <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-[#80283e] transition-all" />
                         </div>
@@ -601,7 +561,11 @@ export function PieBreakdownSection({
 
                           <div className="text-right shrink-0">
                             <p className="text-sm sm:text-base font-bold font-mono text-stone-900 tabular-nums">
-                              {formatCurrencyValue(lia.amountIdr, currencyMode, isPrivate)}
+                              {formatCurrencyValue(
+                                lia.amountIdr,
+                                currencyMode,
+                                isPrivate,
+                              )}
                             </p>
                             <span className="inline-flex items-center gap-1 text-[10px] text-stone-500 px-2 py-0.5 rounded-sm bg-stone-100 font-mono mt-1">
                               <FileText className="w-3 h-3 text-stone-400" />
