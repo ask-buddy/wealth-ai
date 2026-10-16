@@ -33,6 +33,7 @@ interface AssetDetailModalProps {
   selectedLiability?: ExtractedLiabilityItem | null;
   currencyMode?: "IDR" | "USD";
   onPreviewFile?: (fileName: string) => void;
+  usdRate?: number;
 }
 
 export function AssetDetailModal({
@@ -45,6 +46,7 @@ export function AssetDetailModal({
   selectedLiability,
   currencyMode = "IDR",
   onPreviewFile,
+  usdRate,
 }: AssetDetailModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -125,14 +127,14 @@ export function AssetDetailModal({
                   <span>
                     Audit Hutang • Nominal:{" "}
                     <strong className="font-bold text-rose-600 font-mono tabular-nums">
-                      {formatCurrencyValue(selectedLiability?.amountIdr || 0, currencyMode, isPrivate)}
+                      {formatCurrencyValue(selectedLiability?.amountIdr || 0, currencyMode, isPrivate, usdRate)}
                     </strong>
                   </span>
                 ) : (
                   <span>
                     {filteredAssets.length} aset terdata • Subtotal:{" "}
                     <strong className="font-bold text-stone-900 font-mono tabular-nums">
-                      {formatCurrencyValue(categoryTotal, currencyMode, isPrivate)}
+                      {formatCurrencyValue(categoryTotal, currencyMode, isPrivate, usdRate)}
                     </strong>
                   </span>
                 )}
@@ -192,7 +194,7 @@ export function AssetDetailModal({
                       Sisa Pokok
                     </span>
                     <p className="text-xl font-bold font-mono text-rose-600 tabular-nums">
-                      {formatCurrencyValue(selectedLiability.amountIdr, currencyMode, isPrivate)}
+                      {formatCurrencyValue(selectedLiability.amountIdr, currencyMode, isPrivate, usdRate)}
                     </p>
                   </div>
                 </div>
@@ -252,7 +254,7 @@ export function AssetDetailModal({
                         onClick={() =>
                           handleCopy(
                             item.id,
-                            `${item.name} - ${formatCurrencyValue(item.valueIdr, currencyMode)} (${item.sourceFile})`
+                            `${item.name} - ${formatCurrencyValue(item.valueIdr, currencyMode, false, usdRate)} (${item.sourceFile})`
                           )
                         }
                         className="p-1 rounded-sm text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
@@ -276,7 +278,7 @@ export function AssetDetailModal({
 
                   <div className="text-left sm:text-right">
                     <p className="text-base sm:text-lg font-bold font-mono text-stone-900 tabular-nums">
-                      {formatCurrencyValue(item.valueIdr, currencyMode, isPrivate)}
+                      {formatCurrencyValue(item.valueIdr, currencyMode, isPrivate, usdRate)}
                     </p>
                     {item.originalCurrency &&
                       item.originalCurrency !== "IDR" &&

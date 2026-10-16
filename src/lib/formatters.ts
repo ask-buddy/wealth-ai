@@ -1,4 +1,18 @@
-export const USD_RATE = 15800;
+export const DEFAULT_USD_RATE = 16000;
+let currentUsdRate = DEFAULT_USD_RATE;
+
+export function setGlobalUsdRate(rate: number): void {
+  if (typeof rate === "number" && rate > 0) {
+    currentUsdRate = rate;
+  }
+}
+
+export function getGlobalUsdRate(): number {
+  return currentUsdRate;
+}
+
+// For backwards compatibility
+export const USD_RATE = DEFAULT_USD_RATE;
 
 export function formatIdr(amount: number, isPrivate: boolean = false): string {
   if (isPrivate) return "Rp ••••••••••";
@@ -29,10 +43,15 @@ export function formatCompactIdr(amount: number, isPrivate: boolean = false): st
   return formatIdr(amount, isPrivate);
 }
 
-export function formatUsd(amountIdr: number, isPrivate: boolean = false, rate: number = USD_RATE): string {
+export function formatUsd(
+  amountIdr: number,
+  isPrivate: boolean = false,
+  rate: number = currentUsdRate
+): string {
   if (isPrivate) return "$••••••••";
   if (isNaN(amountIdr) || amountIdr === null || amountIdr === undefined) return "$0";
-  const usd = amountIdr / rate;
+  const validRate = rate > 0 ? rate : currentUsdRate;
+  const usd = amountIdr / validRate;
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -40,10 +59,15 @@ export function formatUsd(amountIdr: number, isPrivate: boolean = false, rate: n
   }).format(usd);
 }
 
-export function formatCompactUsd(amountIdr: number, isPrivate: boolean = false, rate: number = USD_RATE): string {
+export function formatCompactUsd(
+  amountIdr: number,
+  isPrivate: boolean = false,
+  rate: number = currentUsdRate
+): string {
   if (isPrivate) return "$••••";
   if (isNaN(amountIdr) || !amountIdr) return "$0";
-  const usd = amountIdr / rate;
+  const validRate = rate > 0 ? rate : currentUsdRate;
+  const usd = amountIdr / validRate;
   if (usd >= 1_000_000_000) {
     return `$${(usd / 1_000_000_000).toFixed(2)}B`;
   }
@@ -53,20 +77,25 @@ export function formatCompactUsd(amountIdr: number, isPrivate: boolean = false, 
   if (usd >= 1_000) {
     return `$${(usd / 1_000).toFixed(1)}K`;
   }
-  return formatUsd(amountIdr, isPrivate, rate);
+  return formatUsd(amountIdr, isPrivate, validRate);
 }
 
-export function formatUsdEstimate(amountIdr: number, rate: number = USD_RATE, isPrivate: boolean = false): string {
+export function formatUsdEstimate(
+  amountIdr: number,
+  rate: number = currentUsdRate,
+  isPrivate: boolean = false
+): string {
   return formatCompactUsd(amountIdr, isPrivate, rate);
 }
 
 export function formatCurrencyValue(
   amountIdr: number,
   currencyMode: "IDR" | "USD" = "IDR",
-  isPrivate: boolean = false
+  isPrivate: boolean = false,
+  rate: number = currentUsdRate
 ): string {
   if (currencyMode === "USD") {
-    return formatUsd(amountIdr, isPrivate);
+    return formatUsd(amountIdr, isPrivate, rate);
   }
   return formatIdr(amountIdr, isPrivate);
 }
@@ -74,10 +103,11 @@ export function formatCurrencyValue(
 export function formatCompactCurrencyValue(
   amountIdr: number,
   currencyMode: "IDR" | "USD" = "IDR",
-  isPrivate: boolean = false
+  isPrivate: boolean = false,
+  rate: number = currentUsdRate
 ): string {
   if (currencyMode === "USD") {
-    return formatCompactUsd(amountIdr, isPrivate);
+    return formatCompactUsd(amountIdr, isPrivate, rate);
   }
   return formatCompactIdr(amountIdr, isPrivate);
 }

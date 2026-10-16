@@ -39,6 +39,7 @@ interface PieBreakdownSectionProps {
   activeTab?: "assets" | "liabilities";
   onTabChange?: (tab: "assets" | "liabilities") => void;
   onPreviewFile?: (fileName: string) => void;
+  usdRate?: number;
 }
 
 type FilterGroup = "ALL" | "LIQUID" | "CAPITAL_MARKETS" | "REAL_ASSETS";
@@ -54,6 +55,7 @@ export function PieBreakdownSection({
   activeTab: propActiveTab,
   onTabChange,
   onPreviewFile,
+  usdRate,
 }: PieBreakdownSectionProps) {
   const [internalTab, setInternalTab] = useState<"assets" | "liabilities">(
     "assets",
@@ -154,7 +156,7 @@ export function PieBreakdownSection({
         <div className="p-3 rounded-md border border-stone-200/90 bg-white/95 backdrop-blur-md shadow-2xl text-xs space-y-1.5 relative z-50 pointer-events-none min-w-[130px]">
           <p className="font-bold text-stone-900">{data.name}</p>
           <p className="text-stone-900 font-mono font-bold text-sm tabular-nums">
-            {formatCurrencyValue(data.value, currencyMode, isPrivate)}
+            {formatCurrencyValue(data.value, currencyMode, isPrivate, usdRate)}
           </p>
           <div className="flex items-center gap-2 text-stone-500 font-medium">
             <span>Porsi:</span>
@@ -300,6 +302,7 @@ export function PieBreakdownSection({
                           : portfolio.totalLiabilitiesIdr,
                         currencyMode,
                         isPrivate,
+                        usdRate,
                       )}
                     </p>
                   </div>
@@ -476,6 +479,7 @@ export function PieBreakdownSection({
                               cat.totalIdr,
                               currencyMode,
                               isPrivate,
+                              usdRate,
                             )}
                           </span>
                           <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-[#80283e] transition-all" />
@@ -563,6 +567,7 @@ export function PieBreakdownSection({
                                 lia.amountIdr,
                                 currencyMode,
                                 isPrivate,
+                                usdRate,
                               )}
                             </p>
                             <button

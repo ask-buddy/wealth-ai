@@ -25,7 +25,9 @@ import {
   EyeOff,
   Coins,
   ArrowRight,
+  RefreshCw,
 } from "lucide-react";
+import { getGlobalUsdRate, setGlobalUsdRate } from "@/lib/formatters";
 
 export default function Home() {
   const [portfolio, setPortfolio] = useState<WealthPortfolio | null>(null);
@@ -41,8 +43,38 @@ export default function Home() {
   const [isPrivate, setIsPrivate] = useState(false);
   const [currencyMode, setCurrencyMode] = useState<"IDR" | "USD">("IDR");
   const [dashboardTab, setDashboardTab] = useState<"assets" | "liabilities">("assets");
+  const [usdRate, setUsdRate] = useState<number>(() => getGlobalUsdRate());
+  const [rateLoading, setRateLoading] = useState(false);
+  const [rateInfo, setRateInfo] = useState<{
+    lastUpdated?: string;
+    provider?: string;
+    isFallback?: boolean;
+  } | null>(null);
 
   const printRef = useRef<HTMLDivElement>(null);
+
+  const fetchExchangeRate = async () => {
+    try {
+      setRateLoading(true);
+      const res = await fetch("/api/exchange-rate");
+      if (res.ok) {
+        const data = await res.json();
+        if (typeof data.rate === "number" && data.rate > 0) {
+          setUsdRate(data.rate);
+          setGlobalUsdRate(data.rate);
+          setRateInfo({
+            lastUpdated: data.lastUpdated,
+            provider: data.provider,
+            isFallback: data.isFallback,
+          });
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to fetch live exchange rate:", err);
+    } finally {
+      setRateLoading(false);
+    }
+  };
 
   useEffect(() => {
     const saved = loadPortfolioFromStorage();
@@ -50,6 +82,7 @@ export default function Home() {
       setPortfolio(saved);
     }
     setIsLoaded(true);
+    fetchExchangeRate();
 
     // Keyboard shortcut 'P' for privacy mode
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -168,34 +201,61 @@ export default function Home() {
                 </button>
               )}
 
-              {/* Currency Switcher in Header (right of Mode Privat) */}
+              {/* Currency Switcher & Live Rate Badge in Header */}
               {portfolio && (
-                <button
-                  type="button"
-                  onClick={toggleCurrency}
-                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-sm border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-colors cursor-pointer"
-                  title="Ganti mata uang tampilan (IDR / USD)"
-                >
-                  <span
-                    className={
-                      currencyMode === "IDR"
-                        ? "font-bold text-[#80283e]"
-                        : "text-stone-400"
-                    }
+                <div className="flex items-center gap-2">
+                  {currencyMode === "USD" && (
+                    <div
+                      className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-mono text-stone-600 bg-stone-50 border border-stone-200 rounded-sm shadow-2xs"
+                      title={
+                        rateInfo?.lastUpdated
+                          ? `Kurs real-time diperbarui: ${new Date(rateInfo.lastUpdated).toLocaleTimeString("id-ID")}`
+                          : "Kurs Real-time"
+                      }
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>1 USD ≈ Rp {usdRate.toLocaleString("id-ID")}</span>
+                      <button
+                        type="button"
+                        onClick={fetchExchangeRate}
+                        disabled={rateLoading}
+                        className="text-stone-400 hover:text-[#80283e] ml-0.5 cursor-pointer disabled:opacity-50 transition-colors"
+                        title="Segarkan Nilai Kurs"
+                      >
+                        <RefreshCw
+                          className={`w-3 h-3 ${rateLoading ? "animate-spin text-[#80283e]" : ""}`}
+                        />
+                      </button>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={toggleCurrency}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-sm border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 transition-colors cursor-pointer"
+                    title="Ganti mata uang tampilan (IDR / USD)"
                   >
-                    IDR
-                  </span>
-                  <span className="text-stone-300">/</span>
-                  <span
-                    className={
-                      currencyMode === "USD"
-                        ? "font-bold text-[#80283e]"
-                        : "text-stone-400"
-                    }
-                  >
-                    USD
-                  </span>
-                </button>
+                    <span
+                      className={
+                        currencyMode === "IDR"
+                          ? "font-bold text-[#80283e]"
+                          : "text-stone-400"
+                      }
+                    >
+                      IDR
+                    </span>
+                    <span className="text-stone-300">/</span>
+                    <span
+                      className={
+                        currencyMode === "USD"
+                          ? "font-bold text-[#80283e]"
+                          : "text-stone-400"
+                      }
+                    >
+                      USD
+                    </span>
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -285,6 +345,7 @@ export default function Home() {
                 onToggleCurrency={toggleCurrency}
                 activeTab={dashboardTab}
                 onTabChange={setDashboardTab}
+                usdRate={usdRate}
               />
 
               {/* Exact Layout: Pie Breakdown Section with Tabs, Pie Chart on Left, and Card List on Right */}
@@ -299,6 +360,7 @@ export default function Home() {
                 activeTab={dashboardTab}
                 onTabChange={setDashboardTab}
                 onPreviewFile={setSelectedPreviewFile}
+                usdRate={usdRate}
               />
 
               {/* Executive Summary */}
@@ -326,6 +388,7 @@ export default function Home() {
             selectedLiability={selectedLiability}
             currencyMode={currencyMode}
             onPreviewFile={setSelectedPreviewFile}
+            usdRate={usdRate}
           />
         )}
 

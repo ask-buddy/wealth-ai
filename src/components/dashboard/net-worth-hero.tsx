@@ -8,6 +8,7 @@ import {
   formatDateIndo,
   formatCompactCurrencyValue,
   formatTerbilang,
+  getGlobalUsdRate,
 } from "@/lib/formatters";
 import { WealthPortfolio } from "@/types/wealth";
 import {
@@ -29,6 +30,7 @@ interface NetWorthHeroProps {
   onToggleCurrency?: () => void;
   activeTab?: "assets" | "liabilities";
   onTabChange?: (tab: "assets" | "liabilities") => void;
+  usdRate?: number;
 }
 
 export function NetWorthHero({
@@ -42,6 +44,7 @@ export function NetWorthHero({
   onToggleCurrency,
   activeTab = "assets",
   onTabChange,
+  usdRate,
 }: NetWorthHeroProps) {
   const debtToAssetRatio =
     portfolio.totalAssetsIdr > 0
@@ -111,15 +114,15 @@ export function NetWorthHero({
               {currencyMode === "USD"
                 ? formatUsdEstimate(
                     portfolio.totalNetWorthIdr,
-                    15800,
+                    usdRate || getGlobalUsdRate(),
                     isPrivate,
                   )
                 : formatIdr(portfolio.totalNetWorthIdr, isPrivate)}
             </h1>
 
             {currencyMode === "USD" && !isPrivate && (
-              <span className="text-xs sm:text-sm text-stone-500 font-mono font-medium">
-                (Kurs ~Rp 15.800)
+              <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-stone-500 font-mono font-medium">
+                <span>(Kurs 1 USD ≈ {formatIdr(usdRate || getGlobalUsdRate())})</span>
               </span>
             )}
           </div>
@@ -170,6 +173,7 @@ export function NetWorthHero({
                 portfolio.totalAssetsIdr,
                 currencyMode,
                 isPrivate,
+                usdRate,
               )}
             </p>
           </button>
@@ -214,6 +218,7 @@ export function NetWorthHero({
                     portfolio.totalLiabilitiesIdr,
                     currencyMode,
                     isPrivate,
+                    usdRate,
                   )
                 : currencyMode === "USD"
                   ? "$0"
