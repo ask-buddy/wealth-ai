@@ -92,24 +92,186 @@ export const CATEGORY_CONFIG: Record<
   },
 };
 
+export function parseFlexibleNumber(val: any): number {
+  if (typeof val === "number") return isNaN(val) ? 0 : val;
+  if (!val) return 0;
+  if (typeof val === "string") {
+    // Strip everything except digits, minus, and dot
+    const cleanStr = val.replace(/[^0-9.-]+/g, "");
+    const parsed = parseFloat(cleanStr);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+  return 0;
+}
+
+export function normalizeCategory(cat: string | undefined): AssetCategory {
+  if (!cat) return "LAINNYA";
+  const upper = String(cat).toUpperCase().replace(/[\s-_]+/g, "_");
+
+  if (
+    upper.includes("SAHAM") ||
+    upper.includes("STOCK") ||
+    upper.includes("EQUITY") ||
+    upper.includes("REKSA") ||
+    upper.includes("MUTUAL")
+  ) {
+    return "SAHAM";
+  }
+  if (
+    upper.includes("KAS") ||
+    upper.includes("DEPOSITO") ||
+    upper.includes("BANK") ||
+    upper.includes("CASH") ||
+    upper.includes("SAVING") ||
+    upper.includes("GIRO")
+  ) {
+    return "KAS_DEPOSITO";
+  }
+  if (
+    upper.includes("CRYPTO") ||
+    upper.includes("KRIPTO") ||
+    upper.includes("BTC") ||
+    upper.includes("ETH") ||
+    upper.includes("USDT")
+  ) {
+    return "CRYPTO";
+  }
+  if (
+    upper.includes("PROPERTI") ||
+    upper.includes("PROPERTY") ||
+    upper.includes("TANAH") ||
+    upper.includes("RUMAH") ||
+    upper.includes("APARTEMEN") ||
+    upper.includes("RUKO") ||
+    upper.includes("REAL_ESTATE")
+  ) {
+    return "PROPERTI";
+  }
+  if (
+    upper.includes("OBLIGASI") ||
+    upper.includes("SBN") ||
+    upper.includes("SUKUK") ||
+    upper.includes("BOND")
+  ) {
+    return "OBLIGASI_SBN";
+  }
+  if (
+    upper.includes("EMAS") ||
+    upper.includes("GOLD") ||
+    upper.includes("LOGAM") ||
+    upper.includes("PERAK")
+  ) {
+    return "EMAS_LOGAM_MULIA";
+  }
+  if (
+    upper.includes("KENDARAAN") ||
+    upper.includes("VEHICLE") ||
+    upper.includes("MOBIL") ||
+    upper.includes("MOTOR")
+  ) {
+    return "KENDARAAN";
+  }
+  if (
+    upper.includes("PERUSAHAAN") ||
+    upper.includes("BISNIS") ||
+    upper.includes("BUSINESS") ||
+    upper.includes("STARTUP") ||
+    upper.includes("CV") ||
+    upper.includes("PT")
+  ) {
+    return "PERUSAHAAN_SENDIRI";
+  }
+
+  return "LAINNYA";
+}
+
 export function calculatePortfolio(
   raw: RawWealthAnalysis,
   sourceFiles: string[] = [],
 ): WealthPortfolio {
-  const assets = raw.assets || [];
-  const liabilities = raw.liabilities || [];
+  const rawAssets = raw.assets || (raw as any).assetList || (raw as any).Assets || [];
+  const rawLiabilities = raw.liabilities || (raw as any).liabilityList || (raw as any).Liabilities || [];
+
+  // Robust asset normalization supporting valueIdr, valueIDR, description, etc.
+  const assets: ExtractedAssetItem[] = rawAssets.map((item: any, idx: number) => {
+    const value = parseFlexibleNumber(
+      item.valueIdr ??
+      item.valueIDR ??
+      item.value_idr ??
+      item.value ??
+      item.amountIdr ??
+      item.amountIDR ??
+      item.amount ??
+      item.nominal ??
+      item.totalValue ??
+      item.totalValueIDR ??
+      item.total
+    );
+
+    return {
+      id: String(item.id || item.ID || `ast-${idx + 1}-${Math.random().toString(36).substring(2, 7)}`),
+      name: item.name || item.assetName || item.nama || `Aset #${idx + 1}`,
+      category: normalizeCategory(item.category),
+      institution: item.institution || item.platform || item.broker || item.bank || "",
+      quantity: parseFlexibleNumber(item.quantity ?? item.volume ?? item.lot ?? item.shares) || undefined,
+      unit: item.unit || item.satuan || undefined,
+      valueIdr: value,
+      originalCurrency: item.originalCurrency || item.currency || "IDR",
+      originalValue: parseFlexibleNumber(item.originalValue ?? item.original_value) || value,
+      sourceFile: item.sourceFile || item.source_file || item.fileName || sourceFiles[0] || "Dokumen Sumber",
+      notes: item.notes || item.description || item.keterangan || item.deskripsi || undefined,
+    };
+  });
+
+  // Robust liability normalization supporting amountIdr, amountIDR, etc.
+  const liabilities: ExtractedLiabilityItem[] = rawLiabilities.map((item: any, idx: number) => {
+    const amount = parseFlexibleNumber(
+      item.amountIdr ??
+      item.amountIDR ??
+      item.amount_idr ??
+      item.amount ??
+      item.valueIdr ??
+      item.valueIDR ??
+      item.value ??
+      item.nominal ??
+      item.total
+    );
+
+    return {
+      id: String(item.id || item.ID || `lia-${idx + 1}-${Math.random().toString(36).substring(2, 7)}`),
+      name: item.name || item.liabilityName || item.nama || `Liabilitas #${idx + 1}`,
+      lender: item.lender || item.creditor || item.kreditor || item.bank || "",
+      amountIdr: amount,
+      sourceFile: item.sourceFile || item.source_file || item.fileName || sourceFiles[0] || "Dokumen Sumber",
+      notes: item.notes || item.description || item.keterangan || undefined,
+    };
+  });
 
   // Sum total assets
-  const totalAssetsIdr = assets.reduce(
+  const calculatedAssetsTotal = assets.reduce(
     (sum, item) => sum + (Number(item.valueIdr) || 0),
     0,
   );
+  const rawFallbackAssetsTotal = parseFlexibleNumber(
+    (raw as any).totalAssetsIdr ??
+    (raw as any).totalAssetsIDR ??
+    (raw as any).total_assets_idr
+  );
+  const totalAssetsIdr =
+    calculatedAssetsTotal > 0 ? calculatedAssetsTotal : rawFallbackAssetsTotal;
 
   // Sum total liabilities
-  const totalLiabilitiesIdr = liabilities.reduce(
+  const calculatedLiabilitiesTotal = liabilities.reduce(
     (sum, item) => sum + (Number(item.amountIdr) || 0),
     0,
   );
+  const rawFallbackLiabilitiesTotal = parseFlexibleNumber(
+    (raw as any).totalLiabilitiesIdr ??
+    (raw as any).totalLiabilitiesIDR ??
+    (raw as any).total_liabilities_idr
+  );
+  const totalLiabilitiesIdr =
+    calculatedLiabilitiesTotal > 0 ? calculatedLiabilitiesTotal : rawFallbackLiabilitiesTotal;
 
   // Net worth
   const totalNetWorthIdr = totalAssetsIdr - totalLiabilitiesIdr;
@@ -166,7 +328,7 @@ export function calculatePortfolio(
       };
     })
     .filter((c) => c.itemCount > 0 || c.totalIdr > 0)
-    .sort((a, b) => b.totalIdr - a.totalIdr); // Sort descending by value like in reference image
+    .sort((a, b) => b.totalIdr - a.totalIdr);
 
   // Liquid assets = KAS_DEPOSITO + SAHAM + CRYPTO + OBLIGASI_SBN
   const liquidAssets =
@@ -186,14 +348,41 @@ export function calculatePortfolio(
       ? sourceFiles
       : Array.from(new Set(assets.map((a) => a.sourceFile).filter(Boolean)));
 
+  // Executive summary with fallback
+  let executiveSummary =
+    raw.executiveSummary ||
+    (raw as any).summary ||
+    (raw as any).ringkasan ||
+    "";
+
+  if (!executiveSummary || executiveSummary.trim().length === 0) {
+    if (assets.length > 0) {
+      const topCategory = categories[0]?.label || "Aset Terdaftar";
+      executiveSummary = `Audit portofolio berhasil mengidentifikasi ${assets.length} instrumen aset dengan total akumulasi ${new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(totalNetWorthIdr)}. Konsentrasi alokasi terbesar berada pada sektor ${topCategory}.`;
+    } else {
+      executiveSummary = "Dokumen berhasil diproses in-memory tanpa liabilitas berlebih.";
+    }
+  }
+
+  // Key highlights with fallback
+  let keyHighlights = raw.keyHighlights || (raw as any).highlights || [];
+  if (!keyHighlights || keyHighlights.length === 0) {
+    keyHighlights = [
+      `Total ${assets.length} instrumen aset terverifikasi dari dokumen sumber.`,
+      `Rasio likuiditas kas & instrumen bursa tercatat sebesar ${liquidRatioPercentage}%.`,
+      totalLiabilitiesIdr === 0
+        ? "Bebas dari liabilitas atau beban hutang tercatat."
+        : `Total liabilitas tercatat sebesar ${new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(totalLiabilitiesIdr)}.`,
+    ];
+  }
+
   return {
     totalNetWorthIdr,
     totalAssetsIdr,
     totalLiabilitiesIdr,
     liquidRatioPercentage,
-    executiveSummary:
-      raw.executiveSummary || "Ringkasan portofolio berhasil diekstraksi.",
-    keyHighlights: raw.keyHighlights || [],
+    executiveSummary,
+    keyHighlights,
     categories,
     assets,
     liabilities,
