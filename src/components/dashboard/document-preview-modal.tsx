@@ -66,7 +66,7 @@ export function DocumentPreviewModal({
     const win = window.open();
     if (win) {
       win.document.write(
-        `<title>${fileName}</title><iframe src="${preview.dataUrl}" frameborder="0" style="border:0; top:0; left:0; bottom:0; right:0; width:100%; height:100%;" allowfullscreen></iframe>`
+        `<title>${fileName}</title><iframe src="${preview.dataUrl}" frameborder="0" style="border:0; top:0; left:0; bottom:0; right:0; width:100%; height:100%;" allowfullscreen></iframe>`,
       );
     }
   };
@@ -103,10 +103,6 @@ export function DocumentPreviewModal({
               <p className="text-[11px] text-stone-500 font-medium flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span>Dokumen Bukti Aset Terverifikasi</span>
-                <span className="text-stone-300">•</span>
-                <span className="uppercase text-[10px] font-mono font-semibold px-1.5 py-0.2 rounded-xs bg-stone-100 text-stone-600">
-                  {isPdf ? "PDF Document" : "Screenshot / Image"}
-                </span>
               </p>
             </div>
           </div>
@@ -198,10 +194,9 @@ export function DocumentPreviewModal({
                 Pratinjau Tidak Tersedia di Memori
               </h4>
               <p className="text-xs text-stone-500 leading-relaxed font-medium">
-                Berkas <strong>{fileName}</strong> berhasil diaudit dan
-                angkanya telah terekam di portofolio Anda. Namun file visualnya
-                telah dibersihkan dari RAM browser demi efisiensi memori dan
-                privasi.
+                Berkas <strong>{fileName}</strong> berhasil diaudit dan angkanya
+                telah terekam di portofolio Anda. Namun file visualnya telah
+                dibersihkan dari RAM browser demi efisiensi memori dan privasi.
               </p>
             </div>
           )}

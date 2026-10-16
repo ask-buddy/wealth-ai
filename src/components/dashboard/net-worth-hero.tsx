@@ -129,7 +129,7 @@ export function NetWorthHero({
 
           {/* Text Terbilang di bawah Nilai Utama */}
           <p className="text-xs sm:text-sm italic text-stone-600 tracking-wide pt-0.5">
-            &ldquo;{formatTerbilang(portfolio.totalNetWorthIdr, isPrivate)}
+            &ldquo;{formatTerbilang(portfolio.totalNetWorthIdr, isPrivate, currencyMode, usdRate)}
             &rdquo;
           </p>
         </div>

@@ -181,8 +181,98 @@ export function angkaKeTerbilang(angka: number): string {
   return `${hasil} Rupiah`;
 }
 
-export function formatTerbilang(amount: number, isPrivate: boolean = false): string {
+export function numberToEnglishWords(num: number): string {
+  if (isNaN(num) || num === null || num === undefined) return "Zero US Dollars";
+  const n = Math.floor(Math.abs(num));
+  if (n === 0) return "Zero US Dollars";
+
+  const ones = [
+    "",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+  ];
+  const tens = [
+    "",
+    "",
+    "Twenty",
+    "Thirty",
+    "Forty",
+    "Fifty",
+    "Sixty",
+    "Seventy",
+    "Eighty",
+    "Ninety",
+  ];
+
+  function convertChunk(val: number): string {
+    let s = "";
+    if (val >= 100) {
+      s += ones[Math.floor(val / 100)] + " Hundred ";
+      val %= 100;
+    }
+    if (val >= 20) {
+      s += tens[Math.floor(val / 10)] + (val % 10 !== 0 ? "-" + ones[val % 10] : "") + " ";
+    } else if (val > 0) {
+      s += ones[val] + " ";
+    }
+    return s.trim();
+  }
+
+  function convert(val: number): string {
+    if (val === 0) return "";
+    let result = "";
+    const trillions = Math.floor(val / 1_000_000_000_000);
+    val %= 1_000_000_000_000;
+    const billions = Math.floor(val / 1_000_000_000);
+    val %= 1_000_000_000;
+    const millions = Math.floor(val / 1_000_000);
+    val %= 1_000_000;
+    const thousands = Math.floor(val / 1000);
+    const remainder = val % 1000;
+
+    if (trillions > 0) result += convertChunk(trillions) + " Trillion ";
+    if (billions > 0) result += convertChunk(billions) + " Billion ";
+    if (millions > 0) result += convertChunk(millions) + " Million ";
+    if (thousands > 0) result += convertChunk(thousands) + " Thousand ";
+    if (remainder > 0) result += convertChunk(remainder) + " ";
+
+    return result.trim();
+  }
+
+  const words = convert(n);
+  const suffix = n === 1 ? "US Dollar" : "US Dollars";
+  return `${words} ${suffix}`;
+}
+
+export function formatTerbilang(
+  amountIdr: number,
+  isPrivate: boolean = false,
+  currencyMode: "IDR" | "USD" = "IDR",
+  rate: number = currentUsdRate
+): string {
   if (isPrivate) return "••••••••••••••••••••";
-  return angkaKeTerbilang(amount);
+  if (currencyMode === "USD") {
+    const validRate = rate > 0 ? rate : currentUsdRate;
+    const usd = Math.round(amountIdr / validRate);
+    return numberToEnglishWords(usd);
+  }
+  return angkaKeTerbilang(amountIdr);
 }
 

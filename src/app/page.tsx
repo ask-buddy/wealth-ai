@@ -14,7 +14,15 @@ import {
   AssetCategory,
   ExtractedLiabilityItem,
 } from "@/types/wealth";
-import { loadPortfolioFromStorage, clearPortfolioStorage } from "@/lib/storage";
+import {
+  loadPortfolioFromStorage,
+  savePortfolioToStorage,
+  clearPortfolioStorage,
+} from "@/lib/storage";
+import {
+  removeAssetFromPortfolio,
+  removeLiabilityFromPortfolio,
+} from "@/lib/math";
 import {
   ShieldCheck,
   Sparkles,
@@ -113,6 +121,20 @@ export default function Home() {
     setSelectedCategory(null);
     setSelectedLiability(null);
     setIsModalOpen(false);
+  };
+
+  const handleDeleteAssetItem = (assetId: string) => {
+    if (!portfolio) return;
+    const updated = removeAssetFromPortfolio(portfolio, assetId);
+    setPortfolio(updated);
+    savePortfolioToStorage(updated);
+  };
+
+  const handleDeleteLiabilityItem = (liabilityId: string) => {
+    if (!portfolio) return;
+    const updated = removeLiabilityFromPortfolio(portfolio, liabilityId);
+    setPortfolio(updated);
+    savePortfolioToStorage(updated);
   };
 
   const handleSelectCategory = (cat: AssetCategory) => {
@@ -389,6 +411,8 @@ export default function Home() {
             currencyMode={currencyMode}
             onPreviewFile={setSelectedPreviewFile}
             usdRate={usdRate}
+            onDeleteAsset={handleDeleteAssetItem}
+            onDeleteLiability={handleDeleteLiabilityItem}
           />
         )}
 

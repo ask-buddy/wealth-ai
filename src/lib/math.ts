@@ -521,3 +521,49 @@ export function calculatePortfolio(
     sourceFiles: detectedFiles,
   };
 }
+
+export function removeAssetFromPortfolio(
+  portfolio: WealthPortfolio,
+  assetId: string
+): WealthPortfolio {
+  const updatedAssets = portfolio.assets.filter((a) => a.id !== assetId);
+  const recalculated = calculatePortfolio(
+    {
+      ...portfolio,
+      currency: "IDR",
+      assets: updatedAssets,
+      liabilities: portfolio.liabilities,
+    },
+    portfolio.sourceFiles || []
+  );
+
+  return {
+    ...recalculated,
+    analyzedAt: portfolio.analyzedAt,
+    documentPreviews: portfolio.documentPreviews,
+  };
+}
+
+export function removeLiabilityFromPortfolio(
+  portfolio: WealthPortfolio,
+  liabilityId: string
+): WealthPortfolio {
+  const updatedLiabilities = (portfolio.liabilities || []).filter(
+    (l) => l.id !== liabilityId
+  );
+  const recalculated = calculatePortfolio(
+    {
+      ...portfolio,
+      currency: "IDR",
+      assets: portfolio.assets,
+      liabilities: updatedLiabilities,
+    },
+    portfolio.sourceFiles || []
+  );
+
+  return {
+    ...recalculated,
+    analyzedAt: portfolio.analyzedAt,
+    documentPreviews: portfolio.documentPreviews,
+  };
+}
