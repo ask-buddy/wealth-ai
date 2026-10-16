@@ -13,6 +13,7 @@ import {
   AlertCircle,
   Download,
 } from "lucide-react";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 
 interface DocumentPreviewModalProps {
   isOpen: boolean;
@@ -32,6 +33,8 @@ export function DocumentPreviewModal({
   preview,
 }: DocumentPreviewModalProps) {
   const [zoomLevel, setZoomLevel] = useState<number>(100);
+
+  useScrollLock(isOpen);
 
   useEffect(() => {
     if (!isOpen) {
@@ -77,7 +80,7 @@ export function DocumentPreviewModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-5xl max-h-[92vh] bg-white rounded-md border border-stone-200 shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150"
+        className="w-full max-w-5xl max-h-[92vh] bg-white rounded-md border border-stone-200 shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150 overscroll-contain"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -165,7 +168,7 @@ export function DocumentPreviewModal({
         </div>
 
         {/* Content Body */}
-        <div className="flex-1 overflow-auto p-4 sm:p-6 bg-stone-900/90 flex items-center justify-center min-h-[380px]">
+        <div className="flex-1 overflow-auto p-4 sm:p-6 bg-stone-900/90 flex items-center justify-center min-h-[380px] overscroll-contain">
           {preview?.dataUrl ? (
             isPdf ? (
               <div className="w-full h-[70vh] bg-white rounded-sm overflow-hidden shadow-xl border border-stone-800">

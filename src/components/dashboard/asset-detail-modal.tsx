@@ -23,6 +23,7 @@ import {
   ExternalLink,
   Trash2,
 } from "lucide-react";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 
 interface AssetDetailModalProps {
   isOpen: boolean;
@@ -72,6 +73,8 @@ export function AssetDetailModal({
     setConfirmDeleteId(null);
     onClose();
   };
+
+  useScrollLock(isOpen);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -200,7 +203,7 @@ export function AssetDetailModal({
         )}
 
         {/* Content Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-3.5">
+        <div className="flex-1 overflow-y-auto p-6 space-y-3.5 overscroll-contain">
           {deletedToast && (
             <div className="p-3 rounded-sm bg-stone-900 text-white text-xs flex items-center justify-between shadow-md animate-in fade-in slide-in-from-top-2 duration-200">
               <span className="font-medium">{deletedToast}</span>

@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { Trash2, AlertTriangle, X } from "lucide-react";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 
 interface ConfirmDeleteModalProps {
   isOpen: boolean;
@@ -14,6 +15,8 @@ export function ConfirmDeleteModal({
   onClose,
   onConfirm,
 }: ConfirmDeleteModalProps) {
+  useScrollLock(isOpen);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -35,7 +38,7 @@ export function ConfirmDeleteModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md bg-white rounded-md border border-stone-200 shadow-2xl p-6 sm:p-7 space-y-5 animate-in zoom-in-95 duration-150"
+        className="w-full max-w-md bg-white rounded-md border border-stone-200 shadow-2xl p-6 sm:p-7 space-y-5 animate-in zoom-in-95 duration-150 overscroll-contain"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"

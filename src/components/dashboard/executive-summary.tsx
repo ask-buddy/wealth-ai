@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, CheckCircle2, FileText, Copy, Check, Quote, Eye } from "lucide-react";
+import {
+  Sparkles,
+  CheckCircle2,
+  FileText,
+  Copy,
+  Check,
+  Quote,
+  Eye,
+} from "lucide-react";
 import { WealthPortfolio } from "@/types/wealth";
 
 interface ExecutiveSummaryProps {
@@ -33,9 +41,6 @@ export function ExecutiveSummary({
             <h2 className="text-base sm:text-lg font-bold tracking-tight text-stone-900">
               Ringkasan Eksekutif & Opini AI Auditor
             </h2>
-            <p className="text-[11px] text-stone-400 font-medium">
-              Sintesis audit portofolio otomatis oleh Gemini 3.8 Flash
-            </p>
           </div>
         </div>
 
@@ -60,7 +65,7 @@ export function ExecutiveSummary({
       </div>
 
       {/* Main Narrative Card with Editorial Typography */}
-      <div className="relative p-5 sm:p-6 rounded-sm bg-stone-50 border border-stone-200 text-sm sm:text-base leading-relaxed text-stone-800 font-medium">
+      <div className="relative p-5 sm:p-6 rounded-sm bg-stone-50 border border-stone-200 text-xs sm:text-sm leading-relaxed text-stone-800 font-medium">
         <Quote className="w-8 h-8 text-[#ecd0d8] absolute top-4 left-4 -z-0 opacity-40" />
         <p className="relative z-10 font-normal leading-relaxed">
           {portfolio.executiveSummary}
@@ -80,7 +85,9 @@ export function ExecutiveSummary({
                 className="flex items-start gap-2.5 p-4 rounded-sm border border-stone-200 bg-white text-xs sm:text-sm hover:border-stone-300 transition-colors"
               >
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                <span className="text-stone-700 font-medium leading-snug">{highlight}</span>
+                <span className="text-stone-700 font-medium leading-snug">
+                  {highlight}
+                </span>
               </div>
             ))}
           </div>
