@@ -19,4 +19,4 @@ export const genAI = new GoogleGenAI({
 });
 
 export const GEMINI_BASE_URL = rawBaseUrl;
-export const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash";
+export const GEMINI_MODEL = process.env.GEMINI_MODEL || "FireAce";
