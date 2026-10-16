@@ -36,6 +36,7 @@ export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [currencyMode, setCurrencyMode] = useState<"IDR" | "USD">("IDR");
+  const [dashboardTab, setDashboardTab] = useState<"assets" | "liabilities">("assets");
 
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -275,6 +276,8 @@ export default function Home() {
                 onTogglePrivacy={togglePrivacy}
                 currencyMode={currencyMode}
                 onToggleCurrency={toggleCurrency}
+                activeTab={dashboardTab}
+                onTabChange={setDashboardTab}
               />
 
               {/* Exact Layout: Pie Breakdown Section with Tabs, Pie Chart on Left, and Card List on Right */}
@@ -286,6 +289,8 @@ export default function Home() {
                 isPrivate={isPrivate}
                 onSelectLiability={handleSelectLiability}
                 currencyMode={currencyMode}
+                activeTab={dashboardTab}
+                onTabChange={setDashboardTab}
               />
 
               {/* Executive Summary */}

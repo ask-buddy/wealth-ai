@@ -36,6 +36,8 @@ interface PieBreakdownSectionProps {
   isPrivate?: boolean;
   onSelectLiability?: (liability: ExtractedLiabilityItem) => void;
   currencyMode?: "IDR" | "USD";
+  activeTab?: "assets" | "liabilities";
+  onTabChange?: (tab: "assets" | "liabilities") => void;
 }
 
 type FilterGroup = "ALL" | "LIQUID" | "CAPITAL_MARKETS" | "REAL_ASSETS";
@@ -48,10 +50,13 @@ export function PieBreakdownSection({
   isPrivate = false,
   onSelectLiability,
   currencyMode = "IDR",
+  activeTab: propActiveTab,
+  onTabChange,
 }: PieBreakdownSectionProps) {
-  const [activeTab, setActiveTab] = useState<"assets" | "liabilities">(
+  const [internalTab, setInternalTab] = useState<"assets" | "liabilities">(
     "assets",
   );
+  const activeTab = propActiveTab !== undefined ? propActiveTab : internalTab;
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   const [filterGroup, setFilterGroup] = useState<FilterGroup>("ALL");
   const [sortOrder, setSortOrder] = useState<"desc" | "alpha">("desc");
@@ -168,57 +173,8 @@ export function PieBreakdownSection({
 
   return (
     <div className="w-full space-y-6">
-      {/* Top Segmented Tabs: Liabilitas vs Total Aset */}
+      {/* Status Banner */}
       <div className="rounded-sm border border-stone-200 bg-white overflow-hidden luxury-card">
-        <div className="grid grid-cols-2 text-center border-b border-stone-200">
-          {/* Total Aset Tab */}
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab("assets");
-              setHoveredKey(null);
-            }}
-            className={`py-4 px-6 text-sm sm:text-base font-semibold transition-all relative cursor-pointer ${
-              activeTab === "assets"
-                ? "text-stone-900 bg-stone-50/60 font-bold"
-                : "text-stone-500 hover:text-stone-800"
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2 flex-wrap">
-              <span>Total Aset</span>
-              <span className="font-mono font-bold text-stone-900 tabular-nums">
-                {formatCurrencyValue(portfolio.totalAssetsIdr, currencyMode, isPrivate)}
-              </span>
-            </div>
-            {activeTab === "assets" && (
-              <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#80283e]" />
-            )}
-          </button>
-
-          {/* Liabilitas Tab */}
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab("liabilities");
-              setHoveredKey(null);
-            }}
-            className={`py-4 px-6 text-sm sm:text-base font-semibold transition-all relative cursor-pointer ${
-              activeTab === "liabilities"
-                ? "text-stone-900 bg-[#faf0f3]/60 font-bold"
-                : "text-stone-500 hover:text-stone-800"
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2 flex-wrap">
-              <span>Liabilitas</span>
-              <span className="font-mono font-bold text-stone-800 tabular-nums">
-                {formatCurrencyValue(portfolio.totalLiabilitiesIdr, currencyMode, isPrivate)}
-              </span>
-            </div>
-            {activeTab === "liabilities" && (
-              <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[#80283e]" />
-            )}
-          </button>
-        </div>
 
         {/* Sub-bar: Status Banner */}
         <div className="px-6 py-3 bg-stone-50/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">

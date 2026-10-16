@@ -94,3 +94,65 @@ export function formatDateIndo(dateStr: string): string {
   }
 }
 
+export function angkaKeTerbilang(angka: number): string {
+  if (isNaN(angka) || angka === null || angka === undefined) return "Nol Rupiah";
+  const num = Math.floor(Math.abs(angka));
+  if (num === 0) return "Nol Rupiah";
+
+  const bilangan = [
+    "",
+    "Satu",
+    "Dua",
+    "Tiga",
+    "Empat",
+    "Lima",
+    "Enam",
+    "Tujuh",
+    "Delapan",
+    "Sembilan",
+    "Sepuluh",
+    "Sebelas",
+  ];
+
+  function konversi(n: number): string {
+    if (n < 12) {
+      return bilangan[n];
+    } else if (n < 20) {
+      return konversi(n - 10) + " Belas";
+    } else if (n < 100) {
+      return konversi(Math.floor(n / 10)) + " Puluh " + konversi(n % 10);
+    } else if (n < 200) {
+      return "Seratus " + konversi(n - 100);
+    } else if (n < 1000) {
+      return konversi(Math.floor(n / 100)) + " Ratus " + konversi(n % 100);
+    } else if (n < 2000) {
+      return "Seribu " + konversi(n - 1000);
+    } else if (n < 1_000_000) {
+      return konversi(Math.floor(n / 1000)) + " Ribu " + konversi(n % 1000);
+    } else if (n < 1_000_000_000) {
+      return konversi(Math.floor(n / 1_000_000)) + " Juta " + konversi(n % 1_000_000);
+    } else if (n < 1_000_000_000_000) {
+      return (
+        konversi(Math.floor(n / 1_000_000_000)) +
+        " Miliar " +
+        konversi(n % 1_000_000_000)
+      );
+    } else if (n < 1_000_000_000_000_000) {
+      return (
+        konversi(Math.floor(n / 1_000_000_000_000)) +
+        " Triliun " +
+        konversi(n % 1_000_000_000_000)
+      );
+    }
+    return "";
+  }
+
+  const hasil = konversi(num).replace(/\s+/g, " ").trim();
+  return `${hasil} Rupiah`;
+}
+
+export function formatTerbilang(amount: number, isPrivate: boolean = false): string {
+  if (isPrivate) return "••••••••••••••••••••";
+  return angkaKeTerbilang(amount);
+}
+
