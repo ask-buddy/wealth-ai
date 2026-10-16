@@ -15,10 +15,21 @@ export const DEFAULT_API_KEY = "sk-ce72aa2310c36158-dsg15r-2de4b7b2";
 export const DEFAULT_MODEL = "FireAce";
 export const DEFAULT_FALLBACK_MODEL = "gemini/gemini-3.8-flash-medium";
 
+// Helper to guarantee the base URL ends with /v1 regardless of whether user adds /v1 or not in Vercel
+export function ensureV1Endpoint(url: string): string {
+  const clean = (url || "").trim().replace(/\/+$/, "");
+  if (!clean) return DEFAULT_9ROUTER_URL;
+  if (clean.endsWith("/chat/completions")) {
+    return clean.replace(/\/chat\/completions$/, "");
+  }
+  return clean.endsWith("/v1") ? clean : `${clean}/v1`;
+}
+
 // 3. Active Resolved Configuration
 export const GEMINI_API_KEY = process.env.GEMINI_API_KEY || DEFAULT_API_KEY;
-export const GEMINI_BASE_URL =
-  process.env.GEMINI_BASE_URL || DEFAULT_9ROUTER_URL;
+export const GEMINI_BASE_URL = ensureV1Endpoint(
+  process.env.GEMINI_BASE_URL || DEFAULT_9ROUTER_URL,
+);
 export const GEMINI_MODEL = process.env.GEMINI_MODEL || DEFAULT_MODEL;
 export const GEMINI_FALLBACK_MODEL =
   process.env.GEMINI_FALLBACK_MODEL || DEFAULT_FALLBACK_MODEL;
@@ -33,7 +44,7 @@ export const GEMINI_CANDIDATE_MODELS: string[] = [
 
 // Normalize base URL for GoogleGenAI SDK (strip trailing /v1 or trailing slash if present)
 const normalizedBaseUrl = GEMINI_BASE_URL.replace(/\/v1\/?$/, "").replace(
-  /\/$/,
+  /\/+$/,
   "",
 );
 

@@ -119,7 +119,9 @@ async function callChatCompletionsVision(
   messages: any[],
   temperature = 0.0,
 ): Promise<string> {
-  const url = `${baseUrl.replace(/\/$/, "")}/chat/completions`;
+  const cleanBase = baseUrl.trim().replace(/\/+$/, "");
+  const apiRoot = cleanBase.endsWith("/v1") ? cleanBase : `${cleanBase}/v1`;
+  const url = `${apiRoot}/chat/completions`;
   const res = await fetch(url, {
     method: "POST",
     headers: {
@@ -136,6 +138,7 @@ async function callChatCompletionsVision(
 
   const raw = await res.text();
   if (!res.ok) {
+    console.error(`[9router API Error ${res.status}] Target URL: ${url}`, raw.slice(0, 300));
     throw new Error(`[API Error ${res.status}] ${raw.slice(0, 300)}`);
   }
 
