@@ -7,7 +7,11 @@ import { ExecutiveSummary } from "@/components/dashboard/executive-summary";
 import { PieBreakdownSection } from "@/components/dashboard/pie-breakdown-section";
 import { AssetDetailModal } from "@/components/dashboard/asset-detail-modal";
 import { PrintableReport } from "@/components/export/printable-report";
-import { WealthPortfolio, AssetCategory } from "@/types/wealth";
+import {
+  WealthPortfolio,
+  AssetCategory,
+  ExtractedLiabilityItem,
+} from "@/types/wealth";
 import {
   loadPortfolioFromStorage,
   clearPortfolioStorage,
@@ -18,14 +22,22 @@ import {
   Lock,
   Zap,
   TrendingUp,
+  Eye,
+  EyeOff,
+  Coins,
+  ArrowRight,
 } from "lucide-react";
 
 export default function Home() {
   const [portfolio, setPortfolio] = useState<WealthPortfolio | null>(null);
   const [isAddingMore, setIsAddingMore] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<AssetCategory | null>(null);
+  const [selectedLiability, setSelectedLiability] = useState<ExtractedLiabilityItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [currencyMode, setCurrencyMode] = useState<"IDR" | "USD">("IDR");
+
   const printRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,6 +46,18 @@ export default function Home() {
       setPortfolio(saved);
     }
     setIsLoaded(true);
+
+    // Keyboard shortcut 'P' for privacy mode
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        (e.key === "p" || e.key === "P") &&
+        !["INPUT", "TEXTAREA"].includes((e.target as HTMLElement)?.tagName)
+      ) {
+        setIsPrivate((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   const handleAnalysisSuccess = (newPortfolio: WealthPortfolio) => {
@@ -47,12 +71,20 @@ export default function Home() {
       setPortfolio(null);
       setIsAddingMore(false);
       setSelectedCategory(null);
+      setSelectedLiability(null);
       setIsModalOpen(false);
     }
   };
 
   const handleSelectCategory = (cat: AssetCategory) => {
     setSelectedCategory(cat);
+    setSelectedLiability(null);
+    setIsModalOpen(true);
+  };
+
+  const handleSelectLiability = (lia: ExtractedLiabilityItem) => {
+    setSelectedLiability(lia);
+    setSelectedCategory(null);
     setIsModalOpen(true);
   };
 
@@ -60,16 +92,24 @@ export default function Home() {
     window.print();
   };
 
+  const togglePrivacy = () => {
+    setIsPrivate((prev) => !prev);
+  };
+
+  const toggleCurrency = () => {
+    setCurrencyMode((prev) => (prev === "IDR" ? "USD" : "IDR"));
+  };
+
   if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#fbf9f7]">
-        <div className="w-7 h-7 border-3 border-[#fe5e37] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-[#fe5e37] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#fbf9f7] text-[#191919] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#fbf9f7] text-[#191919] flex flex-col font-sans selection:bg-orange-100 selection:text-orange-950">
       {/* Printable Report Component for PDF export */}
       <div className="print-only">
         {portfolio && <PrintableReport ref={printRef} portfolio={portfolio} />}
@@ -77,17 +117,17 @@ export default function Home() {
 
       {/* Screen View */}
       <div className="no-print flex-1 flex flex-col">
-        {/* Navigation Bar in Fluent HQ Clean Style */}
+        {/* Navigation Bar in Fluent HQ Clean Luxury Style */}
         <header className="sticky top-0 z-40 w-full border-b border-stone-200/80 bg-white/90 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#fe5e37] flex items-center justify-center text-white shadow-sm shadow-[#fe5e37]/30 font-bold text-lg">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#ea4e28] to-[#fe5e37] flex items-center justify-center text-white shadow-sm shadow-[#fe5e37]/30 font-bold text-lg">
                 A
               </div>
               <div>
                 <span className="font-extrabold text-base tracking-tight text-stone-900 flex items-center gap-2">
                   AngelWealth
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-100 text-[#fe5e37] font-bold border border-orange-200">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-orange-100 text-[#fe5e37] font-bold border border-orange-200 shadow-2xs">
                     AI AGGREGATOR
                   </span>
                 </span>
@@ -97,10 +137,38 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-100 border border-stone-200 text-xs text-stone-600 font-medium">
+            <div className="flex items-center gap-2.5">
+              {/* Privacy Quick Toggle in Header */}
+              {portfolio && (
+                <button
+                  type="button"
+                  onClick={togglePrivacy}
+                  className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer shadow-2xs ${
+                    isPrivate
+                      ? "bg-stone-900 border-stone-800 text-stone-100"
+                      : "bg-stone-100/90 border-stone-200 hover:bg-stone-200/70 text-stone-700"
+                  }`}
+                  title="Tekan 'P' di keyboard untuk toggle privasi cepat"
+                >
+                  {isPrivate ? (
+                    <>
+                      <EyeOff className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Privat Aktif</span>
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="w-3.5 h-3.5 text-stone-500" />
+                      <span>Mode Privat</span>
+                    </>
+                  )}
+                </button>
+              )}
+
+              {/* Zero Database Privacy Indicator */}
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50/90 border border-emerald-200 text-xs text-emerald-700 font-semibold shadow-2xs">
                 <Lock className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Zero-Database • In-Memory Processing</span>
+                <span className="hidden md:inline">Zero-Database • In-Memory AI</span>
+                <span className="md:hidden">Privat</span>
               </div>
             </div>
           </div>
@@ -112,12 +180,12 @@ export default function Home() {
             <div className="space-y-8 animate-in fade-in duration-300">
               {/* Value Proposition Hero */}
               <div className="text-center max-w-3xl mx-auto space-y-4 pt-4">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-[#fe5e37] text-xs font-bold">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-[#fe5e37] text-xs font-bold shadow-2xs">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Powered by Gemini 3.8 Flash Multimodal</span>
                 </div>
 
-                <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-stone-900">
+                <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-stone-900 leading-tight">
                   Hitung Total Kekayaan Bersih Anda Secara{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fe5e37] via-[#f97316] to-[#eab308]">
                     Instan & 100% Privat
@@ -125,16 +193,16 @@ export default function Home() {
                 </h1>
 
                 <p className="text-sm sm:text-base text-stone-600 max-w-2xl mx-auto leading-relaxed font-medium">
-                  Unggah berbagai dokumen aset Anda yang tercecer—screenshot portofolio saham, sertifikat tanah, akta perusahaan, atau rekening koran PDF. Tanpa database, data aman di peramban Anda.
+                  Unggah berbagai dokumen aset Anda yang tercecer—screenshot portofolio saham, sertifikat tanah, akta perusahaan, atau rekening koran PDF. Tanpa database server, data aman di peramban Anda.
                 </p>
 
                 {isAddingMore && (
                   <button
                     type="button"
                     onClick={() => setIsAddingMore(false)}
-                    className="text-xs text-[#fe5e37] hover:underline font-bold cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-xs text-[#fe5e37] hover:underline font-bold cursor-pointer pt-2"
                   >
-                    ← Kembali ke Tampilan Dashboard
+                    <span>← Kembali ke Tampilan Dashboard Portofolio</span>
                   </button>
                 )}
               </div>
@@ -144,7 +212,7 @@ export default function Home() {
 
               {/* Security & Feature Badges */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 max-w-4xl mx-auto text-left">
-                <div className="p-4 rounded-xl border border-stone-200/80 bg-white space-y-1.5 shadow-2xs">
+                <div className="p-4 rounded-2xl border border-stone-200/80 bg-white space-y-1.5 shadow-2xs luxury-card">
                   <div className="flex items-center gap-2 font-bold text-sm text-stone-900">
                     <ShieldCheck className="w-4 h-4 text-emerald-600" />
                     <span>Zero-Database Storage</span>
@@ -154,7 +222,7 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl border border-stone-200/80 bg-white space-y-1.5 shadow-2xs">
+                <div className="p-4 rounded-2xl border border-stone-200/80 bg-white space-y-1.5 shadow-2xs luxury-card">
                   <div className="flex items-center gap-2 font-bold text-sm text-stone-900">
                     <Zap className="w-4 h-4 text-[#fe5e37]" />
                     <span>Multimodal One-Shot</span>
@@ -164,7 +232,7 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl border border-stone-200/80 bg-white space-y-1.5 shadow-2xs">
+                <div className="p-4 rounded-2xl border border-stone-200/80 bg-white space-y-1.5 shadow-2xs luxury-card">
                   <div className="flex items-center gap-2 font-bold text-sm text-stone-900">
                     <TrendingUp className="w-4 h-4 text-blue-600" />
                     <span>Auditable Source Tracking</span>
@@ -185,6 +253,10 @@ export default function Home() {
                 onReset={handleReset}
                 onAddMore={() => setIsAddingMore(true)}
                 onExportPdf={handleExportPdf}
+                isPrivate={isPrivate}
+                onTogglePrivacy={togglePrivacy}
+                currencyMode={currencyMode}
+                onToggleCurrency={toggleCurrency}
               />
 
               {/* Exact Layout: Pie Breakdown Section with Tabs, Pie Chart on Left, and Card List on Right */}
@@ -193,6 +265,8 @@ export default function Home() {
                 onSelectCategory={handleSelectCategory}
                 selectedCategory={selectedCategory}
                 onAddMore={() => setIsAddingMore(true)}
+                isPrivate={isPrivate}
+                onSelectLiability={handleSelectLiability}
               />
 
               {/* Executive Summary */}
@@ -208,19 +282,22 @@ export default function Home() {
             onClose={() => {
               setIsModalOpen(false);
               setSelectedCategory(null);
+              setSelectedLiability(null);
             }}
             category={selectedCategory}
             assets={portfolio.assets}
             liabilities={portfolio.liabilities}
+            isPrivate={isPrivate}
+            selectedLiability={selectedLiability}
           />
         )}
 
         {/* Footer */}
         <footer className="border-t border-stone-200/80 py-6 text-center text-xs text-stone-500 bg-white mt-12">
           <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span>© 2026 AngelWealth. Private Wealth & Asset Aggregator.</span>
+            <span>© 2026 AngelWealth. Private Wealth & Asset Aggregator AI.</span>
             <span className="font-mono text-[11px] text-stone-400">
-              Fluent HQ Inspired Design • Zero-Database Local Privacy
+              Fluent HQ Inspired Luxury Design • Zero-Database Local Privacy
             </span>
           </div>
         </footer>

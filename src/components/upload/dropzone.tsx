@@ -140,10 +140,10 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
           handleFiles(e.dataTransfer.files);
         }}
         onClick={() => fileInputRef.current?.click()}
-        className={`relative border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center transition-all cursor-pointer ${
+        className={`relative border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center transition-all cursor-pointer luxury-card overflow-hidden ${
           isDragging
-            ? "border-[#fe5e37] bg-orange-50/50 scale-[1.01]"
-            : "border-stone-300 hover:border-[#fe5e37]/70 hover:bg-stone-50/70 bg-white shadow-xs"
+            ? "border-[#fe5e37] bg-orange-50/70 scale-[1.01] shadow-lg shadow-orange-100"
+            : "border-stone-300/90 hover:border-[#fe5e37]/70 hover:bg-stone-50/60 bg-white shadow-xs"
         }`}
       >
         <input
@@ -155,39 +155,42 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
           onChange={(e) => handleFiles(e.target.files)}
         />
 
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center text-[#fe5e37] ring-8 ring-orange-50/60">
-            <Upload className="w-8 h-8" />
+        {/* Ambient subtle warm gradient */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-orange-100/30 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+
+        <div className="relative flex flex-col items-center justify-center space-y-4">
+          <div className="w-16 h-16 rounded-2xl bg-orange-50 border border-orange-200/60 flex items-center justify-center text-[#fe5e37] ring-8 ring-orange-50/40 shadow-xs">
+            <Upload className="w-7 h-7" />
           </div>
 
-          <div className="space-y-1">
-            <h3 className="text-xl font-bold tracking-tight text-stone-900">
-              Tarik & Lepas Dokumen Aset Anda ke Sini
+          <div className="space-y-1.5 max-w-md">
+            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-stone-900">
+              Tarik & Lepas Dokumen Portofolio Anda ke Sini
             </h3>
-            <p className="text-sm text-stone-500 max-w-md mx-auto font-medium">
-              Screenshot portofolio saham, crypto, rekening koran PDF, sertifikat tanah, atau akta perusahaan.
+            <p className="text-xs sm:text-sm text-stone-500 font-medium leading-relaxed">
+              Screenshot portofolio saham, crypto, rekening koran PDF, sertifikat tanah, atau bilyet deposito.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 pt-2">
-            <span className="px-2.5 py-1 text-xs font-semibold rounded-md bg-stone-100 border border-stone-200 text-stone-600">
+          <div className="flex items-center gap-2 pt-2 flex-wrap justify-center">
+            <span className="px-3 py-1 text-[11px] font-bold rounded-lg bg-stone-100 border border-stone-200 text-stone-700 font-mono">
               PDF
             </span>
-            <span className="px-2.5 py-1 text-xs font-semibold rounded-md bg-stone-100 border border-stone-200 text-stone-600">
+            <span className="px-3 py-1 text-[11px] font-bold rounded-lg bg-stone-100 border border-stone-200 text-stone-700 font-mono">
               JPG / JPEG
             </span>
-            <span className="px-2.5 py-1 text-xs font-semibold rounded-md bg-stone-100 border border-stone-200 text-stone-600">
+            <span className="px-3 py-1 text-[11px] font-bold rounded-lg bg-stone-100 border border-stone-200 text-stone-700 font-mono">
               PNG
             </span>
-            <span className="text-xs text-stone-400 font-medium">• Multi-dokumen</span>
+            <span className="text-xs text-stone-400 font-medium">• Multi-berkas sekaligus</span>
           </div>
         </div>
       </div>
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-600" />
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-start gap-3 shadow-2xs">
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-rose-600" />
           <div>
             <p className="font-bold">Perhatian</p>
             <p>{errorMessage}</p>
@@ -197,10 +200,10 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
 
       {/* Uploaded Files Queue */}
       {files.length > 0 && (
-        <div className="p-6 rounded-2xl border border-stone-200 bg-white shadow-xs space-y-4">
+        <div className="p-6 rounded-3xl border border-stone-200/90 bg-white shadow-sm space-y-4 luxury-card">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-stone-900">Dokumen Terpilih</span>
+              <span className="font-bold text-sm text-stone-900">Dokumen Siap Diekstrak</span>
               <span className="text-xs px-2.5 py-0.5 rounded-full bg-orange-100 text-[#fe5e37] font-mono font-bold">
                 {files.length} berkas
               </span>
@@ -211,7 +214,7 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
                 e.stopPropagation();
                 setFiles([]);
               }}
-              className="text-xs text-stone-400 hover:text-red-600 transition-colors cursor-pointer"
+              className="text-xs text-stone-400 hover:text-rose-600 transition-colors cursor-pointer"
             >
               Hapus Semua
             </button>
@@ -223,12 +226,12 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
               return (
                 <div
                   key={file.id}
-                  className="flex items-center justify-between p-3 rounded-xl border border-stone-200/80 bg-stone-50/50 text-sm gap-2"
+                  className="flex items-center justify-between p-3 rounded-2xl border border-stone-200/80 bg-stone-50/50 text-sm gap-2"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="p-2 rounded-lg bg-white border border-stone-200 text-stone-500 shrink-0">
+                    <div className="p-2 rounded-xl bg-white border border-stone-200 text-stone-500 shrink-0 shadow-2xs">
                       {isPdf ? (
-                        <FileText className="w-4 h-4 text-red-500" />
+                        <FileText className="w-4 h-4 text-rose-500" />
                       ) : (
                         <ImageIcon className="w-4 h-4 text-[#fe5e37]" />
                       )}
@@ -246,7 +249,7 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
                   <button
                     type="button"
                     onClick={() => removeFile(file.id)}
-                    className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
                     title="Hapus file"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -256,13 +259,13 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
             })}
           </div>
 
-          {/* Action Button in Fluent Coral */}
+          {/* Action Button */}
           <div className="pt-2">
             <button
               type="button"
               disabled={isAnalyzing}
               onClick={handleStartAnalysis}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#fe5e37] hover:bg-[#ea4e28] text-white font-bold text-sm transition-all shadow-md shadow-[#fe5e37]/25 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-[#fe5e37] hover:bg-[#ea4e28] text-white font-bold text-sm sm:text-base transition-all shadow-md shadow-[#fe5e37]/25 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer active:scale-[0.99]"
             >
               {isAnalyzing ? (
                 <>
@@ -272,7 +275,7 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  <span>Analisis & Hitung Kekayaan Bersih</span>
+                  <span>Analisis & Hitung Kekayaan Bersih (One-Shot)</span>
                 </>
               )}
             </button>
@@ -281,23 +284,24 @@ export function DocumentDropzone({ onAnalysisSuccess }: DropzoneProps) {
       )}
 
       {/* Footer / Privacy & Demo Options */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl border border-stone-200 bg-white text-xs text-stone-600 shadow-2xs">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl border border-stone-200/90 bg-white text-xs text-stone-600 shadow-2xs luxury-card">
+        <div className="flex items-center gap-2.5">
           <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>
-            <strong>Zero-Database Privacy:</strong> Tidak ada database server. Semua data diproses in-memory dan disimpan di browser Anda.
+            <strong>Zero-Database Privacy:</strong> Tidak ada berkas atau angka yang disimpan di server. Hasil ekstraksi hanya hidup di RAM browser Anda.
           </span>
         </div>
 
         <button
           type="button"
           onClick={loadDemoData}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 font-bold text-stone-800 transition-colors shrink-0 cursor-pointer shadow-2xs"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 font-bold text-stone-800 transition-colors shrink-0 cursor-pointer shadow-2xs active:scale-[0.98]"
         >
           <Eye className="w-3.5 h-3.5 text-[#fe5e37]" />
-          <span>Lihat Data Contoh (Demo)</span>
+          <span>Coba Portofolio Eksekutif Demo</span>
         </button>
       </div>
     </div>
   );
+
 }
