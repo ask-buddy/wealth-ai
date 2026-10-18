@@ -1,0 +1,39 @@
+name: Deploy production
+
+on:
+  pull_request:
+    branches: [release/prod]
+    types: [closed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted
+    environment: prod
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          persist-credentials: false
+
+      - name: Build, push, and deploy
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_REGION: ${{ secrets.GCP_REGION }}
+          DEPLOY_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        run: |
+          : "${GCP_PROJECT_ID:?Set GCP_PROJECT_ID in the prod environment secrets}"
+          : "${GCP_REGION:?Set GCP_REGION in the prod environment secrets}"
+          bash scripts/push-image.sh "$GCP_PROJECT_ID" "$GCP_REGION" "$DEPLOY_SHA"
