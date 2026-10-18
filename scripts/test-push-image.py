@@ -36,7 +36,8 @@ with tempfile.TemporaryDirectory() as directory:
     assert calls[2][:4] == ["gcloud", "run", "deploy", "angelwealth"]
     assert calls[2][calls[2].index("--image") + 1] == image
     assert calls[2][calls[2].index("--project") + 1] == "test-project"
-    assert "--no-allow-unauthenticated" in calls[2]
+    assert "--allow-unauthenticated" in calls[2]
+    assert calls[2][calls[2].index("--ingress") + 1] == "all"
     assert "--set-env-vars" not in calls[2] and "--set-secrets" not in calls[2]
     result, calls = run("test-project", "us-central1", "v2")
     assert result.returncode == 0

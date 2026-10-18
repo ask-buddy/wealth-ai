@@ -28,6 +28,7 @@ gcloud run deploy angelwealth \
   --port 8080 \
   --memory 1Gi \
   --timeout 300 \
-  --no-allow-unauthenticated \
+  --allow-unauthenticated \
+  --ingress all \
   --quiet
 printf '\nDeployed image: %s\n' "$image"
