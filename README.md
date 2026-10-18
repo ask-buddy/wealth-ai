@@ -102,7 +102,8 @@ identity, builds locally for `linux/amd64` (including on Apple Silicon), pushes 
 It does not use Cloud Build. See Google's [container build guidance](https://docs.cloud.google.com/run/docs/building/containers)
 and [Cloud Run deployment guidance](https://docs.cloud.google.com/run/docs/deploying).
 
-The service requires authentication, uses port 8080, 1 GiB memory, and a 300-second
+The service allows public unauthenticated access with ingress from all sources,
+uses port 8080, 1 GiB memory, and a 300-second
 request timeout. Existing environment variables and secret references are
 preserved. The script does not load `.env` files; `.dockerignore` excludes them
 from the build.
@@ -123,10 +124,15 @@ would point inside the container. Override all AI settings above because the
 application currently has development defaults in `src/server/ai/config.ts`.
 The existing embedded key should be rotated if it is a real credential.
 
-To access the private service locally:
+The runner identity also needs `run.services.setIamPolicy` permission to grant
+public access. Organization policies must allow the `allUsers` IAM binding.
+See [Cloud Run public access](https://docs.cloud.google.com/run/docs/authenticating/public).
+Public access includes the application's API routes.
+
+To get the public service URL:
 
 ```bash
-gcloud run services proxy angelwealth --project "$PROJECT_ID" --region "$REGION"
+gcloud run services describe angelwealth --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)'
 ```
 
 Offline script checks: `python3 scripts/test-push-image.py`.
