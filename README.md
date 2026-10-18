@@ -142,8 +142,10 @@ self-hosted runner. Add these **environment secrets** in GitHub:
 - `GCP_PROJECT_ID`: your Google Cloud project ID.
 - `GCP_REGION`: for example, `asia-southeast2`.
 
-The runner must already have Docker/Buildx and authenticated `gcloud` available
-to its service user. No authentication action or service account key is added.
+The workflow installs the Google Cloud CLI using `google-github-actions/setup-gcloud`.
+The runner must already have Docker/Buildx and Google Cloud credentials available
+to its service user. Installing the CLI does not authenticate it. No authentication
+action or service account key is added.
 The commit SHA becomes the image tag, and production deployments run one at a
 time. Environment protection rules configured on `prod` still apply.
 
