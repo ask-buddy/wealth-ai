@@ -46,9 +46,17 @@ export default function Home() {
     useState<ExtractedLiabilityItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedPreviewFile, setSelectedPreviewFile] = useState<string | null>(
-    null,
-  );
+  const [selectedPreviewTarget, setSelectedPreviewTarget] = useState<{
+    fileName: string;
+    assetInfo?: { name: string; valueFormatted?: string } | null;
+  } | null>(null);
+
+  const handlePreviewFile = (
+    fileName: string,
+    assetInfo?: { name: string; valueFormatted?: string } | null,
+  ) => {
+    setSelectedPreviewTarget({ fileName, assetInfo });
+  };
   const [isLoaded, setIsLoaded] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [currencyMode, setCurrencyMode] = useState<"IDR" | "USD">("IDR");
@@ -295,9 +303,7 @@ export default function Home() {
               <div className="text-center max-w-3xl mx-auto space-y-4 pt-4">
                 <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-stone-900 leading-tight font-play">
                   Hitung Total Kekayaan Bersih Anda Secara{" "}
-                  <span className="text-[#1A76FF]">
-                    Instan & 100% Privat
-                  </span>
+                  <span className="text-[#1A76FF]">Instan & 100% Privat</span>
                 </h1>
 
                 {isAddingMore && (
@@ -385,14 +391,14 @@ export default function Home() {
                 currencyMode={currencyMode}
                 activeTab={dashboardTab}
                 onTabChange={setDashboardTab}
-                onPreviewFile={setSelectedPreviewFile}
+                onPreviewFile={handlePreviewFile}
                 usdRate={usdRate}
               />
 
               {/* Executive Summary */}
               <ExecutiveSummary
                 portfolio={portfolio}
-                onPreviewFile={setSelectedPreviewFile}
+                onPreviewFile={handlePreviewFile}
               />
             </div>
           )}
@@ -413,7 +419,7 @@ export default function Home() {
             isPrivate={isPrivate}
             selectedLiability={selectedLiability}
             currencyMode={currencyMode}
-            onPreviewFile={setSelectedPreviewFile}
+            onPreviewFile={handlePreviewFile}
             usdRate={usdRate}
             onDeleteAsset={handleDeleteAssetItem}
             onDeleteLiability={handleDeleteLiabilityItem}
@@ -422,12 +428,13 @@ export default function Home() {
 
         {/* Document Preview Modal */}
         <DocumentPreviewModal
-          isOpen={!!selectedPreviewFile}
-          onClose={() => setSelectedPreviewFile(null)}
-          fileName={selectedPreviewFile}
+          isOpen={!!selectedPreviewTarget}
+          onClose={() => setSelectedPreviewTarget(null)}
+          fileName={selectedPreviewTarget?.fileName || null}
+          assetInfo={selectedPreviewTarget?.assetInfo}
           preview={
-            selectedPreviewFile && portfolio?.documentPreviews
-              ? portfolio.documentPreviews[selectedPreviewFile]
+            selectedPreviewTarget?.fileName && portfolio?.documentPreviews
+              ? portfolio.documentPreviews[selectedPreviewTarget.fileName]
               : null
           }
         />

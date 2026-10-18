@@ -38,7 +38,10 @@ interface PieBreakdownSectionProps {
   currencyMode?: "IDR" | "USD";
   activeTab?: "assets" | "liabilities";
   onTabChange?: (tab: "assets" | "liabilities") => void;
-  onPreviewFile?: (fileName: string) => void;
+  onPreviewFile?: (
+    fileName: string,
+    assetInfo?: { name: string; valueFormatted?: string } | null,
+  ) => void;
   usdRate?: number;
 }
 
@@ -574,7 +577,15 @@ export function PieBreakdownSection({
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                onPreviewFile?.(lia.sourceFile);
+                                onPreviewFile?.(lia.sourceFile, {
+                                  name: lia.name,
+                                  valueFormatted: formatCurrencyValue(
+                                    lia.amountIdr,
+                                    currencyMode,
+                                    isPrivate,
+                                    usdRate,
+                                  ),
+                                });
                               }}
                               className="inline-flex items-center gap-1 text-[10px] text-stone-600 hover:text-[#1A76FF] px-2 py-0.5 rounded-sm bg-stone-100 hover:bg-[#eef5ff] border border-stone-200 hover:border-[#d2e3fc] font-mono mt-1 cursor-pointer transition-all shadow-2xs"
                               title="Klik untuk membuka pratinjau dokumen"

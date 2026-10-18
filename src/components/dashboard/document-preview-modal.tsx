@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useScrollLock } from "@/hooks/use-scroll-lock";
 
-interface DocumentPreviewModalProps {
+export interface DocumentPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   fileName: string | null;
@@ -24,6 +24,10 @@ interface DocumentPreviewModalProps {
     mimeType: string;
     dataUrl: string;
   } | null;
+  assetInfo?: {
+    name: string;
+    valueFormatted?: string;
+  } | null;
 }
 
 export function DocumentPreviewModal({
@@ -31,6 +35,7 @@ export function DocumentPreviewModal({
   onClose,
   fileName,
   preview,
+  assetInfo,
 }: DocumentPreviewModalProps) {
   const [zoomLevel, setZoomLevel] = useState<number>(100);
 
@@ -103,10 +108,23 @@ export function DocumentPreviewModal({
               >
                 {fileName}
               </h3>
-              <p className="text-[11px] text-stone-500 font-medium flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span>Dokumen Bukti Aset Terverifikasi</span>
-              </p>
+              {assetInfo ? (
+                <p className="text-[11px] font-medium flex items-center gap-1.5 truncate">
+                  {assetInfo.valueFormatted && (
+                    <span className="font-bold font-mono text-stone-900 shrink-0">
+                      {assetInfo.valueFormatted}
+                    </span>
+                  )}
+                  <span className="truncate text-stone-600">
+                    {assetInfo.name}
+                  </span>
+                </p>
+              ) : (
+                <p className="text-[11px] text-stone-500 font-medium flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>Dokumen Bukti Aset Terverifikasi</span>
+                </p>
+              )}
             </div>
           </div>
 
