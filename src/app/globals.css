@@ -41,18 +41,18 @@
   --card-foreground: #191919;
   --popover: #ffffff;
   --popover-foreground: #191919;
-  --primary: #80283e;
+  --primary: #1A76FF;
   --primary-foreground: #ffffff;
   --secondary: #f4f1ec;
   --secondary-foreground: #191919;
   --muted: #f5f2ed;
   --muted-foreground: #6b7280;
-  --accent: #f8eef1;
-  --accent-foreground: #80283e;
+  --accent: #eef5ff;
+  --accent-foreground: #1A76FF;
   --destructive: #ef4444;
   --border: #e9e5df;
   --input: #e9e5df;
-  --ring: #80283e;
+  --ring: #1A76FF;
   --radius: 0.25rem;
 }
 
@@ -108,10 +108,10 @@
 
 @keyframes pulseLaserGlow {
   0%, 100% {
-    box-shadow: 0 0 12px rgba(128, 40, 62, 0.35);
+    box-shadow: 0 0 12px rgba(26, 118, 255, 0.35);
   }
   50% {
-    box-shadow: 0 0 26px rgba(128, 40, 62, 0.65);
+    box-shadow: 0 0 26px rgba(26, 118, 255, 0.65);
   }
 }
 

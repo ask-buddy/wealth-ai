@@ -50,7 +50,7 @@ export function AssetDistributionChart({
     <div className="rounded-3xl border bg-card p-6 sm:p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <PieIcon className="w-5 h-5 text-[#80283e]" />
+          <PieIcon className="w-5 h-5 text-[#1A76FF]" />
           <h3 className="text-base sm:text-lg font-bold tracking-tight text-foreground">
             Distribusi Portofolio Aset
           </h3>
@@ -116,7 +116,7 @@ export function AssetDistributionChart({
               onClick={() => onSelectCategory(cat.category)}
               className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
                 isSelected
-                  ? "border-[#80283e] bg-[#80283e]/10 shadow-sm"
+                  ? "border-[#1A76FF] bg-[#1A76FF]/10 shadow-sm"
                   : "border-transparent hover:bg-muted/50"
               }`}
             >

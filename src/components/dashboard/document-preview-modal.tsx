@@ -89,7 +89,7 @@ export function DocumentPreviewModal({
         {/* Header */}
         <div className="px-5 py-3.5 border-b border-stone-200 bg-white flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-sm bg-[#faf0f3] border border-[#ecd0d8] flex items-center justify-center text-[#80283e] shrink-0">
+            <div className="w-8 h-8 rounded-sm bg-[#eef5ff] border border-[#d2e3fc] flex items-center justify-center text-[#1A76FF] shrink-0">
               {isPdf ? (
                 <FileText className="w-4 h-4" />
               ) : (
@@ -151,7 +151,7 @@ export function DocumentPreviewModal({
                 className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-sm border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs font-semibold transition-all cursor-pointer shadow-2xs mr-1"
                 title="Buka di tab baru"
               >
-                <ExternalLink className="w-3.5 h-3.5 text-[#80283e]" />
+                <ExternalLink className="w-3.5 h-3.5 text-[#1A76FF]" />
                 <span>Buka Penuh</span>
               </button>
             )}
@@ -215,7 +215,7 @@ export function DocumentPreviewModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-1.5 rounded-sm bg-[#80283e] hover:bg-[#6c1e32] text-white text-xs font-semibold cursor-pointer transition-all shadow-xs"
+              className="px-4 py-1.5 rounded-sm bg-[#1A76FF] hover:bg-[#0d5fd9] text-white text-xs font-semibold cursor-pointer transition-all shadow-xs"
             >
               Tutup
             </button>

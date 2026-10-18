@@ -168,13 +168,13 @@ export default function Home() {
   if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#fbf9f7]">
-        <div className="w-8 h-8 border-3 border-[#80283e] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-[#1A76FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#fbf9f7] text-[#191919] flex flex-col font-sans selection:bg-[#f5dfe6] selection:text-[#5e1929]">
+    <div className="min-h-screen bg-[#fbf9f7] text-[#191919] flex flex-col font-sans selection:bg-[#dbeafe] selection:text-[#0b4eb8]">
       {/* Printable Report Component for PDF export */}
       <div className="print-only">
         {portfolio && <PrintableReport ref={printRef} portfolio={portfolio} />}
@@ -186,7 +186,7 @@ export default function Home() {
         <header className="sticky top-0 z-40 w-full border-b border-stone-200 bg-white/95 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-sm bg-[#80283e] flex items-center justify-center text-white font-bold text-lg">
+              <div className="w-9 h-9 rounded-sm bg-[#1A76FF] flex items-center justify-center text-white font-bold text-lg">
                 A
               </div>
               <div>
@@ -245,11 +245,11 @@ export default function Home() {
                         type="button"
                         onClick={fetchExchangeRate}
                         disabled={rateLoading}
-                        className="text-stone-400 hover:text-[#80283e] ml-0.5 cursor-pointer disabled:opacity-50 transition-colors"
+                        className="text-stone-400 hover:text-[#1A76FF] ml-0.5 cursor-pointer disabled:opacity-50 transition-colors"
                         title="Segarkan Nilai Kurs"
                       >
                         <RefreshCw
-                          className={`w-3 h-3 ${rateLoading ? "animate-spin text-[#80283e]" : ""}`}
+                          className={`w-3 h-3 ${rateLoading ? "animate-spin text-[#1A76FF]" : ""}`}
                         />
                       </button>
                     </div>
@@ -264,7 +264,7 @@ export default function Home() {
                     <span
                       className={
                         currencyMode === "IDR"
-                          ? "font-bold text-[#80283e]"
+                          ? "font-bold text-[#1A76FF]"
                           : "text-stone-400"
                       }
                     >
@@ -274,7 +274,7 @@ export default function Home() {
                     <span
                       className={
                         currencyMode === "USD"
-                          ? "font-bold text-[#80283e]"
+                          ? "font-bold text-[#1A76FF]"
                           : "text-stone-400"
                       }
                     >
@@ -295,7 +295,7 @@ export default function Home() {
               <div className="text-center max-w-3xl mx-auto space-y-4 pt-4">
                 <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-stone-900 leading-tight font-play">
                   Hitung Total Kekayaan Bersih Anda Secara{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#80283e] via-[#a34159] to-[#c57288]">
+                  <span className="text-[#1A76FF]">
                     Instan & 100% Privat
                   </span>
                 </h1>
@@ -304,7 +304,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setIsAddingMore(false)}
-                    className="inline-flex items-center gap-1.5 text-xs text-[#80283e] hover:underline font-bold cursor-pointer pt-2"
+                    className="inline-flex items-center gap-1.5 text-xs text-[#1A76FF] hover:underline font-bold cursor-pointer pt-2"
                   >
                     <span>← Kembali ke Tampilan Dashboard Portofolio</span>
                   </button>
@@ -334,7 +334,7 @@ export default function Home() {
 
                 <div className="p-4 rounded-sm border border-stone-200 bg-white space-y-1.5 luxury-card">
                   <div className="flex items-center gap-2 font-bold text-sm text-stone-900">
-                    <Zap className="w-4 h-4 text-[#80283e]" />
+                    <Zap className="w-4 h-4 text-[#1A76FF]" />
                     <span>Multimodal One-Shot</span>
                   </div>
                   <p className="text-xs text-stone-500 leading-relaxed font-medium">

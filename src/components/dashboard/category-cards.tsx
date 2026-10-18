@@ -47,7 +47,7 @@ export function CategoryCards({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-base sm:text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
-          <Layers className="w-5 h-5 text-[#80283e]" />
+          <Layers className="w-5 h-5 text-[#1A76FF]" />
           Kategori Portofolio Aset
         </h3>
         <span className="text-xs text-muted-foreground">Pilih untuk melihat detail</span>
@@ -62,8 +62,8 @@ export function CategoryCards({
               onClick={() => onSelectCategory(cat.category)}
               className={`group p-5 rounded-2xl border transition-all duration-200 cursor-pointer relative overflow-hidden bg-card ${
                 isSelected
-                  ? "ring-2 ring-[#80283e] border-transparent shadow-lg bg-[#80283e]/5"
-                  : "hover:border-[#80283e]/40 hover:shadow-md"
+                  ? "ring-2 ring-[#1A76FF] border-transparent shadow-lg bg-[#1A76FF]/5"
+                  : "hover:border-[#1A76FF]/40 hover:shadow-md"
               }`}
             >
               {/* Top Accent Stripe */}
@@ -84,7 +84,7 @@ export function CategoryCards({
               </div>
 
               <div className="mt-4 space-y-1">
-                <h4 className="font-semibold text-sm sm:text-base text-foreground group-hover:text-[#80283e] transition-colors">
+                <h4 className="font-semibold text-sm sm:text-base text-foreground group-hover:text-[#1A76FF] transition-colors">
                   {cat.label}
                 </h4>
                 <p className="text-lg sm:text-xl font-bold font-mono text-foreground">
@@ -97,7 +97,7 @@ export function CategoryCards({
 
               <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
                 <span>{cat.itemCount} Item Tercatat</span>
-                <span className="flex items-center gap-1 text-[#80283e] font-medium group-hover:translate-x-0.5 transition-transform">
+                <span className="flex items-center gap-1 text-[#1A76FF] font-medium group-hover:translate-x-0.5 transition-transform">
                   Rincian <ChevronRight className="w-3.5 h-3.5" />
                 </span>
               </div>

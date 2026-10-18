@@ -45,7 +45,7 @@ export function ConfirmDeleteModal({
         aria-labelledby="confirm-delete-title"
       >
         <div className="flex items-start justify-between">
-          <div className="w-11 h-11 rounded-sm bg-[#fbf2f4] border border-[#f3d3dc] flex items-center justify-center text-[#80283e]">
+          <div className="w-11 h-11 rounded-sm bg-[#eef5ff] border border-[#d2e3fc] flex items-center justify-center text-[#1A76FF]">
             <Trash2 className="w-5 h-5" />
           </div>
           <button
@@ -93,7 +93,7 @@ export function ConfirmDeleteModal({
               onConfirm();
               onClose();
             }}
-            className="px-4 py-2 rounded-sm bg-[#80283e] hover:bg-[#6c1e32] text-white font-semibold text-xs transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
+            className="px-4 py-2 rounded-sm bg-[#1A76FF] hover:bg-[#0d5fd9] text-white font-semibold text-xs transition-all cursor-pointer shadow-xs inline-flex items-center gap-1.5"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>Ya, Hapus Semua Data</span>

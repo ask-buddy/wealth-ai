@@ -33,8 +33,8 @@ export function ExecutiveSummary({
     <div className="rounded-sm border border-stone-200 bg-white p-6 sm:p-8 space-y-6 luxury-card relative overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2.5 text-[#80283e]">
-          <div className="w-8 h-8 rounded-sm bg-[#faf0f3] border border-[#ecd0d8] flex items-center justify-center text-[#80283e]">
+        <div className="flex items-center gap-2.5 text-[#1A76FF]">
+          <div className="w-8 h-8 rounded-sm bg-[#eef5ff] border border-[#d2e3fc] flex items-center justify-center text-[#1A76FF]">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
@@ -66,7 +66,7 @@ export function ExecutiveSummary({
 
       {/* Main Narrative Card with Editorial Typography */}
       <div className="relative p-5 sm:p-6 rounded-sm bg-stone-50 border border-stone-200 text-xs sm:text-sm leading-relaxed text-stone-800 font-medium">
-        <Quote className="w-8 h-8 text-[#ecd0d8] absolute top-4 left-4 -z-0 opacity-40" />
+        <Quote className="w-8 h-8 text-[#d2e3fc] absolute top-4 left-4 -z-0 opacity-40" />
         <p className="relative z-10 font-normal leading-relaxed">
           {portfolio.executiveSummary}
         </p>
@@ -98,7 +98,7 @@ export function ExecutiveSummary({
       {portfolio.sourceFiles && portfolio.sourceFiles.length > 0 && (
         <div className="pt-3 border-t border-stone-100 flex items-start gap-2.5 sm:gap-3 text-xs text-stone-500">
           <span className="font-semibold text-stone-800 flex items-center gap-1.5 shrink-0 pt-1">
-            <FileText className="w-3.5 h-3.5 text-[#80283e]" />
+            <FileText className="w-3.5 h-3.5 text-[#1A76FF]" />
             Dokumen Sumber Terverifikasi ({portfolio.sourceFiles.length}):
           </span>
 
@@ -108,11 +108,11 @@ export function ExecutiveSummary({
                 key={idx}
                 type="button"
                 onClick={() => onPreviewFile?.(file)}
-                className="px-2.5 py-1 rounded-sm bg-stone-50 hover:bg-[#faf0f3] border border-stone-200 hover:border-[#ecd0d8] text-[11px] font-mono text-stone-700 hover:text-[#80283e] transition-all cursor-pointer inline-flex items-center gap-1.5 group shadow-2xs"
+                className="px-2.5 py-1 rounded-sm bg-stone-50 hover:bg-[#eef5ff] border border-stone-200 hover:border-[#d2e3fc] text-[11px] font-mono text-stone-700 hover:text-[#1A76FF] transition-all cursor-pointer inline-flex items-center gap-1.5 group shadow-2xs"
                 title="Klik untuk membuka pratinjau dokumen"
               >
                 <span>{file}</span>
-                <Eye className="w-3 h-3 text-stone-400 group-hover:text-[#80283e] transition-colors" />
+                <Eye className="w-3 h-3 text-stone-400 group-hover:text-[#1A76FF] transition-colors" />
               </button>
             ))}
           </div>

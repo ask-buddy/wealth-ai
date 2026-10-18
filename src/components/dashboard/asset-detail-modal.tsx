@@ -267,7 +267,7 @@ export function AssetDetailModal({
                     onClick={() =>
                       onPreviewFile?.(selectedLiability.sourceFile)
                     }
-                    className="px-2 py-0.5 rounded-sm bg-white hover:bg-rose-50 border border-rose-200 hover:border-rose-300 font-mono text-[11px] text-stone-800 hover:text-[#80283e] cursor-pointer inline-flex items-center gap-1.5 transition-all shadow-2xs"
+                    className="px-2 py-0.5 rounded-sm bg-white hover:bg-rose-50 border border-rose-200 hover:border-rose-300 font-mono text-[11px] text-stone-800 hover:text-[#1A76FF] cursor-pointer inline-flex items-center gap-1.5 transition-all shadow-2xs"
                     title="Klik untuk membuka pratinjau dokumen"
                   >
                     <span>{selectedLiability.sourceFile}</span>
@@ -288,7 +288,7 @@ export function AssetDetailModal({
                             onClick={() =>
                               handleDeleteLiability(selectedLiability.id)
                             }
-                            className="px-3 py-1 text-xs font-bold text-white bg-[#80283e] hover:bg-[#6c1e32] rounded-sm transition-colors cursor-pointer"
+                            className="px-3 py-1 text-xs font-bold text-white bg-[#1A76FF] hover:bg-[#0d5fd9] rounded-sm transition-colors cursor-pointer"
                           >
                             Ya, Hapus
                           </button>
@@ -340,7 +340,7 @@ export function AssetDetailModal({
 
                     {item.institution && (
                       <p className="text-xs text-stone-500 flex items-center gap-1.5 font-medium">
-                        <Tag className="w-3 h-3 text-[#80283e]" />
+                        <Tag className="w-3 h-3 text-[#1A76FF]" />
                         <span>Institusi: {item.institution}</span>
                       </p>
                     )}
@@ -380,7 +380,7 @@ export function AssetDetailModal({
                       <button
                         type="button"
                         onClick={() => handleDeleteItem(item.id, item.name)}
-                        className="px-3 py-1 text-xs font-bold text-white bg-[#80283e] hover:bg-[#6c1e32] rounded-sm transition-colors cursor-pointer shadow-2xs"
+                        className="px-3 py-1 text-xs font-bold text-white bg-[#1A76FF] hover:bg-[#0d5fd9] rounded-sm transition-colors cursor-pointer shadow-2xs"
                       >
                         Ya, Hapus
                       </button>
@@ -421,7 +421,7 @@ export function AssetDetailModal({
                     <button
                       type="button"
                       onClick={() => onPreviewFile?.(item.sourceFile)}
-                      className="font-mono font-semibold text-stone-800 hover:text-[#80283e] px-2 py-0.5 rounded-sm bg-[#faf0f3] hover:bg-white border border-[#ecd0d8] hover:border-[#80283e]/50 text-[10px] cursor-pointer inline-flex items-center gap-1 transition-all shadow-2xs"
+                      className="font-mono font-semibold text-stone-800 hover:text-[#1A76FF] px-2 py-0.5 rounded-sm bg-[#eef5ff] hover:bg-white border border-[#d2e3fc] hover:border-[#1A76FF]/50 text-[10px] cursor-pointer inline-flex items-center gap-1 transition-all shadow-2xs"
                       title="Klik untuk membuka pratinjau dokumen"
                     >
                       <span>{item.sourceFile}</span>

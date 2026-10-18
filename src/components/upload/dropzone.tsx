@@ -346,9 +346,9 @@ export function DocumentDropzone({
     <div className="w-full max-w-4xl mx-auto space-y-6">
       {/* Mode Tambah Aset Informative Alert */}
       {isAddingMore && (
-        <div className="p-3.5 sm:p-4 rounded-sm bg-[#faf0f3] border border-[#ecd0d8] flex items-center justify-between gap-3 text-xs text-[#80283e] animate-in fade-in duration-200">
+        <div className="p-3.5 sm:p-4 rounded-sm bg-[#eef5ff] border border-[#d2e3fc] flex items-center justify-between gap-3 text-xs text-[#1A76FF] animate-in fade-in duration-200">
           <div className="flex items-center gap-2.5 font-medium">
-            <Sparkles className="w-4 h-4 shrink-0 text-[#80283e]" />
+            <Sparkles className="w-4 h-4 shrink-0 text-[#1A76FF]" />
             <span>
               <strong>Mode Tambah Aset:</strong> Dokumen yang Anda unggah akan otomatis digabungkan dengan{" "}
               {existingPortfolio?.assets?.length || 0}{" "}
@@ -359,7 +359,7 @@ export function DocumentDropzone({
             <button
               type="button"
               onClick={onCancel}
-              className="px-3 py-1.5 rounded-sm bg-white hover:bg-stone-50 border border-[#ecd0d8] text-stone-700 text-xs font-semibold cursor-pointer shrink-0 transition-all shadow-2xs"
+              className="px-3 py-1.5 rounded-sm bg-white hover:bg-stone-50 border border-[#d2e3fc] text-stone-700 text-xs font-semibold cursor-pointer shrink-0 transition-all shadow-2xs"
             >
               Batal
             </button>
@@ -369,15 +369,15 @@ export function DocumentDropzone({
 
       {/* Upload Drop Zone / Active Document Scanner View */}
       {isAnalyzing ? (
-        <div className="relative border-2 border-[#80283e]/30 rounded-sm p-6 sm:p-10 text-center bg-gradient-to-b from-[#faf0f3]/70 via-white to-[#faf0f3]/40 luxury-card overflow-hidden animate-in fade-in duration-300">
+        <div className="relative border-2 border-[#1A76FF]/30 rounded-sm p-6 sm:p-10 text-center bg-gradient-to-b from-[#eef5ff]/70 via-white to-[#eef5ff]/40 luxury-card overflow-hidden animate-in fade-in duration-300">
           {/* Top Status & Cancel Action Bar */}
-          <div className="flex items-center justify-between pb-5 border-b border-[#ecd0d8]/80 text-xs">
+          <div className="flex items-center justify-between pb-5 border-b border-[#d2e3fc]/80 text-xs">
             <div className="flex items-center gap-2.5">
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#80283e] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#80283e]"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1A76FF] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#1A76FF]"></span>
               </span>
-              <span className="font-bold text-[#80283e] tracking-wide uppercase text-[11px]">
+              <span className="font-bold text-[#1A76FF] tracking-wide uppercase text-[11px]">
                 Pemindaian In-Memory Berjalan ({files.length} Berkas)
               </span>
             </div>
@@ -398,17 +398,17 @@ export function DocumentDropzone({
             {/* Visual Folder & Document with Horizontal Laser Scan Beam */}
             <div className="relative w-56 h-40 sm:w-64 sm:h-48 mx-auto flex items-center justify-center">
               {/* Pulsing Aura */}
-              <div className="absolute inset-0 bg-[#80283e]/10 rounded-2xl filter blur-xl animate-pulse-glow" />
+              <div className="absolute inset-0 bg-[#1A76FF]/10 rounded-2xl filter blur-xl animate-pulse-glow" />
 
               {/* Background Folder Tab Shape */}
-              <div className="absolute bottom-2 w-48 sm:w-56 h-32 sm:h-36 bg-[#faf0f3] border border-[#ecd0d8] rounded-lg transform -rotate-1 shadow-xs" />
+              <div className="absolute bottom-2 w-48 sm:w-56 h-32 sm:h-36 bg-[#eef5ff] border border-[#d2e3fc] rounded-lg transform -rotate-1 shadow-xs" />
 
               {/* Foreground Document Under Laser Scanner */}
               <div className="relative w-44 sm:w-52 h-36 sm:h-40 bg-white border border-stone-200 rounded-md shadow-md p-3.5 space-y-2 overflow-hidden animate-float-gentle">
                 {/* Header Skeleton */}
                 <div className="flex items-center justify-between border-b border-stone-100 pb-1.5">
                   <div className="w-16 h-2 bg-stone-200 rounded-xs" />
-                  <div className="w-8 h-2 bg-[#80283e]/30 rounded-xs" />
+                  <div className="w-8 h-2 bg-[#1A76FF]/30 rounded-xs" />
                 </div>
                 {/* Body Lines */}
                 <div className="space-y-1.5 pt-0.5">
@@ -419,17 +419,17 @@ export function DocumentDropzone({
                 {/* Asset Line Skeleton */}
                 <div className="pt-2 flex items-center justify-between">
                   <div className="w-12 h-2.5 bg-stone-200 rounded-xs" />
-                  <div className="w-14 h-2.5 bg-[#80283e]/20 rounded-xs" />
+                  <div className="w-14 h-2.5 bg-[#1A76FF]/20 rounded-xs" />
                 </div>
 
                 {/* Laser Scan Beam */}
-                <div className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#80283e] to-transparent shadow-[0_0_12px_#80283e] animate-scan-beam pointer-events-none" />
+                <div className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#1A76FF] to-transparent shadow-[0_0_12px_#1A76FF] animate-scan-beam pointer-events-none" />
               </div>
 
               {/* Front Label Pocket */}
-              <div className="absolute -bottom-1 w-48 sm:w-56 h-12 bg-white/90 backdrop-blur-xs border-t-2 border-[#80283e]/40 rounded-b-lg flex items-center justify-center px-3 shadow-xs">
-                <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#80283e] truncate">
-                  <Scan className="w-3.5 h-3.5 animate-spin text-[#80283e] shrink-0" />
+              <div className="absolute -bottom-1 w-48 sm:w-56 h-12 bg-white/90 backdrop-blur-xs border-t-2 border-[#1A76FF]/40 rounded-b-lg flex items-center justify-center px-3 shadow-xs">
+                <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#1A76FF] truncate">
+                  <Scan className="w-3.5 h-3.5 animate-spin text-[#1A76FF] shrink-0" />
                   <span className="truncate max-w-[170px]">
                     {files[activeScanFileIndex]?.fileName || "Memindai dokumen..."}
                   </span>
@@ -449,14 +449,14 @@ export function DocumentDropzone({
               {/* Progress Bar */}
               <div className="w-full h-2 bg-stone-200/60 rounded-full overflow-hidden mt-3">
                 <div
-                  className="h-full bg-gradient-to-r from-[#80283e] to-[#a5435c] rounded-full transition-all duration-300"
+                  className="h-full bg-gradient-to-r from-[#1A76FF] to-[#60a5fa] rounded-full transition-all duration-300"
                   style={{ width: `${scanProgress}%` }}
                 />
               </div>
 
               <div className="flex justify-between items-center text-[11px] font-mono text-stone-400 pt-1">
                 <span>Audit in-memory</span>
-                <span className="font-bold text-[#80283e]">{scanProgress}%</span>
+                <span className="font-bold text-[#1A76FF]">{scanProgress}%</span>
               </div>
             </div>
           </div>
@@ -477,8 +477,8 @@ export function DocumentDropzone({
           onClick={() => fileInputRef.current?.click()}
           className={`relative border-2 border-dashed rounded-sm p-8 sm:p-12 text-center transition-all cursor-pointer luxury-card overflow-hidden ${
             isDragging
-              ? "border-[#80283e] bg-[#faf0f3]/70"
-              : "border-stone-300 hover:border-[#80283e]/70 hover:bg-stone-50/60 bg-white"
+              ? "border-[#1A76FF] bg-[#eef5ff]/70"
+              : "border-stone-300 hover:border-[#1A76FF]/70 hover:bg-stone-50/60 bg-white"
           }`}
         >
           <input
@@ -491,7 +491,7 @@ export function DocumentDropzone({
           />
 
           <div className="relative flex flex-col items-center justify-center space-y-4">
-            <div className="w-16 h-16 rounded-sm bg-[#faf0f3] border border-[#ecd0d8] flex items-center justify-center text-[#80283e]">
+            <div className="w-16 h-16 rounded-sm bg-[#eef5ff] border border-[#d2e3fc] flex items-center justify-center text-[#1A76FF]">
               <Upload className="w-7 h-7" />
             </div>
 
@@ -567,7 +567,7 @@ export function DocumentDropzone({
               <span className="font-bold text-sm text-stone-900">
                 Dokumen Siap Diekstrak
               </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-sm bg-[#f5dfe6] text-[#80283e] font-mono font-bold">
+              <span className="text-xs px-2.5 py-0.5 rounded-sm bg-[#dbeafe] text-[#1A76FF] font-mono font-bold">
                 {files.length} berkas
               </span>
             </div>
@@ -595,7 +595,7 @@ export function DocumentDropzone({
                   key={file.id}
                   className={`flex items-center justify-between p-3 rounded-sm border text-sm gap-2 transition-all ${
                     isCurrentScanTarget
-                      ? "border-[#80283e] bg-[#faf0f3]/70 ring-1 ring-[#80283e]/30"
+                      ? "border-[#1A76FF] bg-[#eef5ff]/70 ring-1 ring-[#1A76FF]/30"
                       : "border-stone-200 bg-stone-50/50"
                   }`}
                 >
@@ -604,7 +604,7 @@ export function DocumentDropzone({
                       {isPdf ? (
                         <FileText className="w-4 h-4 text-rose-500" />
                       ) : (
-                        <ImageIcon className="w-4 h-4 text-[#80283e]" />
+                        <ImageIcon className="w-4 h-4 text-[#1A76FF]" />
                       )}
                     </div>
                     <div className="min-w-0">
@@ -614,7 +614,7 @@ export function DocumentDropzone({
                       <p className="text-[11px] text-stone-400 font-mono">
                         {formatFileSize(file.size)}
                         {isCurrentScanTarget && (
-                          <span className="ml-1.5 text-[#80283e] font-bold">
+                          <span className="ml-1.5 text-[#1A76FF] font-bold">
                             • Sedang dipindai
                           </span>
                         )}
@@ -643,7 +643,7 @@ export function DocumentDropzone({
               type="button"
               disabled={isAnalyzing}
               onClick={handleStartAnalysis}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-sm bg-[#80283e] hover:bg-[#6c1e32] text-white font-bold text-sm sm:text-base transition-all disabled:opacity-80 disabled:cursor-not-allowed cursor-pointer"
+              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-sm bg-[#1A76FF] hover:bg-[#0d5fd9] text-white font-bold text-sm sm:text-base transition-all disabled:opacity-80 disabled:cursor-not-allowed cursor-pointer"
             >
               {isAnalyzing ? (
                 <>

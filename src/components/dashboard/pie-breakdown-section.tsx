@@ -160,7 +160,7 @@ export function PieBreakdownSection({
           </p>
           <div className="flex items-center gap-2 text-stone-500 font-medium">
             <span>Porsi:</span>
-            <span className="font-bold text-[#80283e] font-mono">
+            <span className="font-bold text-[#1A76FF] font-mono">
               {data.percentage}%
             </span>
           </div>
@@ -202,7 +202,7 @@ export function PieBreakdownSection({
                   onClick={() => setChartViewMode("donut")}
                   className={`p-1.5 rounded-sm transition-all cursor-pointer ${
                     chartViewMode === "donut"
-                      ? "bg-white text-[#80283e] font-bold"
+                      ? "bg-white text-[#1A76FF] font-bold"
                       : "text-stone-400 hover:text-stone-700"
                   }`}
                   title="Tampilan Donut Chart"
@@ -214,7 +214,7 @@ export function PieBreakdownSection({
                   onClick={() => setChartViewMode("bar")}
                   className={`p-1.5 rounded-sm transition-all cursor-pointer ${
                     chartViewMode === "bar"
-                      ? "bg-white text-[#80283e] font-bold"
+                      ? "bg-white text-[#1A76FF] font-bold"
                       : "text-stone-400 hover:text-stone-700"
                   }`}
                   title="Tampilan Bar Distribusi"
@@ -355,7 +355,7 @@ export function PieBreakdownSection({
 
           {/* Bottom Helpful Tip */}
           <div className="mt-4 p-3 rounded-sm bg-stone-50 border border-stone-200 text-xs text-stone-600 flex items-center gap-2.5">
-            <Lightbulb className="w-4 h-4 text-[#80283e] shrink-0" />
+            <Lightbulb className="w-4 h-4 text-[#1A76FF] shrink-0" />
             <span>
               <strong>Audit Tip:</strong> Klik irisan grafik atau baris aset
               untuk melihat dokumen sumber dan audit biner.
@@ -442,7 +442,7 @@ export function PieBreakdownSection({
                       onMouseLeave={() => setHoveredKey(null)}
                       className={`group flex flex-col p-3 sm:p-3.5 rounded-sm border transition-all duration-200 cursor-pointer ${
                         isSelected || isHovered
-                          ? "border-[#80283e] bg-[#faf0f3]/60"
+                          ? "border-[#1A76FF] bg-[#eef5ff]/60"
                           : "border-stone-200 hover:border-stone-300 hover:bg-stone-50/60 bg-white"
                       }`}
                     >
@@ -482,7 +482,7 @@ export function PieBreakdownSection({
                               usdRate,
                             )}
                           </span>
-                          <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-[#80283e] transition-all" />
+                          <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-[#1A76FF] transition-all" />
                         </div>
                       </div>
 
@@ -532,7 +532,7 @@ export function PieBreakdownSection({
                         onClick={() => onSelectLiability?.(lia)}
                         className={`group p-4 rounded-sm border transition-all duration-200 cursor-pointer ${
                           isHovered
-                            ? "border-[#9E4B5E]/50 bg-[#faf0f3]/40"
+                            ? "border-[#9E4B5E]/50 bg-rose-50/40"
                             : "border-stone-200 bg-white hover:border-stone-300 hover:bg-stone-50/50"
                         }`}
                       >
@@ -542,7 +542,7 @@ export function PieBreakdownSection({
                               <span className="px-2 py-0.5 rounded-sm bg-[#f7edf0] text-[#7a2d3e] border border-[#7a2d3e]/20 text-[11px] font-bold font-mono">
                                 {pct}%
                               </span>
-                              <h4 className="font-bold text-sm text-stone-900 group-hover:text-[#80283e] transition-colors">
+                              <h4 className="font-bold text-sm text-stone-900 group-hover:text-[#1A76FF] transition-colors">
                                 {lia.name}
                               </h4>
                             </div>
@@ -576,7 +576,7 @@ export function PieBreakdownSection({
                                 e.stopPropagation();
                                 onPreviewFile?.(lia.sourceFile);
                               }}
-                              className="inline-flex items-center gap-1 text-[10px] text-stone-600 hover:text-[#80283e] px-2 py-0.5 rounded-sm bg-stone-100 hover:bg-[#faf0f3] border border-stone-200 hover:border-[#ecd0d8] font-mono mt-1 cursor-pointer transition-all shadow-2xs"
+                              className="inline-flex items-center gap-1 text-[10px] text-stone-600 hover:text-[#1A76FF] px-2 py-0.5 rounded-sm bg-stone-100 hover:bg-[#eef5ff] border border-stone-200 hover:border-[#d2e3fc] font-mono mt-1 cursor-pointer transition-all shadow-2xs"
                               title="Klik untuk membuka pratinjau dokumen"
                             >
                               <FileText className="w-3 h-3 text-stone-400" />

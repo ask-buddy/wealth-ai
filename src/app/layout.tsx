@@ -52,7 +52,7 @@ export default function RootLayout({
       lang="id"
       className={`${plusJakartaSans.variable} ${playfairDisplay.variable} ${jetbrainsMono.variable} ${play.variable} font-sans h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-[#f5dfe6] selection:text-[#5e1929]">
+      <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-[#dbeafe] selection:text-[#0b4eb8]">
         <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>

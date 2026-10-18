@@ -70,7 +70,7 @@ export function NetWorthHero({
             title="Tambah Dokumen"
             aria-label="Tambah Dokumen"
           >
-            <PlusCircle className="w-4 h-4 text-[#80283e]" />
+            <PlusCircle className="w-4 h-4 text-[#1A76FF]" />
           </button>
 
           {/* Export PDF Button: Icon + Border Only, White Background */}
@@ -81,14 +81,14 @@ export function NetWorthHero({
             title="Ekspor PDF"
             aria-label="Ekspor PDF"
           >
-            <FileDown className="w-4 h-4 text-[#80283e]" />
+            <FileDown className="w-4 h-4 text-[#1A76FF]" />
           </button>
 
-          {/* Delete Button: Border + Soft Lux Burgundy Solid Style */}
+          {/* Delete Button: Border + Soft Lux Blue Solid Style */}
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex items-center justify-center w-8 h-8 rounded-sm bg-[#80283e] hover:bg-[#6c1e32] text-white border border-[#80283e] transition-all cursor-pointer shadow-xs"
+            className="inline-flex items-center justify-center w-8 h-8 rounded-sm bg-[#1A76FF] hover:bg-[#0d5fd9] text-white border border-[#1A76FF] transition-all cursor-pointer shadow-xs"
             title="Hapus data portofolio dari browser ini"
             aria-label="Hapus data portofolio"
           >
@@ -103,7 +103,7 @@ export function NetWorthHero({
         <div className="lg:col-span-8 space-y-2">
           {/* Title for the Main Value */}
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#80283e]" />
+            <span className="w-2 h-2 rounded-full bg-[#1A76FF]" />
             <span className="text-xs font-bold uppercase tracking-wider text-stone-500 font-play">
               Total Kekayaan Bersih (Net Worth)
             </span>
@@ -142,7 +142,7 @@ export function NetWorthHero({
             onClick={() => onTabChange?.("assets")}
             className={`p-3.5 rounded-sm text-left transition-all cursor-pointer relative ${
               activeTab === "assets"
-                ? "bg-white border-2 border-[#80283e] shadow-xs ring-1 ring-[#80283e]/20"
+                ? "bg-white border-2 border-[#1A76FF] shadow-xs ring-1 ring-[#1A76FF]/20"
                 : "bg-stone-50 border border-stone-200 hover:border-stone-300 opacity-75 hover:opacity-100"
             }`}
             title="Klik untuk beralih ke data Total Aset"
@@ -152,7 +152,7 @@ export function NetWorthHero({
                 <Layers
                   className={`w-3.5 h-3.5 ${
                     activeTab === "assets"
-                      ? "text-[#80283e]"
+                      ? "text-[#1A76FF]"
                       : "text-emerald-600"
                   }`}
                 />
@@ -165,7 +165,7 @@ export function NetWorthHero({
                 </span>
               </span>
               {activeTab === "assets" && (
-                <span className="w-1.5 h-1.5 rounded-full bg-[#80283e]" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1A76FF]" />
               )}
             </div>
             <p className="text-sm sm:text-base font-bold font-mono text-stone-900 mt-1 truncate tabular-nums">
@@ -184,7 +184,7 @@ export function NetWorthHero({
             onClick={() => onTabChange?.("liabilities")}
             className={`p-3.5 rounded-sm text-left transition-all cursor-pointer relative ${
               activeTab === "liabilities"
-                ? "bg-white border-2 border-[#80283e] shadow-xs ring-1 ring-[#80283e]/20"
+                ? "bg-white border-2 border-[#1A76FF] shadow-xs ring-1 ring-[#1A76FF]/20"
                 : "bg-stone-50 border border-stone-200 hover:border-stone-300 opacity-75 hover:opacity-100"
             }`}
             title="Klik untuk beralih ke data Liabilitas"
@@ -194,7 +194,7 @@ export function NetWorthHero({
                 <ArrowDownRight
                   className={`w-3.5 h-3.5 ${
                     activeTab === "liabilities"
-                      ? "text-[#80283e]"
+                      ? "text-[#1A76FF]"
                       : "text-rose-500"
                   }`}
                 />
