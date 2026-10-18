@@ -37,11 +37,17 @@ export function DocumentDropzone({
   const [analysisStep, setAnalysisStep] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeScanFileIndex, setActiveScanFileIndex] = useState(0);
-  const [scanProgress, setScanProgress] = useState(15);
+  const [scanProgress, setScanProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const isCompletingRef = useRef<boolean>(false);
+  const scanProgressRef = useRef<number>(0);
 
-  // Cycling animation when scanning is active
+  useEffect(() => {
+    scanProgressRef.current = scanProgress;
+  }, [scanProgress]);
+
+  // Cycling animation when scanning is active with dynamic duration adapted to file count
   useEffect(() => {
     if (!isAnalyzing) {
       setScanProgress(0);
@@ -49,20 +55,52 @@ export function DocumentDropzone({
       return;
     }
 
-    setScanProgress(12);
+    // Dynamic duration based on files count:
+    // 1 file = ~15s
+    // 5 files = ~67s (~1.1 min)
+    // 6 files = ~80s (~1.3 min)
+    const fileCount = Math.max(1, files.length);
+    const estimatedSeconds = 15 + (fileCount - 1) * 13;
+    const intervalMs = 250; // smooth 4 updates per second
+
+    setScanProgress(6);
+    const startTime = Date.now();
 
     const progressInterval = setInterval(() => {
-      setScanProgress((prev) => {
-        if (prev >= 92) return 92; // hold at 92 until completed
-        return prev + 3;
-      });
-    }, 600);
+      const elapsedSeconds = (Date.now() - startTime) / 1000;
+      const progressFraction = Math.min(1, elapsedSeconds / estimatedSeconds);
 
+      // Natural easing curve from 6% to 92%:
+      // Fast start (6% - 35%), steady middle (35% - 75%), gentle deceleration towards 92%
+      let target: number;
+      if (progressFraction < 0.25) {
+        target = 6 + (progressFraction / 0.25) * 29;
+      } else if (progressFraction < 0.75) {
+        target = 35 + ((progressFraction - 0.25) / 0.5) * 40;
+      } else {
+        target = 75 + ((progressFraction - 0.75) / 0.25) * 17;
+      }
+
+      setScanProgress((prev) => {
+        // If rapid completion ramp is active, do not overwrite from background interval
+        if (isCompletingRef.current) return prev;
+        // Strict boundary: Never exceed 92% before actual completion!
+        if (prev >= 92) return 92;
+        const nextVal = Math.round(target);
+        return Math.min(92, Math.max(prev, nextVal));
+      });
+    }, intervalMs);
+
+    // Dynamic file carousel: cycle through files during scanning proportional to duration
+    const cycleIntervalMs = Math.max(
+      2000,
+      Math.floor((estimatedSeconds * 1000) / (fileCount * 2)),
+    );
     const fileCycleInterval = setInterval(() => {
       setActiveScanFileIndex((prev) =>
-        files.length > 0 ? (prev + 1) % files.length : 0
+        files.length > 0 ? (prev + 1) % files.length : 0,
       );
-    }, 2000);
+    }, cycleIntervalMs);
 
     return () => {
       clearInterval(progressInterval);
@@ -110,7 +148,7 @@ export function DocumentDropzone({
 
         if (!isPdf && !isImage && !validTypes.includes(f.type)) {
           setErrorMessage(
-            `Berkas "${f.name}" tidak didukung. Harap unggah dokumen PDF atau gambar (PNG/JPG).`
+            `Berkas "${f.name}" tidak didukung. Harap unggah dokumen PDF atau gambar (PNG/JPG).`,
           );
           continue;
         }
@@ -118,7 +156,7 @@ export function DocumentDropzone({
         // Limit size per file: 20MB
         if (f.size > 20 * 1024 * 1024) {
           setErrorMessage(
-            `Berkas "${f.name}" melebihi batas 20MB. Harap perkecil ukuran berkas.`
+            `Berkas "${f.name}" melebihi batas 20MB. Harap perkecil ukuran berkas.`,
           );
           continue;
         }
@@ -152,6 +190,7 @@ export function DocumentDropzone({
     if (files.length === 0) return;
     setIsAnalyzing(true);
     setErrorMessage(null);
+    isCompletingRef.current = false;
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -195,7 +234,9 @@ export function DocumentDropzone({
           text.toLowerCase().includes("cloudflare") ||
           text.toLowerCase().includes("tunnel error")
         ) {
-          throw new Error("Servernya lagi mati bang, besok lagi gwa nyalain wkwkwkw");
+          throw new Error(
+            "Servernya lagi mati bang, besok lagi gwa nyalain wkwkwkw",
+          );
         }
         throw new Error("Gagal memproses dokumen dari server.");
       }
@@ -207,17 +248,20 @@ export function DocumentDropzone({
           errorMsg.toLowerCase().includes("cloudflare") ||
           errorMsg.toLowerCase().includes("tunnel error")
         ) {
-          throw new Error("Servernya lagi mati bang, besok lagi gwa nyalain wkwkwkw");
+          throw new Error(
+            "Servernya lagi mati bang, besok lagi gwa nyalain wkwkwkw",
+          );
         }
         throw new Error(errorMsg);
       }
 
+      // Signal that response has arrived to take over progress animation
+      isCompletingRef.current = true;
       setAnalysisStep(
         existingPortfolio && isAddingMore
           ? "Menggabungkan dokumen baru & mengkalkulasi ulang alokasi aset..."
-          : "Mengkalkulasi alokasi 8 kategori aset..."
+          : "Mengkalkulasi alokasi 8 kategori aset...",
       );
-      setScanProgress(100);
       const fileNames = files.map((f) => f.fileName);
 
       let finalPortfolio: WealthPortfolio;
@@ -234,7 +278,7 @@ export function DocumentDropzone({
               e.sourceFile.trim().toLowerCase() ===
                 n.sourceFile.trim().toLowerCase() &&
               e.name.trim().toLowerCase() === n.name.trim().toLowerCase() &&
-              e.valueIdr === n.valueIdr
+              e.valueIdr === n.valueIdr,
           );
           if (!isDup) {
             mergedAssets.push(n);
@@ -251,7 +295,7 @@ export function DocumentDropzone({
               e.sourceFile.trim().toLowerCase() ===
                 n.sourceFile.trim().toLowerCase() &&
               e.name.trim().toLowerCase() === n.name.trim().toLowerCase() &&
-              e.amountIdr === n.amountIdr
+              e.amountIdr === n.amountIdr,
           );
           if (!isDup) {
             mergedLiabilities.push(n);
@@ -259,17 +303,15 @@ export function DocumentDropzone({
         }
 
         const combinedFiles = Array.from(
-          new Set([
-            ...(existingPortfolio.sourceFiles || []),
-            ...fileNames,
-          ])
+          new Set([...(existingPortfolio.sourceFiles || []), ...fileNames]),
         );
 
         const mergedRawData: any = {
           currency: "IDR",
           assets: mergedAssets,
           liabilities: mergedLiabilities,
-          keyHighlights: json.data.keyHighlights || existingPortfolio.keyHighlights || [],
+          keyHighlights:
+            json.data.keyHighlights || existingPortfolio.keyHighlights || [],
           executiveSummary:
             json.data.executiveSummary || existingPortfolio.executiveSummary,
         };
@@ -299,9 +341,30 @@ export function DocumentDropzone({
 
       finalPortfolio.documentPreviews = combinedPreviews;
 
+      // Smooth, rapid ramp from current progress (e.g. 63%) to 100%
+      const startProg = scanProgressRef.current;
+      const diff = 100 - startProg;
+      const rampSteps = 12;
+      const stepDuration = Math.max(25, Math.floor(450 / rampSteps)); // ~450ms total smooth duration
+
+      for (let i = 1; i <= rampSteps; i++) {
+        const t = i / rampSteps;
+        // Quadratic ease-out: starts briskly and decelerates gracefully into 100%
+        const ease = 1 - Math.pow(1 - t, 2);
+        setScanProgress(Math.min(100, Math.round(startProg + diff * ease)));
+        await new Promise((r) => setTimeout(r, stepDuration));
+      }
+
+      setScanProgress(100);
+      setAnalysisStep("Audit selesai 100% ✓ Membuka portofolio...");
+
+      // Brief visual pause (250ms) so user clearly perceives the 100% completion
+      await new Promise((r) => setTimeout(r, 250));
+
       savePortfolioToStorage(finalPortfolio);
       onAnalysisSuccess(finalPortfolio);
     } catch (err: any) {
+      isCompletingRef.current = false;
       clearTimeout(timeoutId);
       console.error("Analysis process error:", err);
 
@@ -314,19 +377,21 @@ export function DocumentDropzone({
         msg.toLowerCase().includes("tunnel error") ||
         msg.includes("Servernya lagi mati bang")
       ) {
-        setErrorMessage("Servernya lagi mati bang, besok lagi gwa nyalain wkwkwkw");
+        setErrorMessage(
+          "Servernya lagi mati bang, besok lagi gwa nyalain wkwkwkw",
+        );
       } else if (
         msg.includes("Failed to fetch") ||
         msg.includes("NetworkError") ||
         (typeof navigator !== "undefined" && !navigator.onLine)
       ) {
         setErrorMessage(
-          "Koneksi internet terputus atau tidak stabil saat mengirim dokumen. Silakan periksa jaringan internet Anda dan coba lagi."
+          "Koneksi internet terputus atau tidak stabil saat mengirim dokumen. Silakan periksa jaringan internet Anda dan coba lagi.",
         );
       } else {
         setErrorMessage(
           msg ||
-            "Terjadi kendala saat analisis. Silakan periksa koneksi dan coba kembali."
+            "Terjadi kendala saat analisis. Silakan periksa koneksi dan coba kembali.",
         );
       }
     } finally {
@@ -350,9 +415,10 @@ export function DocumentDropzone({
           <div className="flex items-center gap-2.5 font-medium">
             <Sparkles className="w-4 h-4 shrink-0 text-[#1A76FF]" />
             <span>
-              <strong>Mode Tambah Aset:</strong> Dokumen yang Anda unggah akan otomatis digabungkan dengan{" "}
-              {existingPortfolio?.assets?.length || 0}{" "}
-              aset yang sudah ada tanpa menghapus data sebelumnya.
+              <strong>Mode Tambah Aset:</strong> Dokumen yang Anda unggah akan
+              otomatis digabungkan dengan{" "}
+              {existingPortfolio?.assets?.length || 0} aset yang sudah ada tanpa
+              menghapus data sebelumnya.
             </span>
           </div>
           {onCancel && (
@@ -431,7 +497,8 @@ export function DocumentDropzone({
                 <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#1A76FF] truncate">
                   <Scan className="w-3.5 h-3.5 animate-spin text-[#1A76FF] shrink-0" />
                   <span className="truncate max-w-[170px]">
-                    {files[activeScanFileIndex]?.fileName || "Memindai dokumen..."}
+                    {files[activeScanFileIndex]?.fileName ||
+                      "Memindai dokumen..."}
                   </span>
                 </div>
               </div>
@@ -443,7 +510,8 @@ export function DocumentDropzone({
                 {analysisStep || "Memindai Dokumen Finansial..."}
               </h4>
               <p className="text-xs text-stone-500 font-medium">
-                Membaca angka nominal, jenis aset (saham, properti, kas, kripto), serta melacak bukti berkas sumber secara privat di RAM.
+                Membaca angka nominal, jenis aset (saham, properti, kas,
+                kripto), serta melacak bukti berkas sumber secara privat di RAM.
               </p>
 
               {/* Progress Bar */}
@@ -456,7 +524,9 @@ export function DocumentDropzone({
 
               <div className="flex justify-between items-center text-[11px] font-mono text-stone-400 pt-1">
                 <span>Audit in-memory</span>
-                <span className="font-bold text-[#1A76FF]">{scanProgress}%</span>
+                <span className="font-bold text-[#1A76FF]">
+                  {scanProgress}%
+                </span>
               </div>
             </div>
           </div>
@@ -529,8 +599,12 @@ export function DocumentDropzone({
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-rose-600" />
             <div className="space-y-0.5">
-              <p className="font-bold text-stone-900">Kendala Analisis Dokumen</p>
-              <p className="text-stone-600 leading-relaxed font-medium">{errorMessage}</p>
+              <p className="font-bold text-stone-900">
+                Kendala Analisis Dokumen
+              </p>
+              <p className="text-stone-600 leading-relaxed font-medium">
+                {errorMessage}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
@@ -588,7 +662,8 @@ export function DocumentDropzone({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-60 overflow-y-auto pr-1">
             {files.map((file, idx) => {
               const isPdf = file.mimeType.includes("pdf");
-              const isCurrentScanTarget = isAnalyzing && idx === activeScanFileIndex;
+              const isCurrentScanTarget =
+                isAnalyzing && idx === activeScanFileIndex;
 
               return (
                 <div
@@ -648,9 +723,7 @@ export function DocumentDropzone({
               {isAnalyzing ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin text-white" />
-                  <span>
-                    {analysisStep || "Sedang Memindai Dokumen..."}
-                  </span>
+                  <span>{analysisStep || "Sedang Memindai Dokumen..."}</span>
                 </>
               ) : (
                 <>
