@@ -45,6 +45,65 @@ GEMINI_MODEL=gemini-3.8-flash
 
 ---
 
+## Deploy to Google Cloud Run
+
+This repository is one Next.js application: React pages and TypeScript API routes
+in `src/app/api`. There is no Python backend to deploy separately.
+
+The Dockerfile builds the application, removes development dependencies, and runs
+it as a non-root user on `0.0.0.0:$PORT` (default `8080`).
+
+### Test locally
+
+Create `.env.local` with your real gateway settings, then run:
+
+```bash
+docker build -t angelwealth .
+docker run --rm -p 8080:8080 --env-file .env.local angelwealth
+```
+
+Open http://localhost:8080. Environment files and `document_test` are excluded
+from the Docker build context. Dependencies and Google Fonts require network
+access during the build.
+
+### Build and deploy
+
+With billing enabled and the Google Cloud CLI authenticated, replace the project
+and gateway values below. Use an existing Secret Manager secret named
+`gemini-api-key` containing your gateway API key.
+
+```bash
+PROJECT_ID="your-project-id"
+REGION="asia-southeast2"
+IMAGE="$REGION-docker.pkg.dev/$PROJECT_ID/angelwealth/app:latest"
+
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com --project "$PROJECT_ID"
+gcloud artifacts repositories create angelwealth --repository-format=docker --location "$REGION" --project "$PROJECT_ID"
+gcloud builds submit --tag "$IMAGE" --project "$PROJECT_ID" .
+
+gcloud run deploy angelwealth \
+  --project "$PROJECT_ID" \
+  --region "$REGION" \
+  --image "$IMAGE" \
+  --port 8080 \
+  --memory 1Gi \
+  --timeout 300 \
+  --no-allow-unauthenticated \
+  --set-env-vars "GEMINI_BASE_URL=https://your-gateway.example/v1,GEMINI_MODEL=your-model,GEMINI_FALLBACK_MODEL=your-fallback-model" \
+  --set-secrets "GEMINI_API_KEY=gemini-api-key:latest"
+```
+
+Skip repository creation if it already exists. Grant the Cloud Run runtime service
+account `roles/secretmanager.secretAccessor` on the API key secret before deploying.
+Cloud Build also needs permission to push to the Artifact Registry repository.
+The service is private by default; use `gcloud run services proxy angelwealth
+--project "$PROJECT_ID" --region "$REGION"` to access it locally.
+
+Set `GEMINI_BASE_URL` to a stable gateway reachable from Cloud Run; `localhost`
+would point inside the container. Override all AI settings above because the
+application currently has development defaults in `src/server/ai/config.ts`.
+The existing embedded key should be rotated if it is a real credential.
+
 ## ✨ Fitur Utama
 
 - **Zero-Database & In-Memory Privacy**: Tidak ada database server. Semua dokumen dan nominal diproses secara *stateless in-memory* dan disimpan di `localStorage` peramban pengguna.
