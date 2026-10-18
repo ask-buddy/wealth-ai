@@ -28,6 +28,9 @@ jobs:
           ref: ${{ github.event.pull_request.merge_commit_sha }}
           persist-credentials: false
 
+      - name: Install Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v3
+
       - name: Build, push, and deploy
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
