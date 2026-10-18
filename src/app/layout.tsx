@@ -3,6 +3,7 @@ import {
   Plus_Jakarta_Sans,
   Playfair_Display,
   JetBrains_Mono,
+  Play,
 } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -28,6 +29,13 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const play = Play({
+  variable: "--font-play",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "AngelWealth | Private Wealth & Asset",
   description:
@@ -42,7 +50,7 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${plusJakartaSans.variable} ${playfairDisplay.variable} ${jetbrainsMono.variable} font-sans h-full antialiased`}
+      className={`${plusJakartaSans.variable} ${playfairDisplay.variable} ${jetbrainsMono.variable} ${play.variable} font-sans h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground selection:bg-[#f5dfe6] selection:text-[#5e1929]">
         <TooltipProvider>{children}</TooltipProvider>

@@ -185,7 +185,7 @@ export function PieBreakdownSection({
             {/* Header with View Toggle (Donut vs Bar) */}
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="font-bold text-stone-900 text-base">
+                <h3 className="font-bold text-stone-900 text-base font-play">
                   {activeTab === "assets"
                     ? "Distribusi Alokasi Kekayaan"
                     : "Porsi Pembagian Liabilitas"}

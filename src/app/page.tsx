@@ -190,7 +190,7 @@ export default function Home() {
                 A
               </div>
               <div>
-                <span className="font-extrabold text-base tracking-tight text-stone-900 flex items-center gap-2">
+                <span className="font-bold text-base tracking-tight text-stone-900 flex items-center gap-2 font-play">
                   AngelWealth
                 </span>
                 <p className="text-[11px] text-stone-500 hidden sm:block font-medium">
@@ -293,7 +293,7 @@ export default function Home() {
             <div className="space-y-8 animate-in fade-in duration-300">
               {/* Value Proposition Hero */}
               <div className="text-center max-w-3xl mx-auto space-y-4 pt-4">
-                <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-stone-900 leading-tight">
+                <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-stone-900 leading-tight font-play">
                   Hitung Total Kekayaan Bersih Anda Secara{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#80283e] via-[#a34159] to-[#c57288]">
                     Instan & 100% Privat

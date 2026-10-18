@@ -38,7 +38,7 @@ export function ExecutiveSummary({
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
-            <h2 className="text-base sm:text-lg font-bold tracking-tight text-stone-900">
+            <h2 className="text-base sm:text-lg font-bold tracking-tight text-stone-900 font-play">
               Ringkasan Eksekutif & Opini AI Auditor
             </h2>
           </div>

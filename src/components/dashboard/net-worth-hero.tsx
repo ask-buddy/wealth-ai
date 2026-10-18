@@ -104,7 +104,7 @@ export function NetWorthHero({
           {/* Title for the Main Value */}
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#80283e]" />
-            <span className="text-xs font-bold uppercase tracking-wider text-stone-500">
+            <span className="text-xs font-bold uppercase tracking-wider text-stone-500 font-play">
               Total Kekayaan Bersih (Net Worth)
             </span>
           </div>
