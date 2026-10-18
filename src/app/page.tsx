@@ -48,12 +48,20 @@ export default function Home() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedPreviewTarget, setSelectedPreviewTarget] = useState<{
     fileName: string;
-    assetInfo?: { name: string; valueFormatted?: string } | null;
+    assetInfo?: {
+      name: string;
+      valueFormatted?: string;
+      box_2d?: [number, number, number, number];
+    } | null;
   } | null>(null);
 
   const handlePreviewFile = (
     fileName: string,
-    assetInfo?: { name: string; valueFormatted?: string } | null,
+    assetInfo?: {
+      name: string;
+      valueFormatted?: string;
+      box_2d?: [number, number, number, number];
+    } | null,
   ) => {
     setSelectedPreviewTarget({ fileName, assetInfo });
   };

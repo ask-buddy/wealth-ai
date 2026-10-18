@@ -21,6 +21,7 @@ export interface ExtractedAssetItem {
   originalValue?: number;
   sourceFile: string;
   notes?: string;
+  box_2d?: [number, number, number, number]; // [ymin, xmin, ymax, xmax] normalized 0..1000
 }
 
 export interface ExtractedLiabilityItem {
@@ -30,6 +31,7 @@ export interface ExtractedLiabilityItem {
   amountIdr: number;
   sourceFile: string;
   notes?: string;
+  box_2d?: [number, number, number, number]; // [ymin, xmin, ymax, xmax] normalized 0..1000
 }
 
 export interface RawWealthAnalysis {

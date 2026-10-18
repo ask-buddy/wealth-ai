@@ -32,7 +32,8 @@ HANYA kembalikan satu objek JSON valid dengan struktur skema berikut:
       "category": "SAHAM | PERUSAHAAN_SENDIRI | CRYPTO | PROPERTI | KAS_DEPOSITO | EMAS_LOGAM_MULIA | OBLIGASI_SBN | KENDARAAN | LAINNYA",
       "estimated_value_idr": number (nilai moneter dalam rupiah, integer murni tanpa titik/koma/desimal),
       "quantity_or_ownership_detail": "string (contoh: '0.011 gram', 'Saldo Aktif', '60% saham', '100 Lot', dsb)",
-      "source_file": "string (nama file dokumen asal item ini)"
+      "source_file": "string (nama file dokumen asal item ini)",
+      "box_2d": [ymin, xmin, ymax, xmax] (koordinat 2D bounding box integer ternormalisasi 0-1000 tempat baris/angka aset ini berada di gambar)
     }
   ],
   "liabilities": [],
@@ -362,6 +363,10 @@ export async function POST(req: NextRequest) {
             files[0]?.fileName ||
             "Dokumen Sumber",
           notes: detailNote,
+          box_2d:
+            Array.isArray(item.box_2d) && item.box_2d.length === 4
+              ? [item.box_2d[0], item.box_2d[1], item.box_2d[2], item.box_2d[3]]
+              : undefined,
         };
       },
     );
@@ -408,6 +413,10 @@ export async function POST(req: NextRequest) {
             files[0]?.fileName ||
             "Dokumen Sumber",
           notes: item.notes || item.keterangan || item.description || "",
+          box_2d:
+            Array.isArray(item.box_2d) && item.box_2d.length === 4
+              ? [item.box_2d[0], item.box_2d[1], item.box_2d[2], item.box_2d[3]]
+              : undefined,
         };
       });
 

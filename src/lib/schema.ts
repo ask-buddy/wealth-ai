@@ -45,6 +45,14 @@ export const assetExtractionSchema: Schema = {
             description:
               "Nama file dokumen asal tempat item aset ini ditemukan, harus persis dengan label Nama File yang diberikan.",
           },
+          box_2d: {
+            type: Type.ARRAY,
+            description:
+              "Koordinat 2D bounding box [ymin, xmin, ymax, xmax] dengan skala 0 sampai 1000 pada gambar tempat baris atau angka nilai aset ini berada di dokumen.",
+            items: {
+              type: Type.INTEGER,
+            },
+          },
         },
         required: [
           "asset_name",
@@ -84,6 +92,14 @@ export const assetExtractionSchema: Schema = {
           notes: {
             type: Type.STRING,
             description: "Keterangan tambahan mengenai liabilitas jika ada.",
+          },
+          box_2d: {
+            type: Type.ARRAY,
+            description:
+              "Koordinat 2D bounding box [ymin, xmin, ymax, xmax] dengan skala 0 sampai 1000 pada gambar tempat baris liabilitas ini berada.",
+            items: {
+              type: Type.INTEGER,
+            },
           },
         },
         required: ["liability_name", "amount_idr", "source_file"],

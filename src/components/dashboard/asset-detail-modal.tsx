@@ -36,7 +36,11 @@ interface AssetDetailModalProps {
   currencyMode?: "IDR" | "USD";
   onPreviewFile?: (
     fileName: string,
-    assetInfo?: { name: string; valueFormatted?: string } | null,
+    assetInfo?: {
+      name: string;
+      valueFormatted?: string;
+      box_2d?: [number, number, number, number];
+    } | null,
   ) => void;
   usdRate?: number;
   onDeleteAsset?: (assetId: string) => void;
@@ -276,6 +280,7 @@ export function AssetDetailModal({
                           isPrivate,
                           usdRate,
                         ),
+                        box_2d: selectedLiability.box_2d,
                       })
                     }
                     className="px-2 py-0.5 rounded-sm bg-white hover:bg-rose-50 border border-rose-200 hover:border-rose-300 font-mono text-[11px] text-stone-800 hover:text-[#1A76FF] cursor-pointer inline-flex items-center gap-1.5 transition-all shadow-2xs"
@@ -440,6 +445,7 @@ export function AssetDetailModal({
                             isPrivate,
                             usdRate,
                           ),
+                          box_2d: item.box_2d,
                         })
                       }
                       className="font-mono font-semibold text-stone-800 hover:text-[#1A76FF] px-2 py-0.5 rounded-sm bg-[#eef5ff] hover:bg-white border border-[#d2e3fc] hover:border-[#1A76FF]/50 text-[10px] cursor-pointer inline-flex items-center gap-1 transition-all shadow-2xs"

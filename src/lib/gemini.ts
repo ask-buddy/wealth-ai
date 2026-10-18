@@ -58,3 +58,59 @@ export const genAI = new GoogleGenAI({
     },
   },
 });
+
+export async function callChatCompletionsVision(
+  baseUrl: string,
+  apiKey: string,
+  model: string,
+  messages: any[],
+  temperature = 0.0,
+): Promise<string> {
+  const cleanBase = baseUrl.trim().replace(/\/+$/, "");
+  const apiRoot = cleanBase.endsWith("/v1") ? cleanBase : `${cleanBase}/v1`;
+  const url = `${apiRoot}/chat/completions`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: model,
+      stream: false,
+      temperature,
+      messages: messages,
+    }),
+  });
+
+  const raw = await res.text();
+  if (!res.ok) {
+    console.error(
+      `[9router API Error ${res.status}] Target URL: ${url}`,
+      raw.slice(0, 300),
+    );
+    throw new Error(`[API Error ${res.status}] ${raw.slice(0, 300)}`);
+  }
+
+  // Check if response is Server-Sent Events (SSE)
+  if (raw.startsWith("data:")) {
+    const lines = raw.split("\n");
+    let content = "";
+    for (const line of lines) {
+      if (line.startsWith("data: ") && !line.includes("[DONE]")) {
+        try {
+          const parsed = JSON.parse(line.substring(6));
+          const delta =
+            parsed.choices?.[0]?.delta?.content ||
+            parsed.choices?.[0]?.message?.content ||
+            "";
+          content += delta;
+        } catch {}
+      }
+    }
+    return content;
+  }
+
+  const json = JSON.parse(raw);
+  return json.choices?.[0]?.message?.content || "";
+}

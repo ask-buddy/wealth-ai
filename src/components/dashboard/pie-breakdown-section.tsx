@@ -40,7 +40,11 @@ interface PieBreakdownSectionProps {
   onTabChange?: (tab: "assets" | "liabilities") => void;
   onPreviewFile?: (
     fileName: string,
-    assetInfo?: { name: string; valueFormatted?: string } | null,
+    assetInfo?: {
+      name: string;
+      valueFormatted?: string;
+      box_2d?: [number, number, number, number];
+    } | null,
   ) => void;
   usdRate?: number;
 }
@@ -585,6 +589,7 @@ export function PieBreakdownSection({
                                     isPrivate,
                                     usdRate,
                                   ),
+                                  box_2d: lia.box_2d,
                                 });
                               }}
                               className="inline-flex items-center gap-1 text-[10px] text-stone-600 hover:text-[#1A76FF] px-2 py-0.5 rounded-sm bg-stone-100 hover:bg-[#eef5ff] border border-stone-200 hover:border-[#d2e3fc] font-mono mt-1 cursor-pointer transition-all shadow-2xs"
