@@ -78,18 +78,20 @@ One-time setup (with billing enabled and sufficient administrator permissions):
 PROJECT_ID="your-project-id"
 REGION="asia-southeast2"
 
-gcloud services enable run.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com --project "$PROJECT_ID"
+gcloud services enable run.googleapis.com artifactregistry.googleapis.com --project "$PROJECT_ID"
 gcloud artifacts repositories create angelwealth --repository-format=docker --location "$REGION" --project "$PROJECT_ID"
 ```
 
 Skip repository creation if it already exists. The runner identity needs Artifact
 Registry Writer on the repository, Cloud Run deployment permissions, and Service
-Account User on the Cloud Run runtime service account. The runtime service account
-needs Secret Manager Secret Accessor on the existing `gemini-api-key` secret.
+Account User on the Cloud Run runtime service account.
 
 Build, push, and deploy:
 
 ```bash
+export GEMINI_BASE_URL="https://your-gateway.example/v1"
+export GEMINI_MODEL="your-model"
+# Set GEMINI_API_KEY in the runner environment before invoking the script.
 bash scripts/push-image.sh your-project-id
 # Optional region and image tag (use the commit SHA in CI):
 bash scripts/push-image.sh your-project-id asia-southeast2 v1
@@ -102,33 +104,30 @@ identity, builds locally for `linux/amd64` (including on Apple Silicon), pushes 
 It does not use Cloud Build. See Google's [container build guidance](https://docs.cloud.google.com/run/docs/building/containers)
 and [Cloud Run deployment guidance](https://docs.cloud.google.com/run/docs/deploying).
 
-The service allows public unauthenticated access with ingress from all sources,
-uses port 8080, 1 GiB memory, and a 300-second
-request timeout. Existing environment variables and secret references are
-preserved. The script does not load `.env` files; `.dockerignore` excludes them
-from the build.
+The service allows public access, uses port 8080, 128 MiB memory, and a 300-second
+request timeout. It uses the first-generation execution environment because
+[second generation requires at least 512 MiB](https://docs.cloud.google.com/run/docs/configuring/services/memory-limits).
+128 MiB is a tight limit for Next.js and document processing; increase it if the
+service runs out of memory.
 
-On the first deployment, configure the runtime settings before using the app
-(replace the gateway and model values):
+Each deployment updates `GEMINI_BASE_URL`, `GEMINI_MODEL`, and `GEMINI_API_KEY`
+from the runner environment while preserving unrelated runtime variables. All
+three must be non-empty. The script requires Python 3 and writes these settings to
+a temporary flags file with owner-only permissions, then deletes it on exit. The
+API key is not included in command-line arguments. Any old Secret Manager binding
+for `GEMINI_API_KEY` is removed when switching to the GitHub-supplied value.
 
-```bash
-gcloud run services update angelwealth \
-  --project "$PROJECT_ID" \
-  --region "$REGION" \
-  --update-env-vars "GEMINI_BASE_URL=https://your-gateway.example/v1,GEMINI_MODEL=your-model,GEMINI_FALLBACK_MODEL=your-fallback-model" \
-  --update-secrets "GEMINI_API_KEY=gemini-api-key:latest"
-```
+The API key is stored as a Cloud Run runtime environment value and can be viewed
+by identities allowed to read the service configuration. No GCP Secret Manager
+secret is required. The script does not load `.env` files; `.dockerignore` excludes
+them from the build. Runtime values are not baked into the Docker image.
 
 Set `GEMINI_BASE_URL` to a stable gateway reachable from Cloud Run; `localhost`
 would point inside the container. Override all AI settings above because the
 application currently has development defaults in `src/server/ai/config.ts`.
 The existing embedded key should be rotated if it is a real credential.
 
-The runner identity also needs `run.services.setIamPolicy` permission to grant
-public access. Organization policies must allow the `allUsers` IAM binding.
-See [Cloud Run public access](https://docs.cloud.google.com/run/docs/authenticating/public).
-Public access includes the application's API routes.
-
+The deployer needs `run.services.setIamPolicy` permission to grant public access.
 To get the public service URL:
 
 ```bash
@@ -147,17 +146,20 @@ self-hosted runner. Add these **environment secrets** in GitHub:
 
 - `GCP_PROJECT_ID`: your Google Cloud project ID.
 - `GCP_REGION`: for example, `asia-southeast2`.
+- `GEMINI_BASE_URL`: your reachable gateway URL ending in `/v1`.
+- `GEMINI_MODEL`: the primary model name accepted by your gateway.
+- `GEMINI_API_KEY`: your Gemini/9router gateway API key.
 
 The workflow installs the Google Cloud CLI using `google-github-actions/setup-gcloud`.
-The runner must already have Docker/Buildx and Google Cloud credentials available
+The runner must already have Docker/Buildx, Python 3, and Google Cloud credentials available
 to its service user. Installing the CLI does not authenticate it. No authentication
 action or service account key is added.
 The commit SHA becomes the image tag, and production deployments run one at a
 time. Environment protection rules configured on `prod` still apply.
 
-Application configuration stays on Cloud Run as described above. GitHub secrets
-named `GEMINI_*` are not automatically copied to Cloud Run; the API key remains
-in GCP Secret Manager as `gemini-api-key`.
+The workflow explicitly passes all three Gemini values from GitHub `prod` secrets
+to the deployment script. They are applied to the new Cloud Run revision at
+runtime, not copied into the Docker image. `GEMINI_FALLBACK_MODEL` is not required.
 
 ## ✨ Fitur Utama
 

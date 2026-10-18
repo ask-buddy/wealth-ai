@@ -35,6 +35,9 @@ jobs:
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           GCP_REGION: ${{ secrets.GCP_REGION }}
+          GEMINI_BASE_URL: ${{ secrets.GEMINI_BASE_URL }}
+          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DEPLOY_SHA: ${{ github.event.pull_request.merge_commit_sha }}
         run: |
           : "${GCP_PROJECT_ID:?Set GCP_PROJECT_ID in the prod environment secrets}"
