@@ -567,3 +567,38 @@ export function removeLiabilityFromPortfolio(
     documentPreviews: portfolio.documentPreviews,
   };
 }
+
+export function removeDocumentFromPortfolio(
+  portfolio: WealthPortfolio,
+  fileName: string,
+): WealthPortfolio {
+  const updatedAssets = (portfolio.assets || []).filter(
+    (a) => a.sourceFile !== fileName,
+  );
+  const updatedLiabilities = (portfolio.liabilities || []).filter(
+    (l) => l.sourceFile !== fileName,
+  );
+  const updatedSourceFiles = (portfolio.sourceFiles || []).filter(
+    (f) => f !== fileName,
+  );
+
+  const updatedPreviews = { ...(portfolio.documentPreviews || {}) };
+  delete updatedPreviews[fileName];
+
+  const recalculated = calculatePortfolio(
+    {
+      ...portfolio,
+      currency: "IDR",
+      assets: updatedAssets,
+      liabilities: updatedLiabilities,
+    },
+    updatedSourceFiles,
+  );
+
+  return {
+    ...recalculated,
+    analyzedAt: portfolio.analyzedAt,
+    documentPreviews: updatedPreviews,
+    sourceFiles: updatedSourceFiles,
+  };
+}

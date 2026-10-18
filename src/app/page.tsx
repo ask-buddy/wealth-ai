@@ -22,7 +22,9 @@ import {
 import {
   removeAssetFromPortfolio,
   removeLiabilityFromPortfolio,
+  removeDocumentFromPortfolio,
 } from "@/lib/math";
+import { VerifiedDocumentsSection } from "@/components/dashboard/verified-documents-section";
 import {
   ShieldCheck,
   Sparkles,
@@ -49,18 +51,20 @@ export default function Home() {
   const [selectedPreviewTarget, setSelectedPreviewTarget] = useState<{
     fileName: string;
     assetInfo?: {
-      name: string;
+      name?: string;
       valueFormatted?: string;
       box_2d?: [number, number, number, number];
+      isDocumentSummary?: boolean;
     } | null;
   } | null>(null);
 
   const handlePreviewFile = (
     fileName: string,
     assetInfo?: {
-      name: string;
+      name?: string;
       valueFormatted?: string;
       box_2d?: [number, number, number, number];
+      isDocumentSummary?: boolean;
     } | null,
   ) => {
     setSelectedPreviewTarget({ fileName, assetInfo });
@@ -155,6 +159,22 @@ export default function Home() {
     const updated = removeLiabilityFromPortfolio(portfolio, liabilityId);
     setPortfolio(updated);
     savePortfolioToStorage(updated);
+  };
+
+  const handleDeleteDocumentItem = (fileName: string) => {
+    if (!portfolio) return;
+    const updated = removeDocumentFromPortfolio(portfolio, fileName);
+    if (updated.assets.length === 0 && updated.liabilities.length === 0) {
+      clearPortfolioStorage();
+      setPortfolio(null);
+      setIsAddingMore(false);
+      setSelectedCategory(null);
+      setSelectedLiability(null);
+      setIsModalOpen(false);
+    } else {
+      setPortfolio(updated);
+      savePortfolioToStorage(updated);
+    }
   };
 
   const handleSelectCategory = (cat: AssetCategory) => {
@@ -407,6 +427,16 @@ export default function Home() {
               <ExecutiveSummary
                 portfolio={portfolio}
                 onPreviewFile={handlePreviewFile}
+              />
+
+              {/* Verified Source Documents Gallery Section */}
+              <VerifiedDocumentsSection
+                portfolio={portfolio}
+                onPreviewFile={handlePreviewFile}
+                onDeleteDocument={handleDeleteDocumentItem}
+                isPrivate={isPrivate}
+                currencyMode={currencyMode}
+                usdRate={usdRate}
               />
             </div>
           )}

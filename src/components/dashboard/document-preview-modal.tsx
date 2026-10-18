@@ -26,9 +26,10 @@ export interface DocumentPreviewModalProps {
     dataUrl: string;
   } | null;
   assetInfo?: {
-    name: string;
+    name?: string;
     valueFormatted?: string;
     box_2d?: [number, number, number, number];
+    isDocumentSummary?: boolean;
   } | null;
 }
 
@@ -81,7 +82,13 @@ export function DocumentPreviewModal({
 
   // Handle locating the asset's bounding box on the image
   useEffect(() => {
-    if (!isOpen || !isImage || !assetInfo?.name || !preview?.dataUrl) {
+    if (
+      !isOpen ||
+      !isImage ||
+      !assetInfo?.name ||
+      !preview?.dataUrl ||
+      assetInfo?.isDocumentSummary
+    ) {
       setBox2d(null);
       setIsLocating(false);
       return;
@@ -185,29 +192,32 @@ export function DocumentPreviewModal({
               >
                 {fileName}
               </h3>
-              {assetInfo ? (
+              {assetInfo?.valueFormatted ? (
                 <p className="text-[11px] font-medium flex items-center gap-1.5 truncate">
-                  {assetInfo.valueFormatted && (
-                    <span className="font-bold font-mono text-stone-900 shrink-0">
-                      {assetInfo.valueFormatted}
+                  <span className="font-bold font-mono text-stone-900 shrink-0">
+                    {assetInfo.valueFormatted}
+                  </span>
+                  {assetInfo.name && (
+                    <span className="truncate text-stone-600">
+                      • {assetInfo.name}
                     </span>
                   )}
-                  <span className="truncate text-stone-600">
-                    {assetInfo.name}
-                  </span>
+                </p>
+              ) : assetInfo?.name ? (
+                <p className="text-[11px] font-medium text-stone-600 truncate">
+                  {assetInfo.name}
                 </p>
               ) : (
-                <p className="text-[11px] text-stone-500 font-medium flex items-center gap-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span>Dokumen Bukti Aset Terverifikasi</span>
+                <p className="text-[11px] text-stone-500 font-medium truncate">
+                  Dokumen Sumber Terverifikasi
                 </p>
               )}
             </div>
           </div>
 
           <div className="flex items-center gap-1.5">
-            {/* Stabilo Highlighter Toggle Button */}
-            {isImage && preview?.dataUrl && assetInfo && (
+            {/* Stabilo Highlighter Toggle Button (Only when previewing a specific asset) */}
+            {isImage && preview?.dataUrl && assetInfo && !assetInfo.isDocumentSummary && (
               <button
                 type="button"
                 onClick={() => setShowHighlight((prev) => !prev)}
